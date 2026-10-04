@@ -1,0 +1,541 @@
+/* Restored GinX orange / black / white theme for subpages. */
+:root {
+  --bg: #030304 !important;
+  --ink: #f8f8f5 !important;
+  --muted: #9aa3b2 !important;
+  --soft: #101319 !important;
+  --panel: rgba(15, 17, 21, .86) !important;
+  --panel-2: rgba(22, 20, 18, .76) !important;
+  --line: rgba(255, 255, 255, .11) !important;
+  --orange: #f7931a !important;
+  --orange-2: #ff6a1a !important;
+  --gold: #ffd166 !important;
+  --red: #f23b5d !important;
+  --cyan: #f7931a !important;
+  --green: #18d6a1 !important;
+  --shadow: 0 24px 80px rgba(0, 0, 0, .34) !important;
+  --gin-bg: #030304;
+  --gin-panel: rgba(15, 17, 21, .86);
+  --gin-panel-deep: rgba(6, 7, 10, .92);
+  --gin-border: rgba(255, 255, 255, .11);
+  --gin-border-hot: rgba(255, 209, 102, .34);
+  --gin-orange: #f7931a;
+  --gin-orange-deep: #d96b10;
+  --gin-gold: #ffd166;
+  --gin-red: #f23b5d;
+  --gin-muted: #9aa3b2;
+}
+
+html,
+body {
+  background: #030304 !important;
+  color: var(--ink) !important;
+}
+
+body {
+  background:
+    radial-gradient(900px 620px at 82% -6%, rgba(247, 147, 26, .22), transparent 62%),
+    radial-gradient(760px 500px at 8% 18%, rgba(242, 59, 93, .08), transparent 60%),
+    radial-gradient(820px 520px at 55% 105%, rgba(255, 209, 102, .09), transparent 62%),
+    linear-gradient(180deg, #030304 0%, #050505 50%, #030304 100%) !important;
+}
+
+.page,
+main,
+.site,
+.app,
+.page-wrap {
+  background:
+    radial-gradient(1100px 640px at 86% 0%, rgba(247, 147, 26, .16), transparent 62%),
+    radial-gradient(900px 520px at 12% 70%, rgba(242, 59, 93, .07), transparent 66%),
+    linear-gradient(180deg, #030304 0%, #050505 54%, #030304 100%) !important;
+}
+
+/* Foreground grid overlay — one consistent plane, sits above section backgrounds
+   but below content, fixed to viewport so it reads across the whole page. */
+.page {
+  position: relative;
+}
+.page::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, .05) 1px, transparent 1px) 0 0 / 112px 112px,
+    linear-gradient(0deg, rgba(255, 255, 255, .04) 1px, transparent 1px) 0 0 / 112px 112px;
+  mix-blend-mode: screen;
+}
+.page > * {
+  position: relative;
+  z-index: 2;
+}
+
+body,
+button,
+input,
+select,
+textarea {
+  font-family: Inter, "SF Pro Display", "Helvetica Neue", Arial, "PingFang SC", "Microsoft YaHei", sans-serif !important;
+}
+
+h1,
+h2,
+h3,
+.section-title,
+.hero-title,
+.page-title {
+  color: #fff !important;
+  letter-spacing: -.035em;
+}
+
+p,
+li,
+.muted,
+.eyebrow,
+.section-copy,
+.hero-copy {
+  color: var(--gin-muted) !important;
+}
+
+.eyebrow,
+.kicker,
+.pill,
+.badge,
+.chip,
+.label,
+.tag,
+.meta,
+.top-tab.is-active,
+.sub-tab.is-active {
+  color: #fff7df !important;
+  border-color: rgba(255, 209, 102, .28) !important;
+  background: linear-gradient(135deg, rgba(247, 147, 26, .2), rgba(255, 209, 102, .08)) !important;
+}
+
+.ginx-mega-nav,
+.ginfx-mega-nav,
+.nav,
+.site-header,
+header {
+  background: linear-gradient(180deg, rgba(3, 3, 4, .94), rgba(3, 3, 4, .74)) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, .08) !important;
+  box-shadow: 0 18px 56px rgba(0, 0, 0, .5) !important;
+  -webkit-backdrop-filter: blur(22px) !important;
+  backdrop-filter: blur(22px) !important;
+}
+
+.nav-links,
+.nav-actions,
+.ginx-mega-nav .nav-links,
+.ginfx-mega-nav .nav-links {
+  color: rgba(248, 248, 245, .82) !important;
+}
+
+.nav-links > .nav-item > a.nav-trigger:hover,
+.nav-trigger.is-active,
+.nav-item:hover > .nav-trigger,
+.nav-item:focus-within > .nav-trigger {
+  color: #fff !important;
+}
+
+.nav-links a.is-active:after {
+  background: linear-gradient(90deg, var(--gin-red), var(--gin-orange), var(--gin-gold)) !important;
+}
+
+.mobile-accordion-panel a {
+  border-color: transparent !important;
+}
+
+.mobile-accordion-panel a:hover {
+  background: rgba(247, 147, 26, .11) !important;
+  border-color: rgba(255, 209, 102, .26) !important;
+}
+
+.mega-menu-link[href^="academy.html"]:after,
+.mega-menu-link[href="articles.html"]:after,
+.mega-menu-link[href="trading-audcad.html"]:after,
+.mega-menu-link[href="rewards.html"]:after,
+.mega-menu-link[href="copy-trading.html"]:after,
+.mega-menu-link[href="invite-friends.html"]:after,
+.mega-menu-link[href="partners-ib.html"]:after,
+.mega-menu-link[href="fee.html"]:after {
+  color: #080808 !important;
+  background: linear-gradient(135deg, #ffd166, #f7931a) !important;
+}
+
+.mega-menu-link[href="trading-audcad.html"] {
+  position: relative !important;
+  padding-right: 92px !important;
+}
+
+.mega-menu-link[href="trading-audcad.html"]:after {
+  content: "预览" !important;
+  position: absolute !important;
+  right: 12px !important;
+  top: 50% !important;
+  min-height: 24px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 0 9px !important;
+  border-radius: 999px !important;
+  color: #080808 !important;
+  background: linear-gradient(135deg, #ffd166, #f7931a) !important;
+  font-size: 10px !important;
+  font-weight: 950 !important;
+  transform: translateY(-50%) !important;
+}
+
+.mega-menu-risk {
+  color: rgba(248, 248, 245, .7) !important;
+  border-color: rgba(255, 255, 255, .11) !important;
+  background: rgba(255, 255, 255, .035) !important;
+}
+
+:where(
+  .card,
+  .panel,
+  .article-card,
+  .filter-panel,
+  .academy-card,
+  .course-stage,
+  .course-card,
+  .course-panel,
+  .course-hero,
+  .outline-card,
+  .progress-card,
+  .path-card,
+  .learning-card,
+  .lesson-card,
+  .module-card,
+  .copy-card,
+  .trader-card,
+  .expert-card,
+  .stats-card,
+  .stat-card,
+  .mission-card,
+  .reward-board,
+  .redeem-card,
+  .bonus-card,
+  .check-card,
+  .faq-card,
+  .faq-item,
+  .ib-card,
+  .tier-card,
+  .channel-card,
+  .feature-card,
+  .process-card,
+  .benefit-card,
+  .commission-card,
+  .contact-card,
+  .final-cta,
+  .hero-card,
+  .hero-panel,
+  .hero-visual,
+  .article-hero,
+  .articles-hero,
+  .welcome-pack,
+  .task-panel,
+  .reward-card,
+  .leaderboard-card,
+  .metric-card,
+  .brand-card,
+  .info-card
+) {
+  background:
+    radial-gradient(520px 280px at 85% 10%, rgba(247, 147, 26, .08), transparent 68%),
+    linear-gradient(145deg, rgba(18, 18, 20, .82), rgba(6, 7, 10, .92)) !important;
+  border-color: var(--gin-border) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .055),
+    0 24px 76px rgba(0, 0, 0, .26) !important;
+}
+
+:where(
+  .article-card,
+  .course-stage,
+  .course-card,
+  .outline-card,
+  .progress-card,
+  .copy-card,
+  .trader-card,
+  .mission-card,
+  .reward-board,
+  .redeem-card,
+  .faq-card,
+  .ib-card,
+  .tier-card,
+  .channel-card,
+  .feature-card,
+  .process-card,
+  .benefit-card,
+  .contact-card,
+  .metric-card
+):hover {
+  border-color: var(--gin-border-hot) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .07),
+    0 28px 96px rgba(247, 147, 26, .16),
+    0 0 0 1px rgba(255, 209, 102, .05) !important;
+}
+
+.article-card:first-child,
+.article-card.is-featured,
+.hero,
+.academy-hero,
+.invite-hero,
+.ib-hero,
+.copy-hero,
+.rewards-hero,
+.hero-section {
+  background:
+    radial-gradient(720px 420px at 82% 10%, rgba(247, 147, 26, .18), transparent 62%),
+    radial-gradient(620px 360px at 12% 82%, rgba(242, 59, 93, .08), transparent 66%),
+    linear-gradient(145deg, rgba(14, 14, 16, .78), rgba(4, 4, 5, .88)) !important;
+}
+
+.article-card:first-child h3,
+.article-card:first-child p,
+.article-card:first-child small {
+  color: #fff !important;
+}
+
+.article-image,
+.course-media,
+.academy-media,
+.fox-card,
+.hero-visual,
+.visual-panel,
+.reward-visual,
+.gift-box {
+  background:
+    radial-gradient(circle at 50% 45%, rgba(247, 147, 26, .2), transparent 46%),
+    linear-gradient(145deg, rgba(255, 255, 255, .055), rgba(255, 255, 255, .015)) !important;
+}
+
+.progress,
+.progress-track,
+.meter,
+.bar {
+  background: rgba(255, 255, 255, .08) !important;
+}
+
+.progress span,
+.progress-fill,
+.meter-fill,
+.bar span {
+  background: linear-gradient(90deg, var(--gin-red), var(--gin-orange), var(--gin-gold)) !important;
+  box-shadow: 0 0 22px rgba(247, 147, 26, .36) !important;
+}
+
+:where(
+  .btn,
+  .button,
+  .bitget-button,
+  .course-start,
+  .article-arrow,
+  .task-cta,
+  .copy-button,
+  .copy-btn,
+  .cta,
+  .primary,
+  a[class*="button"],
+  a[class*="btn"],
+  button:not(.nav-icon):not(.mobile-menu-toggle):not(.icon-button):not(.footer-social-btn)
+) {
+  color: #050505 !important;
+  border: 1px solid rgba(255, 209, 102, .5) !important;
+  background: linear-gradient(90deg, #ffd166 0%, #ffb84d 52%, #ff9818 100%) !important;
+  box-shadow: 0 16px 42px rgba(247, 147, 26, .25), inset 0 1px 0 rgba(255, 255, 255, .22) !important;
+}
+
+:where(
+  .btn,
+  .button,
+  .bitget-button,
+  .course-start,
+  .article-arrow,
+  .task-cta,
+  .copy-button,
+  .copy-btn,
+  .cta,
+  .primary,
+  a[class*="button"],
+  a[class*="btn"],
+  button:not(.nav-icon):not(.mobile-menu-toggle):not(.icon-button):not(.footer-social-btn)
+):hover {
+  color: #050505 !important;
+  border-color: rgba(255, 220, 132, .82) !important;
+  background: linear-gradient(90deg, #ffe082 0%, #ffb13b 40%, #ff9818 66%, #f23b5d 100%) !important;
+  box-shadow: 0 22px 60px rgba(247, 147, 26, .32), 0 0 28px rgba(242, 59, 93, .14) !important;
+  transform: translateY(-2px);
+}
+
+:where(.btn.dark, .btn.outline, .bitget-button.dark, .secondary, .outline) {
+  color: #f8f8f5 !important;
+  border-color: rgba(255, 255, 255, .14) !important;
+  background: rgba(255, 255, 255, .06) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06) !important;
+}
+
+:where(.btn.dark, .btn.outline, .bitget-button.dark, .secondary, .outline):hover {
+  color: #050505 !important;
+  background: linear-gradient(90deg, #ffd166, #ff9818) !important;
+  border-color: rgba(255, 209, 102, .58) !important;
+}
+
+.icon-button,
+.nav-icon {
+  color: #f8f8f5 !important;
+}
+
+.icon-button:hover,
+.nav-icon:hover {
+  color: #ffd166 !important;
+  background: rgba(247, 147, 26, .11) !important;
+}
+
+input,
+select,
+textarea,
+.search,
+.search-box,
+.filter-search {
+  color: #fff !important;
+  background: rgba(7, 8, 10, .82) !important;
+  border-color: rgba(255, 255, 255, .13) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .045) !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none !important;
+  border-color: rgba(255, 209, 102, .64) !important;
+  box-shadow: 0 0 0 3px rgba(247, 147, 26, .16) !important;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: #f7931a;
+}
+
+.divider,
+hr,
+.table-row,
+.list-row,
+.article-row,
+.faq-row,
+.mission-row {
+  border-color: rgba(255, 255, 255, .1) !important;
+}
+
+.roi,
+.profit,
+.positive,
+.green,
+.stat-value,
+.metric-value {
+  color: #18d6a1 !important;
+}
+
+.orange,
+.accent,
+.highlight,
+.article-category,
+.course-count,
+.reward-value,
+.bonus-value {
+  color: #ffd166 !important;
+}
+
+.risk,
+.warning,
+.negative,
+.red {
+  color: #ff8a7a !important;
+}
+
+.chart-line,
+.sparkline,
+svg [stroke="#16c995"],
+svg [stroke="#00c087"] {
+  stroke: #18d6a1 !important;
+}
+
+svg [fill="#f7931a"],
+svg [fill="#ff7a1a"],
+svg [fill="#f05f16"] {
+  fill: #f7931a !important;
+}
+
+.footer,
+footer {
+  background: linear-gradient(180deg, rgba(3, 3, 4, .72), rgba(3, 3, 4, .96)) !important;
+  border-top: 1px solid rgba(255, 255, 255, .1) !important;
+}
+
+.footer a:hover,
+footer a:hover {
+  color: #ffd166 !important;
+}
+
+::selection {
+  color: #050505;
+  background: rgba(255, 209, 102, .82);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .mega-menu,
+  .mobile-menu {
+    transition: opacity .22s ease, transform .22s ease, visibility .22s ease;
+  }
+
+  :where(.btn, .button, .bitget-button, a[class*="btn"], button) {
+    transition: transform .22s ease, box-shadow .22s ease, background .22s ease, border-color .22s ease, color .22s ease !important;
+  }
+
+  :where(.article-card, .course-stage, .copy-card, .trader-card, .mission-card, .reward-board, .faq-card, .ib-card, .channel-card, .feature-card) {
+    transition: transform .28s ease, box-shadow .28s ease, border-color .28s ease, background .28s ease !important;
+  }
+
+  :where(.article-card, .course-stage, .copy-card, .trader-card, .mission-card, .reward-board, .faq-card, .ib-card, .channel-card, .feature-card):hover {
+    transform: translateY(-6px);
+  }
+}
+
+@media (max-width: 760px) {
+  .page,
+  main {
+    background:
+      radial-gradient(640px 420px at 70% -8%, rgba(247, 147, 26, .18), transparent 68%),
+      linear-gradient(180deg, #030304 0%, #050505 58%, #030304 100%) !important;
+  }
+}
+
+
+/* FSC lightbox close — match index.html dark-glass style on every page */
+#fsc-lightbox .fsc-close,
+#fsc-lightbox .fsc-close:hover {
+  color: #fff !important;
+  border: 1px solid rgba(255,255,255,.25) !important;
+  background: rgba(255,255,255,.06) !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+#fsc-lightbox .fsc-close:hover {
+  border-color: rgba(255,255,255,.45) !important;
+  background: rgba(255,255,255,.12) !important;
+}
+
+#fsc-lightbox .fsc-close {
+  display: grid !important;
+  place-items: center !important;
+  padding: 0 !important;
+  line-height: 0 !important;
+  font-size: 22px !important;
+  font-family: Arial, sans-serif !important;
+  text-indent: 0 !important;
+}

@@ -1,0 +1,64 @@
+:root {
+  /* Gin Partner 控制台 · 深色主题（取自线上真实页面与设计代码） */
+  --ib-bg: #141414;                          /* 页面底色 gray-800 */
+  --ib-sidebar-bg: rgba(255, 255, 255, 0.024); /* 侧边栏（叠加在底色上） */
+  --ib-card-bg: #171717;                     /* 卡片 panel */
+  --ib-field-bg: rgba(255, 255, 255, 0.03);  /* 字段小块 */
+  --ib-pill-bg: rgba(255, 255, 255, 0.06);   /* 下拉底 */
+  --ib-chip-bg: #26292e;
+  --ib-chip-border: rgba(255, 255, 255, 0.12);
+  --ib-tab-bg: rgba(255, 255, 255, 0.08);    /* 选中 tab / 徽章底 */
+  --ib-track: rgba(255, 255, 255, 0.1);      /* 进度条轨道 */
+  --ib-primary-grad: linear-gradient(180deg, #f9a658 0%, #f2811b 100%);
+  --ib-primary-glow: 0 6px 10px rgba(245, 139, 26, 0.3);
+  --ib-chart-hot: #f13b5d;                   /* 图表线起点 */
+  --ib-chart-warm: #ffd165;                  /* 图表线终点 */
+  --ib-chart-area: rgba(241, 59, 93, 0.16);
+  --ib-progress-grad: linear-gradient(90deg, #d92856 0%, #fbb03b 88%);
+  --ib-success: #35bb88;
+  --ib-success-bg: rgba(53, 187, 136, 0.12);
+  --ib-link-border-grad: linear-gradient(30deg, #d92856 20%, #fbb03b 123%);
+  --ib-menu-active-text: #f7931a;            /* yellow-500 */
+  --ib-menu-active-bg: rgba(255, 255, 255, 0.08);
+  --ib-primary: #f7931a;                     /* 主橙：链接 / 可点数字 / 激活态文字 */
+  --ib-menu-text: #b5b1ac;                   /* gray-300 */
+  --ib-text: #f7f6f4;                        /* gray-50 主文字 */
+  --ib-text-secondary: #b5b1ac;              /* gray-300 */
+  --ib-text-tertiary: rgba(236, 234, 231, 0.68); /* hint */
+  --ib-grid-line: rgba(255, 255, 255, 0.07);
+  --ib-axis-text: #8a857f;                   /* gray-400 */
+  --ib-radius: 12px;
+  --ib-radius-sm: 8px;
+  --ib-gap: 16px;
+  --ib-font: Poppins, "Noto Sans TC Variable", "Noto Sans TC",
+    -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--ib-bg);
+  color: var(--ib-text);
+  font-family: var(--ib-font);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+::selection {
+  background: rgba(249, 145, 26, 0.25);
+}
+
+.ib-num {
+  font-variant-numeric: tabular-nums;
+}

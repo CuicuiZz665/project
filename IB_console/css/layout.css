@@ -1,0 +1,312 @@
+/* ---------------------------------------------------------------------------
+   Gin Partner 控制台 · 应用外壳（深色，按线上真实页面校准）
+   侧边栏（品牌 + 5 项菜单 + 底部用户区）+ 内容工作区。
+--------------------------------------------------------------------------- */
+
+.ib-shell {
+  min-height: 100vh;
+  display: flex;
+}
+
+/* Sidebar ------------------------------------------------------------------ */
+
+.ib-sidebar {
+  width: 220px;
+  flex: none;
+  background: var(--ib-sidebar-bg);
+  display: flex;
+  flex-direction: column;
+  padding: 20px 14px 16px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+
+.ib-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 8px;
+  margin-bottom: 28px;
+}
+
+.ib-brand-logo {
+  width: 34px;
+  height: 34px;
+  flex: none;
+}
+
+.ib-brand-text {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.ib-brand-name {
+  color: var(--ib-text);
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: 0.2px;
+}
+
+.ib-brand-sub {
+  color: var(--ib-text-secondary);
+  font-size: 11px;
+  margin-top: 2px;
+}
+
+.ib-menu {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ib-menu-item {
+  display: flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: var(--ib-menu-text);
+  font-size: 14px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  user-select: none;
+}
+
+.ib-menu-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--ib-text);
+}
+
+.ib-menu-item.is-active {
+  background: var(--ib-menu-active-bg);
+  color: var(--ib-menu-active-text);
+  font-weight: 500;
+}
+
+.ib-sidebar-footer {
+  margin-top: auto;
+  padding: 12px 8px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ib-user-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ib-user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3a3f47 0%, #22262b 100%);
+  color: #cfd4da;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 600;
+  flex: none;
+  overflow: hidden;
+}
+
+.ib-user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ib-user-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.3;
+}
+
+.ib-user-name {
+  color: var(--ib-text);
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ib-user-uid {
+  color: var(--ib-text-secondary);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ib-user-collapse {
+  margin-left: auto;
+  border: none;
+  background: none;
+  color: var(--ib-text-secondary);
+  font-size: 11px;
+  cursor: pointer;
+  padding: 4px;
+  line-height: 1;
+}
+
+.ib-user-collapse:hover {
+  color: var(--ib-text);
+}
+
+/* Workspace ---------------------------------------------------------------- */
+
+.ib-workspace {
+  flex: 1;
+  min-width: 0;
+  padding: 20px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ib-gap);
+}
+
+.ib-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ib-gap);
+  animation: ib-page-in 0.2s ease;
+}
+
+@keyframes ib-page-in {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 页头：标题 + 右侧控件 */
+
+.ib-page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 40px;
+}
+
+.ib-page-title {
+  margin: 0;
+  color: var(--ib-text);
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.ib-page-head-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 按钮尺寸体系（与线上一致）：统一 30px 高 / 12px 字号 / 全圆角 */
+
+.ib-month-select {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--ib-pill-bg);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: var(--ib-text);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+}
+
+.ib-month-select:hover {
+  border-color: rgba(240, 109, 72, 0.72);
+}
+
+.ib-caret {
+  color: var(--ib-text-secondary);
+  font-size: 10px;
+}
+
+/* 主橙色渐变按钮（导出月报） */
+
+.ib-btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: var(--ib-primary-grad);
+  color: var(--ib-text);
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: var(--ib-primary-glow);
+  transition: filter 0.2s;
+}
+
+.ib-btn-primary:hover {
+  filter: brightness(1.08);
+}
+
+/* 7D 周期下拉 */
+
+.ib-range-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: var(--ib-chip-bg);
+  border: 1px solid var(--ib-chip-border);
+  color: var(--ib-text);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+}
+
+.ib-range-chip:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+/* Placeholder for pages not built yet */
+
+.ib-placeholder {
+  display: grid;
+  place-items: center;
+  min-height: 60vh;
+  background: var(--ib-card-bg);
+  border-radius: var(--ib-radius);
+}
+
+.ib-placeholder-inner {
+  text-align: center;
+  color: var(--ib-text-secondary);
+}
+
+.ib-placeholder-inner strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 15px;
+  color: var(--ib-text);
+}
+
+.ib-placeholder-icon {
+  font-size: 30px;
+  margin-bottom: 10px;
+  opacity: 0.5;
+}

@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>设计稿 · 默认跟踪链接放到合伙人列表顶部</title>
+<style>
+  /* ============ 文档画布（设计稿外壳，非正式代码） ============ */
+  :root {
+    --bg: #0a0a0a;
+    --card: #171717;
+    --field: rgba(255, 255, 255, 0.03);
+    --pill: rgba(255, 255, 255, 0.06);
+    --tab: rgba(255, 255, 255, 0.08);
+    --border: rgba(255, 255, 255, 0.08);
+    --primary: #f7931a;
+    --grad-btn: linear-gradient(90deg, #f7931a 0%, #ea580c 100%);
+    --link-border: linear-gradient(30deg, #d92856 20%, #fbb03b 123%);
+    --success: #35bb88;
+    --success-bg: rgba(53, 187, 136, 0.12);
+    --t1: #f7f6f4;
+    --t2: #b5b1ac;
+    --t3: rgba(236, 234, 231, 0.68);
+    --menu-text: #c9cdd3;
+    --menu-active-bg: #3a2410;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--t1);
+    font-family: Poppins, "Noto Sans TC", -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    padding: 40px 32px 80px;
+  }
+  .ib-num { font-variant-numeric: tabular-nums; }
+
+  .doc-head { max-width: 1280px; margin: 0 auto 36px; }
+  .doc-tag {
+    display: inline-flex; align-items: center; gap: 6px; height: 24px; padding: 0 10px;
+    border-radius: 999px; background: var(--menu-active-bg); color: var(--primary);
+    font-size: 12px; font-weight: 500; margin-bottom: 12px;
+  }
+  .doc-title { font-size: 22px; font-weight: 600; margin-bottom: 8px; }
+  .doc-sub { color: var(--t3); font-size: 13px; max-width: 760px; }
+
+  .plan { max-width: 1280px; margin: 0 auto 48px; }
+  .plan-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 6px; }
+  .plan-no { color: var(--primary); font-size: 13px; font-weight: 600; letter-spacing: 1px; }
+  .plan-name { font-size: 17px; font-weight: 600; }
+  .plan-rec {
+    font-size: 11px; color: #fff; background: var(--grad-btn); border-radius: 999px;
+    padding: 3px 10px; font-weight: 500; align-self: center;
+  }
+  .plan-desc { color: var(--t3); font-size: 13px; margin-bottom: 14px; max-width: 900px; }
+  .plan-pros { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 16px; font-size: 12px; color: var(--t2); }
+  .plan-pros b { color: var(--success); font-weight: 500; margin-right: 4px; }
+  .plan-pros .con b { color: #e8636c; }
+
+  /* ============ 浏览器窗口模拟框 ============ */
+  .frame {
+    border: 1px solid var(--border); border-radius: 14px; overflow: hidden;
+    background: #141414; box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
+  }
+  .frame-bar {
+    display: flex; align-items: center; gap: 8px; height: 36px; padding: 0 14px;
+    background: #101010; border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+  .frame-dot { width: 10px; height: 10px; border-radius: 50%; background: #2c2c2c; }
+  .frame-dot:nth-child(1) { background: #3d4148; }
+  .frame-url {
+    flex: 1; max-width: 420px; margin: 0 auto; height: 20px; border-radius: 6px;
+    background: rgba(255, 255, 255, 0.05); color: var(--t3); font-size: 11px;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ============ 应用骨架：侧边栏 + 内容 ============ */
+  .app { display: flex; min-height: 640px; }
+  .side {
+    width: 176px; flex: none; background: #111; border-right: 1px solid rgba(255, 255, 255, 0.04);
+    display: flex; flex-direction: column; padding: 14px 10px;
+  }
+  .brand { display: flex; align-items: center; gap: 8px; padding: 4px 8px 16px; }
+  .brand-logo {
+    width: 24px; height: 24px; border-radius: 7px; background: var(--grad-btn);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff; font-size: 12px; font-weight: 700;
+  }
+  .brand-name { font-size: 13px; font-weight: 600; }
+  .menu { display: flex; flex-direction: column; gap: 2px; }
+  .menu-item {
+    display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 10px;
+    border-radius: 8px; color: var(--menu-text); font-size: 12.5px;
+  }
+  .menu-item .mi-dot { width: 4px; height: 4px; border-radius: 50%; background: currentColor; opacity: 0.5; }
+  .menu-item.is-active { background: var(--menu-active-bg); color: var(--primary); }
+  .menu-item.is-active .mi-dot { opacity: 1; }
+  .side-user { margin-top: auto; display: flex; align-items: center; gap: 8px; padding: 10px 8px 2px; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+  .side-avatar { width: 26px; height: 26px; border-radius: 50%; background: #2b2f36; color: var(--t2); font-size: 11px; display: flex; align-items: center; justify-content: center; }
+  .side-user span { font-size: 12px; color: var(--t2); }
+
+  .main { flex: 1; min-width: 0; padding: 20px 20px 28px; }
+
+  /* 页头 */
+  .page-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 40px; }
+  .page-title { font-size: 18px; font-weight: 600; }
+  .page-actions { display: flex; align-items: center; gap: 10px; }
+  .btn-export {
+    display: inline-flex; align-items: center; gap: 7px; height: 36px; padding: 0 18px;
+    border: 1px solid var(--border); border-radius: 999px; background: var(--pill);
+    color: #cfd4da; font-size: 13px; cursor: pointer;
+  }
+
+  /* 卡片 */
+  .card {
+    background: var(--card); border-radius: 12px; padding: 16px;
+  }
+  .section-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .section-head-left { display: flex; flex-direction: column; gap: 2px; }
+  .section-title { font-size: 15px; font-weight: 600; color: #fff; }
+  .section-hint { color: var(--t2); font-size: 12px; }
+  .section-head-right { display: flex; align-items: center; gap: 10px; }
+
+  .search {
+    display: flex; align-items: center; gap: 8px; height: 30px; padding: 0 12px; width: 230px;
+    background: var(--field); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 999px; color: var(--t3); font-size: 12px;
+  }
+  .btn-add {
+    display: inline-flex; align-items: center; height: 30px; padding: 0 16px;
+    border-radius: 999px; background: var(--grad-btn); color: #fff; font-size: 12px; font-weight: 500; cursor: pointer;
+  }
+  .btn-add .plus { margin-right: 6px; font-size: 13px; }
+
+  /* 表格 */
+  table { width: 100%; border-collapse: collapse; margin-top: 14px; }
+  th { text-align: left; color: #8a857f; font-size: 12px; font-weight: 500; padding: 8px 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.07); white-space: nowrap; }
+  td { padding: 11px 10px; font-size: 13px; color: var(--t1); border-bottom: 1px solid rgba(255, 255, 255, 0.05); white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+  .count-link { color: var(--primary); text-decoration: underline; text-decoration-color: rgba(247, 147, 26, 0.35); text-underline-offset: 3px; cursor: pointer; }
+
+  .foot { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; font-size: 12px; color: var(--t2); }
+  .pager { display: flex; align-items: center; gap: 6px; }
+  .pg-btn {
+    min-width: 24px; height: 24px; border-radius: 6px; border: none; background: none;
+    color: var(--t2); font-size: 12px; cursor: pointer;
+  }
+  .pg-btn.is-active { background: var(--menu-active-bg); color: var(--primary); }
+
+  .ghost-next { margin-top: 16px; opacity: 0.45; filter: saturate(0.6); }
+
+  /* ============ 链接卡通用元素（复刻总览页样式） ============ */
+  .link-card-grad {
+    border: 1px solid transparent;
+    background:
+      linear-gradient(#171717, #171717) padding-box,
+      var(--link-border) border-box;
+  }
+  .badge-live {
+    display: inline-flex; align-items: center; gap: 5px; height: 20px; padding: 0 8px;
+    border-radius: 999px; background: var(--success-bg); color: var(--success); font-size: 11px; white-space: nowrap;
+  }
+  .badge-live::before { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--success); }
+  .btn-qr, .btn-share {
+    display: inline-flex; align-items: center; gap: 5px; height: 28px; padding: 0 13px;
+    border: 1px solid transparent; border-radius: 999px; background: var(--tab);
+    color: var(--t1); font-size: 12px; cursor: pointer; white-space: nowrap;
+  }
+  .btn-share:hover { color: var(--primary); background: rgba(247, 147, 26, 0.12); }
+  .lfield {
+    background: var(--field); border-radius: 8px; padding: 9px 12px;
+    display: flex; flex-direction: column; gap: 5px; min-width: 0;
+  }
+  .lfield .lb { color: var(--t2); font-size: 12px; }
+  .lfield .val { display: flex; align-items: center; justify-content: space-between; gap: 6px; color: #fff; font-size: 13px; min-width: 0; }
+  .lfield .val .txt { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .lfield .val.is-code .txt { letter-spacing: 1px; font-weight: 600; }
+  .copy-ic { flex: none; width: 14px; height: 14px; color: var(--t2); cursor: pointer; }
+  .copy-ic:hover { color: #fff; }
+
+  /* ---------- 方案 A：全宽横条 ---------- */
+  .la-bar {
+    margin-top: 16px; margin-bottom: 16px; border-radius: 12px; padding: 14px 16px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .la-title { display: flex; flex-direction: column; gap: 6px; flex: none; }
+  .la-title-row { display: flex; align-items: center; gap: 8px; }
+  .la-title .t { font-size: 14px; font-weight: 600; white-space: nowrap; }
+  .la-sub { font-size: 11px; color: var(--t3); white-space: nowrap; }
+  .la-fields { display: flex; align-items: center; gap: 8px; flex: 1; min-width: 0; }
+  .la-fields .lfield { flex: 1; }
+  .la-fields .lfield.is-code { flex: 0 0 132px; }
+  .la-actions { display: flex; align-items: center; gap: 8px; flex: none; }
+
+  /* ---------- 方案 B：并入上区卡 ---------- */
+  .lb-block { padding: 2px 2px 0; }
+  .lb-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .lb-head-left { display: flex; align-items: center; gap: 10px; }
+  .lb-head-left .t { font-size: 14px; font-weight: 600; }
+  .lb-fields { display: grid; grid-template-columns: 132px 1fr 1fr; gap: 8px; margin-top: 12px; }
+  .lb-divider { height: 1px; background: rgba(255, 255, 255, 0.07); margin: 16px -16px 16px; }
+
+  /* ---------- 方案 C：页头工具条 ---------- */
+  .pill-link {
+    display: flex; align-items: center; gap: 4px; height: 36px; padding: 0 6px 0 14px;
+    background: var(--field); border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 999px;
+    min-width: 320px; position: relative;
+  }
+  .pill-link .url { flex: 1; min-width: 0; font-size: 12.5px; color: var(--t1); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-variant-numeric: tabular-nums; }
+  .pill-link .pbtn {
+    flex: none; width: 28px; height: 28px; border-radius: 50%; border: none; background: none;
+    color: var(--t2); display: inline-flex; align-items: center; justify-content: center; cursor: pointer;
+  }
+  .pill-link .pbtn:hover { color: #fff; background: rgba(255, 255, 255, 0.06); }
+  .qr-pop {
+    position: absolute; top: 44px; right: 0; width: 150px; padding: 14px;
+    background: #1c1c1c; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px;
+    box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55); text-align: center;
+  }
+  .qr-pop .qr { width: 118px; height: 118px; margin: 0 auto 8px; border-radius: 8px; background: #e8e6e1; display:flex; align-items:center; justify-content:center; color:#333; font-size: 11px; }
+  .qr-pop .cap { font-size: 11px; color: var(--t3); }
+  .callout { margin-top: 8px; display: flex; gap: 8px; align-items: flex-start; font-size: 12px; color: var(--t3); }
+  .callout .arr { color: var(--primary); flex: none; }
+
+  svg { display: block; }
+</style>
+</head>
+<body>
+
+<header class="doc-head">
+  <div class="doc-tag">DESIGN PREVIEW · 静态设计稿（未改任何正式代码）</div>
+  <div class="doc-title">默认跟踪链接 → 合伙人列表顶部 · 3 个方案</div>
+  <div class="doc-sub">
+    目标：把总览页「默认跟踪链接」的能力带到合伙人列表页顶部，让合伙人在这一个页面就能完成「拿链接 → 发链接 → 管比例 → 管人」的完整动线。
+    三个方案均沿用现有设计语言：渐变描边链接卡、生效中徽章、字段小块、复制交互与总览页完全一致，用户零学习成本。往下滚动对比。
+  </div>
+</header>
+
+<!-- ================= 方案 A ================= -->
+<section class="plan">
+  <div class="plan-head">
+    <span class="plan-no">方案 A</span>
+    <span class="plan-name">独立横条卡 · 页头下方</span>
+    <span class="plan-rec">推荐</span>
+  </div>
+  <p class="plan-desc">
+    在页头与「分佣比例」之间加一条全宽横条链接卡。保留总览页的渐变描边（页面上唯一一张描边卡，视线焦点），但布局从「标题在上、三字段在下」压成一行：左侧标题+徽章，中间三个字段块撑满，右侧二维码/分享。高度约 92px，不挤压下方两区首屏。
+  </p>
+  <div class="plan-pros">
+    <span><b>✓</b>与总览认知统一，一眼认出</span>
+    <span><b>✓</b>渐变描边 = 页面最高优先级入口</span>
+    <span><b>✓</b>独立模块，将来好扩展（如加数据摘要）</span>
+    <span class="con"><b>✗</b>页面多一个模块，纵向多占约 92px</span>
+  </div>
+
+  <div class="frame">
+    <div class="frame-bar">
+      <span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span>
+      <span class="frame-url">127.0.0.1:8642/index.html#/partner-list</span>
+    </div>
+    <div class="app">
+      <aside class="side">
+        <div class="brand"><span class="brand-logo">G</span><span class="brand-name">Gin Partner</span></div>
+        <nav class="menu">
+          <div class="menu-item"><span class="mi-dot"></span>工作台总览</div>
+          <div class="menu-item"><span class="mi-dot"></span>直客明细</div>
+          <div class="menu-item is-active"><span class="mi-dot"></span>合伙人列表</div>
+          <div class="menu-item"><span class="mi-dot"></span>子代理网络</div>
+          <div class="menu-item"><span class="mi-dot"></span>财务与结算</div>
+        </nav>
+        <div class="side-user"><span class="side-avatar">A</span><span>amy</span></div>
+      </aside>
+      <main class="main">
+        <div class="page-head">
+          <h1 class="page-title">合伙人列表</h1>
+          <div class="page-actions">
+            <button class="btn-export">⤓ 导出</button>
+          </div>
+        </div>
+
+        <!-- ▼ 新增：默认跟踪链接横条 -->
+        <div class="la-bar link-card-grad">
+          <div class="la-title">
+            <div class="la-title-row">
+              <span class="t">默认跟踪链接</span>
+              <span class="badge-live">生效中</span>
+            </div>
+            <span class="la-sub">无比例 · 经此链接注册计入直客</span>
+          </div>
+          <div class="la-fields">
+            <div class="lfield is-code">
+              <span class="lb">推荐码</span>
+              <div class="val is-code"><span class="txt ib-num">DXQEWRV</span></div>
+            </div>
+            <div class="lfield">
+              <span class="lb">Web地址</span>
+              <div class="val"><span class="txt">https://www.ginx.io/r/DXQEWRV</span>
+                <svg class="copy-ic" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="4.5" y="4.5" width="8" height="8" rx="1.5"/><path d="M9.5 4.5v-2a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2"/></svg>
+              </div>
+            </div>
+            <div class="lfield">
+              <span class="lb">Miniapp地址</span>
+              <div class="val"><span class="txt">https://t.me/ginfit_bot?start=DXQEWRV</span>
+                <svg class="copy-ic" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="4.5" y="4.5" width="8" height="8" rx="1.5"/><path d="M9.5 4.5v-2a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2"/></svg>
+              </div>
+            </div>
+          </div>
+          <div class="la-actions">
+            <button class="btn-qr">二维码</button>
+          </div>
+        </div>
+        <!-- ▲ 新增结束 -->
+
+        <div class="card">
+          <div class="section-head">
+            <div class="section-head-left">
+              <h2 class="section-title">分佣比例</h2>
+              <span class="section-hint">每个分佣比例对应一个专属邀请码：经该链接注册的客户即绑定此比例</span>
+            </div>
+            <div class="section-head-right">
+              <div class="search">🔍 搜索 名称 / 比例 / 邀请码</div>
+              <button class="btn-add"><span class="plus">＋</span>增加返佣比例</button>
+            </div>
+          </div>
+          <table>
+            <thead><tr><th>计划名称</th><th>邀请码</th><th>合约分佣比例</th><th>有效期</th><th>注册人数</th></tr></thead>
+            <tbody>
+              <tr><td>暴走蛟龙</td><td class="ib-num">qI3I</td><td class="ib-num">90%</td><td>永久</td><td class="count-link ib-num">12</td></tr>
+              <tr><td>山顶洞人</td><td class="ib-num">aX7k</td><td class="ib-num">85%</td><td class="ib-num">2026-12-31</td><td class="count-link ib-num">6</td></tr>
+              <tr><td>龙腾四海</td><td class="ib-num">mK2p</td><td class="ib-num">80%</td><td>永久</td><td class="count-link ib-num">3</td></tr>
+            </tbody>
+          </table>
+          <div class="foot">
+            <span class="ib-num">共 6 条</span>
+            <div class="pager"><span>5条/页</span><button class="pg-btn">‹</button><button class="pg-btn is-active ib-num">1</button><button class="pg-btn ib-num">2</button><button class="pg-btn">›</button></div>
+          </div>
+        </div>
+
+        <div class="card ghost-next">
+          <div class="section-head">
+            <div class="section-head-left">
+              <h2 class="section-title">直客与子代理</h2>
+              <span class="section-hint">直客可「设为合伙人」单独设置比例；子代理可修改固定返佣比例或解除</span>
+            </div>
+            <div class="section-head-right">
+              <div class="search" style="width:110px;">人员类型 ▾</div>
+              <div class="search">🔍 搜索 UID / 昵称</div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  <div class="callout"><span class="arr">↖</span>交互同总览页：地址右侧复制图标点击后 1.2s 变绿；「二维码」点击弹出二维码浮层。窄屏（<1360px）时三字段自动换行为两行网格，横条变高但不横向滚动。</div>
+</section>
+
+<!-- ================= 方案 B ================= -->
+<section class="plan">
+  <div class="plan-head">
+    <span class="plan-no">方案 B</span>
+    <span class="plan-name">并入上区卡片 · 卡内首区块</span>
+  </div>
+  <p class="plan-desc">
+    不新增独立卡片，把默认跟踪链接做成「分佣比例」卡片内部的第一个区块，用分隔线与下方隔开。语义上读作「链接总览」：默认链接（无比例兜底）+ 各计划专属邀请码（有比例）在同一张卡里从上到下排布，强调「一条链接一个比例」的对应关系。
+  </p>
+  <div class="plan-pros">
+    <span><b>✓</b>页面模块数不变，纵向最省（约省 40px）</span>
+    <span><b>✓</b>「默认链接 / 计划邀请码」同卡对照，概念聚拢</span>
+    <span class="con"><b>✗</b>渐变描边只能放弃（卡内无法再描边），焦点感弱</span>
+    <span class="con"><b>✗</b>卡内信息密度高，搜索/按钮区被推低</span>
+  </div>
+
+  <div class="frame">
+    <div class="frame-bar">
+      <span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span>
+      <span class="frame-url">127.0.0.1:8642/index.html#/partner-list</span>
+    </div>
+    <div class="app">
+      <aside class="side">
+        <div class="brand"><span class="brand-logo">G</span><span class="brand-name">Gin Partner</span></div>
+        <nav class="menu">
+          <div class="menu-item"><span class="mi-dot"></span>工作台总览</div>
+          <div class="menu-item"><span class="mi-dot"></span>直客明细</div>
+          <div class="menu-item is-active"><span class="mi-dot"></span>合伙人列表</div>
+          <div class="menu-item"><span class="mi-dot"></span>子代理网络</div>
+          <div class="menu-item"><span class="mi-dot"></span>财务与结算</div>
+        </nav>
+        <div class="side-user"><span class="side-avatar">A</span><span>amy</span></div>
+      </aside>
+      <main class="main">
+        <div class="page-head">
+          <h1 class="page-title">合伙人列表</h1>
+          <div class="page-actions"><button class="btn-export">⤓ 导出</button></div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <!-- ▼ 新增：卡内首区块 -->
+          <div class="lb-block">
+            <div class="lb-head">
+              <div class="lb-head-left">
+                <span class="t">默认跟踪链接</span>
+                <span class="badge-live">生效中</span>
+                <span style="font-size:11px;color:var(--t3);">无比例 · 经此链接注册计入直客</span>
+              </div>
+              <button class="btn-qr">二维码</button>
+            </div>
+            <div class="lb-fields">
+              <div class="lfield is-code">
+                <span class="lb">推荐码</span>
+                <div class="val is-code"><span class="txt ib-num">DXQEWRV</span></div>
+              </div>
+              <div class="lfield">
+                <span class="lb">Web地址</span>
+                <div class="val"><span class="txt">https://www.ginx.io/r/DXQEWRV</span>
+                  <svg class="copy-ic" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="4.5" y="4.5" width="8" height="8" rx="1.5"/><path d="M9.5 4.5v-2a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2"/></svg>
+                </div>
+              </div>
+              <div class="lfield">
+                <span class="lb">Miniapp地址</span>
+                <div class="val"><span class="txt">https://t.me/ginfit_bot?start=DXQEWRV</span>
+                  <svg class="copy-ic" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="4.5" y="4.5" width="8" height="8" rx="1.5"/><path d="M9.5 4.5v-2a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2"/></svg>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="lb-divider"></div>
+          <!-- ▲ 新增结束 -->
+
+          <div class="section-head">
+            <div class="section-head-left">
+              <h2 class="section-title">分佣比例</h2>
+              <span class="section-hint">每个分佣比例对应一个专属邀请码：经该链接注册的客户即绑定此比例</span>
+            </div>
+            <div class="section-head-right">
+              <div class="search">🔍 搜索 名称 / 比例 / 邀请码</div>
+              <button class="btn-add"><span class="plus">＋</span>增加返佣比例</button>
+            </div>
+          </div>
+          <table>
+            <thead><tr><th>计划名称</th><th>邀请码</th><th>合约分佣比例</th><th>有效期</th><th>注册人数</th></tr></thead>
+            <tbody>
+              <tr><td>暴走蛟龙</td><td class="ib-num">qI3I</td><td class="ib-num">90%</td><td>永久</td><td class="count-link ib-num">12</td></tr>
+              <tr><td>山顶洞人</td><td class="ib-num">aX7k</td><td class="ib-num">85%</td><td class="ib-num">2026-12-31</td><td class="count-link ib-num">6</td></tr>
+            </tbody>
+          </table>
+          <div class="foot">
+            <span class="ib-num">共 6 条</span>
+            <div class="pager"><span>5条/页</span><button class="pg-btn">‹</button><button class="pg-btn is-active ib-num">1</button><button class="pg-btn ib-num">2</button><button class="pg-btn">›</button></div>
+          </div>
+        </div>
+
+        <div class="card ghost-next">
+          <div class="section-head">
+            <div class="section-head-left">
+              <h2 class="section-title">直客与子代理</h2>
+              <span class="section-hint">直客可「设为合伙人」单独设置比例；子代理可修改固定返佣比例或解除</span>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  <div class="callout"><span class="arr">↖</span>若选 B，建议上区卡标题改为「链接与分佣比例」，让卡名覆盖新增区块；否则「分佣比例」标题管不到上方的默认链接，语义有裂缝。</div>
+</section>
+
+<!-- ================= 方案 C ================= -->
+<section class="plan">
+  <div class="plan-head">
+    <span class="plan-no">方案 C</span>
+    <span class="plan-name">页头工具条 · 链接胶囊</span>
+  </div>
+  <p class="plan-desc">
+    最轻的方案：不动两区卡片，把链接收进页头右侧，做成一个只读「链接胶囊」——内嵌 Web 地址 + 复制图标 + 二维码图标，与「导出」并排。推荐码不直接展示，收进二维码浮层。适合「链接只是顺手复制一下」的低频场景。
+  </p>
+  <div class="plan-pros">
+    <span><b>✓</b>零纵向空间占用，两区首屏完整</span>
+    <span><b>✓</b>复制路径最短：一眼看到 → 点一下</span>
+    <span class="con"><b>✗</b>只放得下 Web 地址，Miniapp / 推荐码藏在浮层</span>
+    <span class="con"><b>✗</b>页头变挤，与「导出」抢视觉权重</span>
+  </div>
+
+  <div class="frame">
+    <div class="frame-bar">
+      <span class="frame-dot"></span><span class="frame-dot"></span><span class="frame-dot"></span>
+      <span class="frame-url">127.0.0.1:8642/index.html#/partner-list</span>
+    </div>
+    <div class="app">
+      <aside class="side">
+        <div class="brand"><span class="brand-logo">G</span><span class="brand-name">Gin Partner</span></div>
+        <nav class="menu">
+          <div class="menu-item"><span class="mi-dot"></span>工作台总览</div>
+          <div class="menu-item"><span class="mi-dot"></span>直客明细</div>
+          <div class="menu-item is-active"><span class="mi-dot"></span>合伙人列表</div>
+          <div class="menu-item"><span class="mi-dot"></span>子代理网络</div>
+          <div class="menu-item"><span class="mi-dot"></span>财务与结算</div>
+        </nav>
+        <div class="side-user"><span class="side-avatar">A</span><span>amy</span></div>
+      </aside>
+      <main class="main">
+        <div class="page-head">
+          <h1 class="page-title">合伙人列表</h1>
+          <div class="page-actions">
+            <!-- ▼ 新增：链接胶囊（含展开的二维码浮层示意） -->
+            <div class="pill-link">
+              <span class="badge-live" style="margin-right:8px;">生效中</span>
+              <span class="url">https://www.ginx.io/r/DXQEWRV</span>
+              <button class="pbtn" title="复制地址">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="4.5" y="4.5" width="8" height="8" rx="1.5"/><path d="M9.5 4.5v-2a1 1 0 0 0-1-1h-6a1 1 0 0 0-1 1v6a1 1 0 0 0 1 1h2"/></svg>
+              </button>
+              <button class="pbtn" title="二维码 / 更多">
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><rect x="1" y="1" width="4.5" height="4.5" rx="1"/><rect x="8.5" y="1" width="4.5" height="4.5" rx="1"/><rect x="1" y="8.5" width="4.5" height="4.5" rx="1"/><path d="M8.5 8.5h2v2h-2zM11 11h2v2h-2zM8.5 12.5h1.5V14H8.5z"/></svg>
+              </button>
+              <div class="qr-pop">
+                <div class="qr">QR 占位</div>
+                <div class="cap">推荐码 <b class="ib-num" style="color:#fff;letter-spacing:1px;">DXQEWRV</b><br>Miniapp 地址 ⧉ 复制</div>
+              </div>
+            </div>
+            <!-- ▲ 新增结束 -->
+            <button class="btn-export">⤓ 导出</button>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <div class="section-head">
+            <div class="section-head-left">
+              <h2 class="section-title">分佣比例</h2>
+              <span class="section-hint">每个分佣比例对应一个专属邀请码：经该链接注册的客户即绑定此比例</span>
+            </div>
+            <div class="section-head-right">
+              <div class="search">🔍 搜索 名称 / 比例 / 邀请码</div>
+              <button class="btn-add"><span class="plus">＋</span>增加返佣比例</button>
+            </div>
+          </div>
+          <table>
+            <thead><tr><th>计划名称</th><th>邀请码</th><th>合约分佣比例</th><th>有效期</th><th>注册人数</th></tr></thead>
+            <tbody>
+              <tr><td>暴走蛟龙</td><td class="ib-num">qI3I</td><td class="ib-num">90%</td><td>永久</td><td class="count-link ib-num">12</td></tr>
+              <tr><td>山顶洞人</td><td class="ib-num">aX7k</td><td class="ib-num">85%</td><td class="ib-num">2026-12-31</td><td class="count-link ib-num">6</td></tr>
+            </tbody>
+          </table>
+          <div class="foot">
+            <span class="ib-num">共 6 条</span>
+            <div class="pager"><span>5条/页</span><button class="pg-btn">‹</button><button class="pg-btn is-active ib-num">1</button><button class="pg-btn ib-num">2</button><button class="pg-btn">›</button></div>
+          </div>
+        </div>
+
+        <div class="card ghost-next">
+          <div class="section-head">
+            <div class="section-head-left">
+              <h2 class="section-title">直客与子代理</h2>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+  <div class="callout"><span class="arr">↖</span>示意图里二维码浮层直接画成展开态；实际交互为点击右侧二维码图标弹出，Esc / 点遮罩关闭。胶囊内 URL hover 时 title 显示完整地址。</div>
+</section>
+
+<footer style="max-width:1280px;margin:0 auto;color:var(--t3);font-size:12px;line-height:1.8;">
+  <div style="color:var(--primary);font-weight:600;margin-bottom:4px;">设计师建议</div>
+  选 <b style="color:#fff;">方案 A</b>：合伙人列表是「拉新 → 分佣」的主战场，默认跟踪链接是页面上唯一无需理解规则就能用的获客入口，值得一个独立、带渐变描边的焦点位；
+  方案 B 适合日后信息继续膨胀时做减法；方案 C 适合链接使用频率被证实很低之后再降级。
+  三案的复制交互（1.2s 变绿「已复制」）、生效中徽章、字段小块样式均与总览页 1:1，保证跨页一致性。
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,2212 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>任务奖励转盘原型</title>
+  <style>
+    * { box-sizing: border-box; }
+    :root {
+      --bg: #101112;
+      --panel: #1f2028;
+      --panel-2: #171d24;
+      --line: rgba(255,255,255,.12);
+      --muted: #8490a2;
+      --text: #f7f7f8;
+      --red: #f01858;
+      --orange: #ff7a32;
+      --gold: #ffd05a;
+      --green: #39e36f;
+      --blue: #23c7df;
+      --tab: #0e1218;
+      --shadow: 0 10px 28px rgba(0,0,0,.28);
+    }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(circle at 50% -10%, rgba(255,70,35,.2), transparent 34%),
+        linear-gradient(180deg, #3a100b 0, #101112 36%, #101112 100%);
+    }
+    button { font: inherit; color: inherit; border: 0; cursor: pointer; }
+    .phone {
+      width: min(100vw, 500px);
+      min-height: 100vh;
+      margin: 0 auto;
+      position: relative;
+      padding: 14px 12px 88px;
+      overflow: hidden;
+    }
+    .topbar {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      height: 42px;
+      padding: 0 4px 8px;
+      font-size: 18px;
+      font-weight: 800;
+    }
+    .back {
+      width: 34px;
+      height: 34px;
+      display: grid;
+      place-items: center;
+      background: transparent;
+      font-size: 30px;
+    }
+    .icon-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      background: rgba(255,255,255,.08);
+      display: grid;
+      place-items: center;
+      color: #cbd3df;
+    }
+    .user-card, .check-card, .spin-entry, .mini-card, .task-card, .summary-card {
+      background: rgba(31,32,40,.92);
+      border: 1px solid rgba(255,255,255,.04);
+      box-shadow: var(--shadow);
+    }
+    .user-card {
+      border-radius: 16px;
+      padding: 16px;
+      position: relative;
+      overflow: hidden;
+    }
+    .user-head {
+      display: grid;
+      grid-template-columns: 44px 1fr 28px;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, #273443, #0d1016);
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,.1);
+      font-size: 28px;
+    }
+    .name {
+      font-weight: 800;
+      line-height: 1.2;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .badge {
+      display: inline-grid;
+      place-items: center;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      color: #4c2b00;
+      background: linear-gradient(145deg, #ffe28a, #c68b21);
+      font-size: 8px;
+    }
+    .points-line {
+      color: #c4cad5;
+      font-size: 12px;
+      margin-top: 4px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+    .drop {
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .drop-mark {
+      color: var(--orange);
+      text-shadow: 0 0 10px rgba(255,88,46,.75);
+    }
+    .chev {
+      color: #8d99aa;
+      font-size: 42px;
+      line-height: .5;
+      transform: translateY(-2px);
+    }
+    .check-row {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 850;
+    }
+    .check-copy {
+      display: grid;
+      gap: 3px;
+    }
+    .check-sub {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.3;
+    }
+    .small-pill {
+      min-width: 74px;
+      height: 32px;
+      padding: 0 14px;
+      border-radius: 999px;
+      background: linear-gradient(100deg, var(--red), var(--orange));
+      font-weight: 800;
+    }
+    .small-pill.done {
+      background: rgba(255,255,255,.16);
+      color: rgba(255,255,255,.66);
+    }
+    .small-pill.status {
+      cursor: default;
+      background: rgba(255,255,255,.12);
+      color: #c8d0db;
+      min-width: 66px;
+      height: 28px;
+      padding: 0 12px;
+      font-size: 12px;
+    }
+    .days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      position: relative;
+      padding-top: 8px;
+      color: #8c96a6;
+      font-size: 12px;
+    }
+    .days::before {
+      content: "";
+      position: absolute;
+      left: 14px;
+      right: 14px;
+      top: 19px;
+      height: 2px;
+      background: rgba(129, 140, 157, .7);
+      border-radius: 999px;
+    }
+    .days::after {
+      content: "";
+      position: absolute;
+      left: 14px;
+      top: 19px;
+      height: 2px;
+      width: var(--progress, 0%);
+      background: linear-gradient(90deg, var(--red), var(--orange));
+      border-radius: 999px;
+    }
+    .day {
+      display: grid;
+      justify-items: center;
+      gap: 7px;
+      position: relative;
+      z-index: 1;
+      color: inherit;
+      background: transparent;
+      padding: 0;
+      min-width: 0;
+      min-height: 44px;
+    }
+    .dot {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: linear-gradient(145deg, #98a3b3, #667385);
+      box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.36),
+        0 1px 3px rgba(0,0,0,.32);
+      transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+    }
+    .day.today {
+      cursor: pointer;
+    }
+    .day.today .dot {
+      width: 16px;
+      height: 16px;
+      margin-top: -3px;
+      background:
+        radial-gradient(circle at 35% 28%, rgba(255,255,255,.72), transparent 18%),
+        linear-gradient(135deg, #ff2258, #ff8133);
+      border: 2px solid #27212a;
+      box-shadow:
+        0 0 0 3px rgba(255,111,50,.16),
+        0 0 12px rgba(255,79,48,.56),
+        inset 0 1px 1px rgba(255,255,255,.35);
+    }
+    .day.today:active .dot {
+      transform: scale(.92);
+    }
+    .day.today::after {
+      content: "";
+      position: absolute;
+      top: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,117,53,.32);
+      pointer-events: none;
+    }
+    .day.active .dot, .day.past .dot {
+      background:
+        radial-gradient(circle at 35% 28%, rgba(255,255,255,.55), transparent 18%),
+        linear-gradient(135deg, var(--red), var(--orange));
+      box-shadow:
+        inset 0 1px 1px rgba(255,255,255,.28),
+        0 0 8px rgba(255,86,52,.46);
+    }
+    .day.active span:last-child,
+    .day.past span:last-child {
+      color: #d7deea;
+      font-weight: 800;
+    }
+    .check-foot {
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      color: #9ba6b6;
+      font-size: 12px;
+    }
+    .check-foot strong {
+      color: var(--gold);
+      font-size: 13px;
+    }
+    .check-foot span:last-child {
+      color: #c9d0dc;
+    }
+    .account-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin: 14px 0;
+      padding: 4px;
+      border-radius: 14px;
+      background: rgba(13,16,22,.78);
+      border: 1px solid rgba(255,255,255,.08);
+    }
+    .account-switch button {
+      height: 38px;
+      border-radius: 10px;
+      background: transparent;
+      color: #8d97a7;
+      font-weight: 800;
+    }
+    .account-switch button.active {
+      background: linear-gradient(100deg, rgba(240,24,88,.95), rgba(255,122,50,.95));
+      color: #fff;
+    }
+    .spin-entry {
+      margin-top: 12px;
+      border-radius: 18px;
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 1fr 112px;
+      gap: 14px;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+    .spin-entry::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 88% 50%, rgba(255,208,90,.22), transparent 34%);
+      pointer-events: none;
+    }
+    .entry-title {
+      font-size: 21px;
+      font-weight: 900;
+      margin-bottom: 4px;
+    }
+    .entry-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+    .entry-title-row .entry-title {
+      margin-bottom: 0;
+    }
+    .info-dot {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: inline-grid;
+      place-items: center;
+      background: rgba(255,255,255,.1);
+      color: #cbd4df;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .entry-sub {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+    .metrics {
+      display: flex;
+      gap: 8px;
+      margin: 12px 0;
+      flex-wrap: wrap;
+    }
+    .metric {
+      height: 28px;
+      padding: 0 9px;
+      display: inline-flex;
+      align-items: center;
+      border-radius: 8px;
+      background: rgba(0,0,0,.24);
+      color: #d8deea;
+      font-size: 12px;
+      font-weight: 700;
+    }
+    .primary {
+      min-width: 94px;
+      height: 36px;
+      border-radius: 999px;
+      background: linear-gradient(100deg, var(--red), var(--orange));
+      font-weight: 900;
+    }
+    .preview-wheel {
+      width: 108px;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: url("wheel-reference.png") center / cover no-repeat;
+      border: 0;
+      box-shadow: 0 12px 30px rgba(0,0,0,.32);
+      position: relative;
+    }
+    .preview-wheel::after {
+      display: none;
+    }
+    .two-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 16px 0 22px;
+    }
+    .mini-card {
+      border-radius: 16px;
+      padding: 16px;
+      min-height: 144px;
+    }
+    .mini-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,.12);
+      margin-bottom: 8px;
+      color: #dfe5ee;
+    }
+    .mini-title {
+      font-size: 18px;
+      font-weight: 900;
+      margin-bottom: 18px;
+    }
+    .mini-text {
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 18px;
+    }
+    .wide-btn {
+      width: 100%;
+      height: 36px;
+      border-radius: 999px;
+      background: linear-gradient(100deg, var(--red), var(--orange));
+      font-weight: 900;
+    }
+    .tabs {
+      display: flex;
+      gap: 16px;
+      height: 48px;
+      align-items: center;
+      background: rgba(13,15,17,.92);
+      border-bottom: 1px solid rgba(255,255,255,.1);
+      margin: 0 -12px 12px;
+      padding: 0 12px;
+      color: #7f8999;
+      font-weight: 800;
+    }
+    .tabs button {
+      background: transparent;
+      padding: 0;
+      height: 48px;
+      color: inherit;
+      position: relative;
+      font-weight: 900;
+    }
+    .tabs button.active {
+      color: #fff;
+    }
+    .tabs button.active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2px;
+      background: #fff;
+      border-radius: 2px;
+    }
+    .task-list {
+      display: grid;
+      gap: 20px;
+    }
+    .task-card {
+      border-radius: 15px;
+      padding: 16px;
+      display: grid;
+      grid-template-columns: 1fr auto auto;
+      gap: 10px;
+      align-items: center;
+      background: rgba(20,20,22,.76);
+    }
+    .task-name {
+      font-weight: 900;
+      margin-bottom: 5px;
+    }
+    .task-desc {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.35;
+    }
+    .reward {
+      font-weight: 900;
+      white-space: nowrap;
+      font-size: 14px;
+    }
+    .reward small {
+      color: var(--gold);
+      font-size: 12px;
+      display: block;
+      text-align: right;
+      margin-top: 2px;
+    }
+    .reward small.muted-reward {
+      color: #7f8999;
+      font-weight: 800;
+    }
+    .task-action {
+      height: 34px;
+      min-width: 66px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: linear-gradient(100deg, var(--red), var(--orange));
+      font-weight: 900;
+    }
+    .bottom-nav {
+      position: fixed;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%);
+      width: min(100vw, 500px);
+      height: 64px;
+      background: #111821;
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      align-items: center;
+      border-top: 1px solid rgba(255,255,255,.04);
+      z-index: 20;
+    }
+    .nav-item {
+      display: grid;
+      place-items: center;
+      height: 50px;
+      color: #5f6d80;
+      font-size: 24px;
+      background: transparent;
+    }
+    .nav-item.active {
+      color: #ff3d38;
+    }
+    .page {
+      display: none;
+    }
+    .page.active {
+      display: block;
+    }
+    .wheel-page {
+      padding-top: 4px;
+    }
+    .wheel-card {
+      margin-top: 12px;
+      background: rgba(24,25,33,.92);
+      border-radius: 18px;
+      padding: 14px;
+      border: 1px solid rgba(255,255,255,.06);
+    }
+    .wheel-wrap {
+      position: relative;
+      display: grid;
+      place-items: center;
+      margin: 6px auto 12px;
+      max-width: 430px;
+    }
+    .pointer {
+      width: 46px;
+      height: 76px;
+      background: linear-gradient(180deg, #ff8b37 0%, #f24b37 72%, rgba(242,75,55,0) 100%);
+      clip-path: polygon(50% 0, 100% 100%, 0 100%);
+      position: absolute;
+      top: calc(50% - 112px);
+      z-index: 4;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,.36));
+    }
+    .big-wheel {
+      width: min(92vw, 430px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      border: 14px solid #252232;
+      background:
+        radial-gradient(circle at center, transparent 0 26%, rgba(18,18,27,.5) 26.5% 27.5%, transparent 28%),
+        conic-gradient(from 0deg,
+          #151623 0deg 2deg,
+          #43835b 2deg 43deg,
+          #151623 43deg 47deg,
+          #27b8cb 47deg 88deg,
+          #151623 88deg 92deg,
+          #26323d 92deg 133deg,
+          #151623 133deg 137deg,
+          #26323d 137deg 178deg,
+          #151623 178deg 182deg,
+          #2b7070 182deg 223deg,
+          #151623 223deg 227deg,
+          #28b6c7 227deg 268deg,
+          #151623 268deg 272deg,
+          #d7d9de 272deg 313deg,
+          #151623 313deg 317deg,
+          #f2b63a 317deg 358deg,
+          #151623 358deg 360deg);
+      transition: transform 4s cubic-bezier(.14,.78,.16,1);
+      box-shadow:
+        inset 0 0 0 4px rgba(255,255,255,.07),
+        inset 0 0 0 16px rgba(12,13,22,.45),
+        0 18px 42px rgba(0,0,0,.38);
+      position: relative;
+      overflow: hidden;
+    }
+    .big-wheel::before {
+      content: "";
+      position: absolute;
+      inset: 10px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.12);
+      pointer-events: none;
+    }
+    .slice-label {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 96px;
+      min-height: 88px;
+      margin-left: -48px;
+      margin-top: -44px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 700;
+      line-height: 1.15;
+      color: #fff;
+      text-shadow: 0 2px 3px rgba(0,0,0,.72);
+      transform: rotate(var(--r)) translateY(-138px) rotate(var(--t));
+      display: grid;
+      grid-template-rows: 38px auto;
+      align-content: center;
+      place-items: center;
+      pointer-events: none;
+    }
+    .slice-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #fff;
+      font-size: 20px;
+      box-shadow: 0 6px 10px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.38);
+      text-shadow: none;
+    }
+    .slice-icon.btc { background: linear-gradient(145deg, #ffd66d, #e98913); color: #6c3900; }
+    .slice-icon.cash { background: linear-gradient(145deg, #68d883, #219951); }
+    .slice-icon.dogs { background: linear-gradient(145deg, #ffe0a1, #ff9047); color: #6b2c00; }
+    .slice-icon.shield { background: linear-gradient(145deg, #8ee8ff, #236fc2); }
+    .slice-icon.rebate { background: linear-gradient(145deg, #ff8f64, #ba322d); }
+    .slice-icon.drop { background: linear-gradient(145deg, #ff9050, #f2254e); }
+    .slice-icon.bonus { background: linear-gradient(145deg, #d9dee9, #8d96a7); color: #26303d; }
+    .slice-main {
+      display: block;
+      max-width: 100px;
+    }
+    .slice-note {
+      display: block;
+      margin-top: 3px;
+      color: rgba(255,255,255,.72);
+      font-size: 10px;
+      font-weight: 600;
+    }
+    .slice-label:nth-child(1) { color: #1d2530; text-shadow: 0 1px 0 rgba(255,255,255,.18); }
+    .slice-label:nth-child(1) .slice-note { color: rgba(29,37,48,.62); }
+    .wheel-center {
+      position: absolute;
+      width: min(28vw, 126px);
+      aspect-ratio: 1;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background:
+        radial-gradient(circle at 50% 35%, rgba(255,170,69,.85), transparent 58%),
+        linear-gradient(145deg, #ff7d35, #ef184f);
+      color: #fff;
+      font-size: 38px;
+      font-weight: 780;
+      box-shadow:
+        0 0 0 14px rgba(255,97,44,.24),
+        0 0 28px rgba(240,24,88,.42),
+        inset 0 -10px 18px rgba(0,0,0,.16);
+      z-index: 3;
+    }
+    .spin-cta {
+      width: 100%;
+      height: 52px;
+      border-radius: 13px;
+      background: linear-gradient(100deg, var(--red), var(--orange));
+      font-size: 18px;
+      font-weight: 950;
+      margin-top: 10px;
+    }
+    .spin-cta.disabled {
+      background: rgba(255,255,255,.18);
+      color: rgba(255,255,255,.54);
+      cursor: not-allowed;
+    }
+    .hint {
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+      line-height: 1.6;
+      margin-top: 8px;
+    }
+    .record-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin: 12px 0;
+    }
+    .record-tabs button {
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(255,255,255,.08);
+      color: #8c96a6;
+      font-weight: 800;
+    }
+    .record-tabs button.active {
+      background: linear-gradient(100deg, rgba(240,24,88,.9), rgba(255,122,50,.9));
+      color: #fff;
+    }
+    .record-caption {
+      margin: 14px 0 8px;
+      color: #dfe5ef;
+      font-size: 15px;
+      font-weight: 900;
+    }
+    .summary-card {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      border-radius: 14px;
+      padding: 18px 10px;
+      margin: 10px 0 16px;
+      text-align: center;
+    }
+    .summary-card span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+    .summary-card strong {
+      font-size: 18px;
+    }
+    .reward-summary {
+      grid-template-columns: 1.55fr 1fr 1fr;
+      text-align: left;
+      gap: 8px;
+      align-items: start;
+    }
+    .reward-summary > div {
+      min-width: 0;
+      text-align: center;
+    }
+    .xp-summary {
+      text-align: left !important;
+    }
+    .xp-breakdown {
+      margin-top: 7px;
+      display: flex;
+      flex-wrap: wrap;
+      column-gap: 10px;
+      row-gap: 3px;
+      color: #8f99aa;
+      font-size: 11px;
+      line-height: 1.2;
+    }
+    .xp-breakdown b {
+      color: #dfe5ef;
+      font-size: 11px;
+      margin-left: 4px;
+    }
+    .table-head, .record-row {
+      display: grid;
+      grid-template-columns: 1.2fr .8fr 1fr;
+      gap: 8px;
+      align-items: center;
+    }
+    .table-head {
+      color: var(--muted);
+      font-size: 12px;
+      padding: 4px 0 12px;
+    }
+    .record-row {
+      padding: 13px 0;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      font-size: 14px;
+    }
+    .record-row b {
+      color: #fff;
+    }
+    .empty {
+      min-height: 360px;
+      display: grid;
+      place-items: center;
+      color: #8995a5;
+      text-align: center;
+    }
+    .empty-icon {
+      width: 72px;
+      height: 52px;
+      margin: 0 auto 14px;
+      border-radius: 10px;
+      background: linear-gradient(180deg, #2c333d, #1a1f26);
+      opacity: .75;
+      position: relative;
+    }
+    .coupon-card {
+      background: #171d24;
+      border-radius: 14px;
+      border: 1px solid rgba(255,255,255,.08);
+      padding: 14px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      margin-top: 12px;
+    }
+    .asset-tabs {
+      display: flex;
+      gap: 18px;
+      margin: 8px 0 10px;
+      color: #7f8999;
+      font-size: 16px;
+      font-weight: 900;
+    }
+    .asset-tabs span:first-child {
+      color: #fff;
+    }
+    .asset-note {
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+    .asset-card {
+      background: #171d24;
+      border-radius: 14px;
+      padding: 16px;
+      border: 1px solid rgba(255,255,255,.06);
+      margin-bottom: 18px;
+    }
+    .asset-card h3 {
+      margin: 0 0 14px;
+      font-size: 18px;
+    }
+    .asset-value {
+      color: var(--green);
+      font-size: 24px;
+      font-weight: 950;
+      margin-bottom: 14px;
+    }
+    .asset-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      color: #cbd3df;
+      text-align: center;
+      font-size: 12px;
+    }
+    .asset-grid b {
+      display: block;
+      margin-top: 4px;
+      color: #fff;
+    }
+    .asset-actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .asset-actions button {
+      height: 56px;
+      border-radius: 13px;
+      background: #171d24;
+      font-weight: 900;
+    }
+    .coupon-card h3 {
+      margin: 0 0 5px;
+      font-size: 16px;
+    }
+    .coupon-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .toast, .modal-mask, .celebrate {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(100vw, 500px);
+      z-index: 50;
+      pointer-events: none;
+    }
+    .toast {
+      top: 22px;
+      display: grid;
+      justify-items: center;
+      opacity: 0;
+      transition: opacity .2s, transform .2s;
+    }
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 8px);
+    }
+    .toast-box {
+      background: rgba(28,30,38,.96);
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 13px;
+      padding: 10px 14px;
+      box-shadow: var(--shadow);
+      font-weight: 800;
+    }
+    .modal-mask {
+      inset: 0 auto auto 50%;
+      height: 100vh;
+      background: rgba(0,0,0,.62);
+      display: none;
+      align-items: flex-end;
+      pointer-events: auto;
+    }
+    .modal-mask.show {
+      display: flex;
+    }
+    .modal {
+      width: 100%;
+      background: #171d24;
+      border-radius: 22px 22px 0 0;
+      padding: 20px 18px 26px;
+      border-top: 1px solid rgba(255,255,255,.1);
+      box-shadow: 0 -20px 50px rgba(0,0,0,.45);
+    }
+    .modal h2 {
+      margin: 0 0 8px;
+      font-size: 21px;
+    }
+    .modal p {
+      margin: 0 0 16px;
+      color: #a4adba;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+    .modal-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .ghost {
+      height: 44px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.08);
+      font-weight: 900;
+    }
+    .solid {
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(100deg, var(--red), var(--orange));
+      font-weight: 900;
+    }
+    .celebrate {
+      inset: 0 auto auto 50%;
+      height: 100vh;
+      display: none;
+      place-items: center;
+      background: rgba(0,0,0,.68);
+      text-align: center;
+    }
+    .celebrate.show {
+      display: grid;
+      animation: fadeIn .2s ease;
+    }
+    .burst {
+      width: 178px;
+      height: 178px;
+      margin: 0 auto 6px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: repeating-conic-gradient(from 0deg, rgba(255,208,90,.25) 0 10deg, transparent 10deg 20deg);
+      color: var(--gold);
+      font-size: 58px;
+      filter: drop-shadow(0 0 22px rgba(255,208,90,.45));
+    }
+    .celebrate h2 {
+      margin: 0;
+      font-size: 24px;
+    }
+    .celebrate p {
+      margin: 10px 0 22px;
+      color: #d7dde8;
+    }
+    .close-tip {
+      position: absolute;
+      bottom: 84px;
+      left: 0;
+      right: 0;
+      color: #fff;
+      font-size: 13px;
+    }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @media (max-width: 390px) {
+      .phone { padding-inline: 10px; }
+      .spin-entry { grid-template-columns: 1fr 96px; }
+      .preview-wheel { width: 94px; }
+      .task-card { grid-template-columns: 1fr auto; }
+      .task-action { grid-column: 2; }
+      .reward small { text-align: left; }
+      .slice-label { transform: rotate(var(--r)) translateY(-118px) rotate(var(--t)); font-size: 12px; width: 86px; margin-left: -43px; }
+      .slice-icon { width: 32px; height: 32px; font-size: 16px; }
+    }
+    .user-card, .spin-entry, .mini-card, .task-card, .summary-card {
+      box-shadow: 0 8px 22px rgba(0,0,0,.24);
+    }
+    .phone {
+      padding-top: 10px;
+      padding-bottom: 76px;
+    }
+    .user-card {
+      border-radius: 14px;
+      padding: 14px;
+    }
+    .user-head {
+      grid-template-columns: 40px 1fr 22px;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    .avatar {
+      width: 40px;
+      height: 40px;
+      font-size: 23px;
+    }
+    .chev {
+      font-size: 32px;
+    }
+    .section-title {
+      font-size: 16px;
+      font-weight: 800;
+    }
+    .spin-entry {
+      border-radius: 14px;
+      padding: 12px;
+      grid-template-columns: 1fr 90px;
+      gap: 10px;
+    }
+    .entry-title {
+      font-size: 17px;
+      font-weight: 850;
+    }
+    .metrics {
+      gap: 6px;
+      margin: 10px 0;
+    }
+    .metric {
+      height: 24px;
+      border-radius: 7px;
+      font-size: 11px;
+      font-weight: 650;
+    }
+    .primary, .wide-btn, .task-action {
+      height: 32px;
+      font-size: 13px;
+      font-weight: 850;
+    }
+    .preview-wheel {
+      width: 90px;
+      border-width: 6px;
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.35), 0 8px 18px rgba(0,0,0,.24);
+    }
+    .preview-wheel::after {
+      inset: 27px;
+      font-size: 13px;
+      box-shadow: 0 0 12px rgba(240,24,88,.25);
+    }
+    .mini-card {
+      border-radius: 14px;
+      min-height: 126px;
+      padding: 14px;
+    }
+    .mini-title {
+      font-size: 16px;
+      margin-bottom: 14px;
+    }
+    .task-list {
+      gap: 14px;
+    }
+    .task-card {
+      border-radius: 13px;
+      padding: 14px;
+    }
+    .wheel-card {
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .wheel-wrap {
+      max-width: 430px;
+      margin: 6px auto 12px;
+    }
+    .pointer {
+      width: 46px;
+      height: 76px;
+      top: calc(50% - 112px);
+      filter: drop-shadow(0 3px 6px rgba(0,0,0,.32));
+    }
+    .big-wheel {
+      width: min(92vw, 430px);
+      border-width: 14px;
+      box-shadow:
+        inset 0 0 0 4px rgba(255,255,255,.07),
+        inset 0 0 0 16px rgba(12,13,22,.45),
+        0 18px 42px rgba(0,0,0,.38);
+    }
+    .slice-label {
+      width: 96px;
+      min-height: 88px;
+      margin-left: -48px;
+      margin-top: -44px;
+      font-size: 14px;
+      font-weight: 700;
+      transform: rotate(var(--r)) translateY(-138px) rotate(var(--t));
+    }
+    .slice-icon {
+      width: 38px;
+      height: 38px;
+      font-size: 20px;
+      box-shadow: 0 6px 10px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.38);
+    }
+    .slice-note {
+      font-size: 10px;
+    }
+    .wheel-center {
+      width: min(28vw, 126px);
+      font-size: 38px;
+      font-weight: 780;
+      box-shadow:
+        0 0 0 14px rgba(255,97,44,.24),
+        0 0 28px rgba(240,24,88,.42),
+        inset 0 -10px 18px rgba(0,0,0,.16);
+    }
+    .spin-cta {
+      height: 44px;
+      border-radius: 11px;
+      font-size: 15px;
+      font-weight: 900;
+    }
+    .summary-card {
+      grid-template-columns: repeat(2, 1fr);
+      padding: 14px 10px;
+    }
+    .record-tabs {
+      grid-template-columns: repeat(3, 1fr);
+    }
+    .modal h2 {
+      font-size: 18px;
+    }
+    .modal p {
+      font-size: 13px;
+    }
+    .burst {
+      width: 136px;
+      height: 136px;
+      font-size: 44px;
+      filter: drop-shadow(0 0 14px rgba(255,208,90,.3));
+    }
+    .celebrate h2 {
+      font-size: 21px;
+    }
+
+    /* Typography pass: match the existing product UI scale. */
+    body {
+      font-size: 14px;
+      font-weight: 400;
+      letter-spacing: 0;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: geometricPrecision;
+    }
+    .name {
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .points-line {
+      font-size: 12px;
+      font-weight: 400;
+    }
+    .points-line b {
+      font-weight: 500;
+    }
+    .section-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .check-sub,
+    .check-foot,
+    .entry-sub,
+    .mini-text,
+    .task-desc,
+    .hint,
+    .asset-note {
+      font-size: 12px;
+      font-weight: 400;
+    }
+    .check-foot strong {
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .small-pill,
+    .small-pill.status,
+    .primary,
+    .wide-btn,
+    .task-action,
+    .spin-cta,
+    .ghost,
+    .solid {
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .small-pill.status {
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .days {
+      font-size: 12px;
+      font-weight: 400;
+    }
+    .day.active span:last-child,
+    .day.past span:last-child {
+      font-weight: 500;
+    }
+    .entry-title,
+    .mini-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .metric {
+      font-size: 12px;
+      font-weight: 500;
+    }
+    .tabs {
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .tabs button {
+      font-weight: 600;
+    }
+    .tabs button.active {
+      font-weight: 700;
+    }
+    .task-name {
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .reward {
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .reward small {
+      font-size: 11px;
+      font-weight: 500;
+    }
+    .topbar {
+      font-size: 17px;
+      font-weight: 700;
+    }
+    .record-tabs button,
+    .table-head,
+    .record-row,
+    .asset-grid {
+      font-size: 12px;
+      font-weight: 400;
+    }
+    .record-row b {
+      font-weight: 500;
+    }
+    .summary-card strong,
+    .asset-card h3,
+    .asset-tabs {
+      font-weight: 700;
+    }
+    .asset-value {
+      font-size: 22px;
+      font-weight: 700;
+    }
+    .slice-label {
+      width: 104px;
+      min-height: 104px;
+      margin-left: -52px;
+      margin-top: -52px;
+      grid-template-rows: 54px auto;
+      transform: rotate(var(--r)) translateY(-132px) rotate(var(--t));
+      font-size: 17px;
+      font-weight: 400;
+      line-height: 1.14;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+      text-shadow: 0 2px 3px rgba(0,0,0,.72);
+    }
+    .slice-main {
+      max-width: 108px;
+    }
+    .slice-note {
+      margin-top: 3px;
+      font-size: 11px;
+      font-weight: 400;
+      opacity: .92;
+    }
+    .slice-icon {
+      position: relative;
+      width: 50px;
+      height: 50px;
+      border-radius: 0;
+      background: none;
+      box-shadow: none;
+      color: transparent;
+      font-size: 0;
+      filter: drop-shadow(0 6px 5px rgba(0,0,0,.32));
+    }
+    .slice-icon::before,
+    .slice-icon::after {
+      content: "";
+      position: absolute;
+      display: block;
+    }
+    .slice-icon.btc {
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 34% 28%, rgba(255,255,255,.75), transparent 18%),
+        radial-gradient(circle at center, #ffbe3e 0 48%, #c97714 49% 63%, #ffd96f 64% 72%, #9d5a0e 73% 100%);
+      box-shadow:
+        inset 0 0 0 2px rgba(255,238,139,.55),
+        inset 0 -6px 10px rgba(105,54,0,.28),
+        0 6px 7px rgba(0,0,0,.35);
+    }
+    .slice-icon.btc::before {
+      content: "₿";
+      inset: 0;
+      display: grid;
+      place-items: center;
+      color: #8a4a08;
+      font-size: 29px;
+      font-weight: 700;
+      text-shadow: 0 1px 0 rgba(255,235,160,.8);
+    }
+    .slice-icon.cash {
+      width: 58px;
+      height: 46px;
+      transform: rotate(-8deg);
+    }
+    .slice-icon.cash::before {
+      left: 4px;
+      top: 6px;
+      width: 40px;
+      height: 25px;
+      border-radius: 5px;
+      background:
+        radial-gradient(circle at 50% 50%, #376b33 0 18%, transparent 19%),
+        linear-gradient(145deg, #9dd96f, #4a9a50);
+      box-shadow:
+        -3px 4px 0 rgba(80,142,70,.72),
+        inset 0 0 0 2px rgba(20,84,42,.22);
+    }
+    .slice-icon.cash::after {
+      right: 3px;
+      bottom: 3px;
+      width: 20px;
+      height: 24px;
+      border-radius: 50%;
+      background:
+        repeating-linear-gradient(180deg, #f6bf39 0 4px, #d98e21 4px 6px);
+      box-shadow: 0 2px 5px rgba(0,0,0,.3);
+    }
+    .slice-icon.dogs {
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 46%, #fff2cf 0 28%, transparent 29%),
+        radial-gradient(circle at 37% 35%, #8e4d1d 0 8%, transparent 9%),
+        radial-gradient(circle at 63% 35%, #8e4d1d 0 8%, transparent 9%),
+        linear-gradient(145deg, #ffc458, #f1782e);
+      box-shadow:
+        inset 0 0 0 3px rgba(255,226,128,.5),
+        0 6px 7px rgba(0,0,0,.32);
+    }
+    .slice-icon.dogs::before {
+      content: "DOG";
+      left: 12px;
+      top: 29px;
+      color: #623413;
+      font-size: 8px;
+      font-weight: 700;
+      transform: rotate(-18deg);
+    }
+    .slice-icon.shield {
+      width: 48px;
+      height: 52px;
+      clip-path: polygon(50% 0, 90% 14%, 82% 72%, 50% 100%, 18% 72%, 10% 14%);
+      background:
+        linear-gradient(145deg, rgba(166,238,255,.92), rgba(49,126,177,.95));
+      box-shadow: inset 0 0 0 4px rgba(191,240,255,.9);
+      color: #17334b;
+      font-size: 16px;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+      text-shadow: 0 1px 0 rgba(255,255,255,.35);
+    }
+    .slice-icon.shield::before {
+      content: "";
+      inset: 5px;
+      clip-path: polygon(50% 0, 90% 14%, 82% 72%, 50% 100%, 18% 72%, 10% 14%);
+      border: 2px solid rgba(221,250,255,.72);
+    }
+    .slice-icon.rebate {
+      width: 58px;
+      height: 46px;
+    }
+    .slice-icon.rebate::before {
+      left: 2px;
+      top: 3px;
+      width: 39px;
+      height: 39px;
+      border: 7px solid #d2573b;
+      border-left-color: transparent;
+      border-radius: 50%;
+      transform: rotate(-36deg);
+    }
+    .slice-icon.rebate::after {
+      right: 3px;
+      bottom: 1px;
+      width: 22px;
+      height: 24px;
+      border-radius: 3px;
+      background:
+        linear-gradient(#f8d8d8 0 22%, #f2f3f8 23% 100%);
+      box-shadow: inset 0 0 0 2px rgba(170,82,82,.22), 0 3px 5px rgba(0,0,0,.24);
+    }
+    .slice-icon.drop {
+      width: 54px;
+      height: 54px;
+      background:
+        linear-gradient(145deg, #ff9a3e, #f24942);
+      clip-path: polygon(50% 4%, 92% 78%, 62% 78%, 62% 96%, 22% 96%, 42% 66%, 20% 66%);
+      filter: drop-shadow(0 7px 6px rgba(0,0,0,.28));
+    }
+    .slice-icon.bonus {
+      width: 56px;
+      height: 48px;
+      transform: rotate(-8deg);
+    }
+    .slice-icon.bonus::before {
+      left: 5px;
+      top: 9px;
+      width: 40px;
+      height: 30px;
+      border-radius: 4px;
+      background:
+        radial-gradient(circle at 80% 24%, #ff724b 0 12%, transparent 13%),
+        linear-gradient(145deg, #e7e3ee, #9ea0aa);
+      box-shadow: inset 0 0 0 2px rgba(75,70,86,.24), 0 4px 6px rgba(0,0,0,.24);
+    }
+    .slice-icon.bonus::after {
+      content: "$";
+      right: 3px;
+      top: 2px;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      color: #5f160d;
+      font-size: 11px;
+      font-weight: 700;
+      background: linear-gradient(145deg, #ff8b5a, #de4a38);
+    }
+    .wheel-center {
+      font-weight: 400;
+      font-size: 32px;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    .wheel-page {
+      min-height: 100vh;
+      margin: -10px -12px -76px;
+      padding: max(14px, env(safe-area-inset-top)) 16px 24px;
+      display: none;
+      grid-template-rows: auto 1fr;
+      align-items: center;
+      justify-items: center;
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      z-index: 60;
+      background:
+        radial-gradient(circle at 78% 18%, rgba(115, 23, 17, .55), transparent 30%),
+        radial-gradient(circle at 22% 82%, rgba(24, 28, 50, .7), transparent 38%),
+        linear-gradient(180deg, #140b14 0%, #221425 48%, #15131e 100%);
+    }
+    .wheel-page.active {
+      display: grid;
+    }
+    .wheel-topbar {
+      width: min(100%, 500px);
+      height: 48px;
+      display: grid;
+      grid-template-columns: 44px 1fr 44px;
+      align-items: center;
+      color: #fff;
+      z-index: 3;
+    }
+    .wheel-topbar .back {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: rgba(255,255,255,.06);
+      font-size: 32px;
+      line-height: 1;
+    }
+    .wheel-topbar-title {
+      text-align: center;
+      font-size: 17px;
+      font-weight: 850;
+    }
+    .wheel-only-wrap {
+      width: min(94vw, 720px);
+      aspect-ratio: 1 / 1;
+      display: grid;
+      place-items: center;
+    }
+    .big-wheel {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background: transparent;
+      border: 0;
+      overflow: visible;
+      box-shadow: none;
+      position: relative;
+    }
+    .big-wheel::before {
+      display: none;
+    }
+    .wheel-image-stage {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      display: block;
+    }
+    .wheel-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      overflow: visible;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 50%, transparent 0 73%, #2f2b3a 73.4% 77.2%, #171422 77.8% 83%, rgba(82,77,92,.46) 83.4% 84.2%, rgba(14,12,22,.7) 85%);
+      filter: drop-shadow(0 18px 24px rgba(0,0,0,.42));
+    }
+    .svg-seg {
+      stroke: #141321;
+      stroke-width: 14;
+      stroke-linejoin: round;
+      filter: drop-shadow(0 5px 4px rgba(0,0,0,.28));
+    }
+    .svg-ring {
+      fill: none;
+      stroke: rgba(255,255,255,.13);
+      stroke-width: 2;
+    }
+    .wheel-text {
+      fill: #f8f8fa;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+      font-size: 31px;
+      font-weight: 400;
+      letter-spacing: 0;
+      paint-order: stroke;
+      stroke: rgba(0,0,0,.34);
+      stroke-width: 1.8px;
+      stroke-linejoin: round;
+    }
+    .wheel-text.dark {
+      fill: #202331;
+      stroke: rgba(255,255,255,.22);
+      stroke-width: .7px;
+    }
+    .wheel-note {
+      fill: rgba(234,239,242,.72);
+      font-size: 20px;
+      font-weight: 400;
+      stroke: rgba(0,0,0,.32);
+      stroke-width: 1.2px;
+    }
+    .wheel-coin-text {
+      fill: #854606;
+      font-size: 44px;
+      font-weight: 700;
+      text-anchor: middle;
+      dominant-baseline: central;
+      stroke: rgba(255,239,166,.75);
+      stroke-width: 1.2px;
+    }
+    #rotatingWheelSvg {
+      transform-origin: 50% 50%;
+      transition: transform 5.4s cubic-bezier(.12, .65, .15, 1);
+    }
+    .wheel-disc {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      overflow: hidden;
+      filter: drop-shadow(0 18px 24px rgba(0,0,0,.42));
+      will-change: transform;
+    }
+    .svg-center-hit {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 25%;
+      aspect-ratio: 1 / 1;
+      transform: translate(-50%, -50%);
+      border-radius: 50%;
+      background: transparent;
+      cursor: pointer;
+      z-index: 2;
+    }
+    .wheel-reference {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: cover;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+    .wheel-center-reference {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      clip-path: circle(20% at 50% 50%);
+      pointer-events: none;
+      user-select: none;
+      -webkit-user-drag: none;
+      z-index: 1;
+    }
+    .svg-go-text {
+      fill: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+      font-size: 54px;
+      font-weight: 400;
+      text-anchor: middle;
+      dominant-baseline: central;
+      filter: drop-shadow(0 2px 2px rgba(0,0,0,.25));
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <main class="phone">
+    <section id="taskPage" class="page active">
+      <div class="user-card" id="openRecords">
+        <div class="user-head">
+          <div class="avatar">🦊</div>
+          <div>
+            <div class="name">qwe06com <span class="badge">G</span></div>
+            <div class="points-line">
+              <span>当月积分:<b id="homeXp">10XP</b></span>
+              <span class="drop"><span class="drop-mark">D</span> Drop:<b id="homeDrop">1000</b></span>
+            </div>
+          </div>
+          <div class="chev">›</div>
+        </div>
+        <div class="check-row">
+          <div class="check-copy">
+            <div class="check-sub">点亮今日节点领取奖励</div>
+          </div>
+        </div>
+        <div class="days" id="daysBar" style="--progress: 16%">
+          <button class="day past" data-day="0"><span class="dot"></span><span>周一</span></button>
+          <button class="day active today" data-day="1"><span class="dot"></span><span>周二</span></button>
+          <button class="day" data-day="2"><span class="dot"></span><span>周三</span></button>
+          <button class="day" data-day="3"><span class="dot"></span><span>周四</span></button>
+          <button class="day" data-day="4"><span class="dot"></span><span>周五</span></button>
+          <button class="day" data-day="5"><span class="dot"></span><span>周六</span></button>
+          <button class="day" data-day="6"><span class="dot"></span><span>周日</span></button>
+        </div>
+        <div class="check-foot">
+          <span id="checkFoot">连续 2 天</span>
+        </div>
+      </div>
+
+      <section class="spin-entry">
+        <div>
+          <div class="entry-title-row">
+            <div class="entry-title">幸运转盘</div>
+            <button class="info-dot" id="dropInfo" type="button" aria-label="Drop 规则">i</button>
+          </div>
+          <div class="entry-sub" id="spinEntrySub">消耗 Drop 抽取交易奖励，今日可抽 1 次</div>
+          <div class="metrics">
+            <span class="metric">Drop <b id="entryDrop">1000</b></span>
+            <span class="metric" id="spinQuota">1 次机会</span>
+            <span class="metric" id="accountHint">真实账号可参与</span>
+          </div>
+          <button class="primary" id="goWheel">GO</button>
+        </div>
+        <div class="preview-wheel" aria-hidden="true"></div>
+      </section>
+
+      <nav class="tabs" aria-label="任务分类">
+        <button class="active" data-task-tab="newbie">新手学校</button>
+        <button data-task-tab="trade">交易任务</button>
+        <button data-task-tab="social">社交任务</button>
+      </nav>
+
+      <div class="task-list" id="taskList"></div>
+    </section>
+
+    <section id="wheelPage" class="page wheel-page">
+      <div class="wheel-topbar">
+        <button class="back" id="backHome" aria-label="返回">‹</button>
+        <div class="wheel-topbar-title">幸运转盘</div>
+        <span></span>
+      </div>
+      <div class="wheel-only-wrap">
+          <div class="big-wheel" id="bigWheel">
+            <div class="wheel-image-stage" aria-label="Lucky reward wheel">
+              <div id="rotatingWheelSvg" class="wheel-disc">
+                <img class="wheel-reference" src="wheel-reference.png" alt="Lucky reward wheel">
+              </div>
+              <img class="wheel-center-reference" src="wheel-reference.png" alt="">
+              <button id="fixedCenterButton" class="svg-center-hit" type="button" aria-label="GO"></button>
+            </div>
+          </div>
+      </div>
+    </section>
+
+    <section id="recordsPage" class="page">
+      <div class="topbar" style="display:flex">
+        <button class="back" id="recordsBack">‹</button>
+        <div>奖励流水</div>
+        <span></span>
+      </div>
+      <div class="summary-card reward-summary">
+        <div class="xp-summary">
+          <span>当月 XP</span>
+          <strong id="sumXp">10</strong>
+          <div class="xp-breakdown">
+            <div>GinX XP <b id="sumGinXp">10</b></div>
+            <div>TG XP <b id="sumTgXp">0</b></div>
+          </div>
+        </div>
+        <div><span>当前 Drop</span><strong id="sumDrop">1000</strong></div>
+        <div><span>转盘机会</span><strong id="sumSpinQuota">1</strong></div>
+      </div>
+      <div class="record-tabs">
+        <button class="active" data-record="xp">XP</button>
+        <button data-record="drop">Drop</button>
+        <button data-record="spin">转盘</button>
+      </div>
+      <div class="record-caption" id="recordCaption">积分明细</div>
+      <div id="recordContent"></div>
+    </section>
+
+    <section id="assetsPage" class="page">
+      <div class="asset-tabs">
+        <span>交易账户</span>
+        <span>资金账户</span>
+        <span>跟单账户</span>
+        <span>总览</span>
+      </div>
+      <div class="asset-note">ⓘ 账户说明：用于交易操作，记录您的持仓、盈亏及交易相关资金。</div>
+      <div class="account-switch" aria-label="账号切换">
+        <button class="active" data-account="real">真实账号</button>
+        <button data-account="demo">模拟账号</button>
+      </div>
+      <div class="asset-card">
+        <h3 id="assetAccountName">统一交易账户</h3>
+        <div style="color:#8995a5;font-size:12px;margin-bottom:4px">浮动盈亏(USDT)</div>
+        <div class="asset-value">0.00</div>
+        <div class="asset-grid">
+          <span>净值<b id="assetNet">0.00</b></span>
+          <span>保证金比例<b>0.00%</b></span>
+          <span>已用保证金<b>0.00</b></span>
+        </div>
+      </div>
+      <div class="asset-actions">
+        <button>⇪<br>入金</button>
+        <button>⇩<br>出金</button>
+        <button>⇄<br>划转</button>
+      </div>
+      <nav class="tabs" aria-label="资产分类">
+        <button class="active">持仓</button>
+        <button>订单</button>
+        <button>资金记录</button>
+      </nav>
+      <div class="empty"><div><div class="empty-icon"></div><div>暂无订单</div></div></div>
+    </section>
+
+    <nav class="bottom-nav">
+      <button class="nav-item">ↄ</button>
+      <button class="nav-item">▱</button>
+      <button class="nav-item">♕</button>
+      <button class="nav-item active" id="navTask">♢</button>
+      <button class="nav-item" id="navAssets">▭</button>
+    </nav>
+  </main>
+
+  <div class="toast" id="toast"><div class="toast-box"></div></div>
+
+  <div class="modal-mask" id="modalMask">
+    <div class="modal">
+      <h2 id="modalTitle"></h2>
+      <p id="modalText"></p>
+      <div class="modal-actions" id="modalActions"></div>
+    </div>
+  </div>
+
+  <div class="celebrate" id="celebrate">
+    <div>
+      <div class="burst">★</div>
+      <p>签到</p>
+      <h2 id="celebrateTitle">签到成功</h2>
+      <p id="celebrateText">恭喜获得 +20 XP</p>
+      <button class="solid" id="closeCelebrate" style="width:160px">知道了</button>
+    </div>
+    <div class="close-tip">点任意处关闭</div>
+  </div>
+
+  <script>
+    const state = {
+      account: "real",
+      checked: false,
+      xp: 10,
+      ginxXp: 10,
+      tgXp: 0,
+      drop: 1000,
+      demoDrop: 0,
+      spinQuota: 1,
+      rotation: 0,
+      taskCategory: "newbie",
+      records: [
+        { type: "drop", name: "交易手续费奖励", value: "+300 Drop", date: "2026-08-25" },
+        { type: "drop", name: "跟单交易加成", value: "+150 Drop", date: "2026-08-25" },
+        { type: "xp", name: "GinX XP · 签到-2", value: "+20XP", date: "2026-08-25" },
+        { type: "xp", name: "GinX XP · 签到-4", value: "+40XP", date: "2026-08-13" },
+        { type: "xp", name: "GinX XP · 签到-3", value: "+30XP", date: "2026-08-12" }
+      ],
+      coupons: []
+    };
+
+    const prizes = [
+      { label: "1000 USDT in BTC", full: "1000 USDT等值BTC币空投 / 1000 USDT Equivalent BTC Airdrop", type: "coupon", value: "1000 USDT in BTC" },
+      { label: "100 USDT Cash Airdrop", full: "100 USDT 现金空投 / 100 USDT Cash Airdrop", type: "coupon", value: "100 USDT Cash Airdrop" },
+      { label: "50 USDT in DOGS", full: "50 USDT等值DOGS币空投 / 50 USDT Equivalent DOGS Airdrop", type: "coupon", value: "50 USDT in DOGS" },
+      { label: "50% First Order Loss Protection", full: "首单亏损最高保护50% 200USDT / 50% First Order Loss Protection (Max 200 USDT)", type: "coupon", value: "50% First Order Loss Protection" },
+      { label: "100% First Order Loss Protection", full: "首单亏损最高保护100% 70 USDT / 100% First Order Loss Protection (Max 70 USDT)", type: "coupon", value: "100% First Order Loss Protection" },
+      { label: "7-Day 100% Fee Rebate", full: "7天手续费100%返现，最高50 USDT / 7-Day 100% Fee Rebate (Max 50 USDT)", type: "coupon", value: "7-Day 100% Fee Rebate" },
+      { label: "50 Drop", full: "50 Drop", type: "drop", value: 50 },
+      { label: "50% Deposit Bonus", full: "入金赠金50% 最高50USDT / 50% Deposit Bonus (Max 50 USDT)", type: "coupon", value: "50% Deposit Bonus" }
+    ];
+
+    const $ = (id) => document.getElementById(id);
+    const setText = (id, value) => {
+      const node = $(id);
+      if (node) node.textContent = value;
+    };
+
+    function activeDrop() {
+      return state.account === "real" ? state.drop : state.demoDrop;
+    }
+
+    function syncXp() {
+      state.xp = state.ginxXp + state.tgXp;
+    }
+
+    function updateHeader() {
+      syncXp();
+      setText("homeXp", state.xp + "XP");
+      setText("wheelXp", state.xp + "XP");
+      setText("homeDrop", activeDrop());
+      setText("wheelDrop", activeDrop());
+      setText("entryDrop", activeDrop());
+      setText("sumXp", state.xp);
+      setText("sumGinXp", state.ginxXp);
+      setText("sumTgXp", state.tgXp);
+      setText("sumDrop", activeDrop());
+      setText("sumSpinQuota", state.spinQuota);
+      $("accountHint").textContent = state.account === "real" ? "真实账号可参与" : "模拟账号仅预览";
+      $("assetAccountName").textContent = state.account === "real" ? "统一交易账户" : "模拟账户";
+      $("assetNet").textContent = state.account === "real" ? "0.00" : "10,000.00";
+      $("spinEntrySub").textContent = state.account === "real" ? "消耗 1000 Drop 抽取交易奖励，今日可抽 1 次" : "可查看奖池，模拟账号仅可获得 XP";
+      setText("spinQuota", state.spinQuota + " 次机会");
+    }
+
+    const taskConfig = [
+      {
+        title: "学习数量 / 手数",
+        desc: "完成新手教学任务可获得 XP",
+        category: "newbie",
+        xpSource: "ginx",
+        xp: 150,
+        drop: 0
+      },
+      {
+        title: "学习杠杆倍数",
+        desc: "完成新手教学任务可获得 XP",
+        category: "newbie",
+        xpSource: "ginx",
+        xp: 150,
+        drop: 0
+      },
+      {
+        title: "学习订单类型",
+        desc: "完成新手教学任务可获得 XP",
+        category: "newbie",
+        xpSource: "ginx",
+        xp: 150,
+        drop: 0
+      },
+      {
+        title: "完成首笔真实交易",
+        desc: "真实账号完成首笔交易后获得 Drop",
+        category: "trade",
+        xpSource: null,
+        xp: 0,
+        drop: 100
+      },
+      {
+        title: "产生有效交易手续费",
+        desc: "真实交易产生手续费后，可按规则获得 Drop",
+        category: "trade",
+        xpSource: null,
+        xp: 0,
+        drop: 150
+      },
+      {
+        title: "跟单交易任务",
+        desc: "跟单产生真实交易时，可在交易奖励基础上获得加成",
+        category: "trade",
+        xpSource: null,
+        xp: 0,
+        drop: 225
+      },
+      {
+        title: "邀请好友",
+        desc: "每邀请 1 位好友完成注册可获得 XP",
+        category: "social",
+        xpSource: "tg",
+        xp: 10,
+        drop: 0
+      },
+      {
+        title: "社群参与",
+        desc: "参与社群互动可获得 XP",
+        category: "social",
+        xpSource: "tg",
+        xp: 10,
+        drop: 0
+      }
+    ];
+
+    function renderTasks() {
+      const real = state.account === "real";
+      const tasks = taskConfig.filter((task) => task.category === state.taskCategory);
+      $("taskList").innerHTML = tasks.map((task) => `
+        <div class="task-card">
+          <div>
+            <div class="task-name">${task.title}</div>
+            <div class="task-desc">${task.desc}</div>
+          </div>
+          <div class="reward">${task.category === "trade" ? (real ? `${task.drop} Drop` : `<small class="muted-reward">真实账号可获得 Drop</small>`) : `${task.xp}XP`}</div>
+          <button class="task-action" data-task="${task.title}">去完成</button>
+        </div>
+      `).join("");
+      document.querySelectorAll("[data-task]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const task = taskConfig.find((item) => item.title === btn.dataset.task);
+          if (task.category === "trade" && state.account !== "real") {
+            showModal(
+              "切换真实账号完成",
+              "交易任务只发放 Drop，需要在真实账号下完成。模拟账号可完成新手学校和社交任务获取 XP。",
+              [{ label: "知道了", primary: true }]
+            );
+            return;
+          }
+          if (task.xp) {
+            if (task.xpSource === "tg") {
+              state.tgXp += task.xp;
+            } else {
+              state.ginxXp += task.xp;
+            }
+            const sourceName = task.xpSource === "tg" ? "TG XP" : "GinX XP";
+            state.records.unshift({ type: "xp", name: sourceName + " · " + task.title, value: "+" + task.xp + "XP", date: "2026-08-25" });
+          }
+          if (task.drop) {
+            state.drop += task.drop;
+            state.records.unshift({ type: "drop", name: task.title, value: "+" + task.drop + " Drop", date: "2026-08-25" });
+            if (task.category === "trade") state.spinQuota += 1;
+          }
+          showToast(task.drop ? `已获得 ${task.drop} Drop` : `已获得 ${task.xp}XP`);
+          btn.textContent = "已领取";
+          btn.classList.add("small-pill", "done");
+          updateHeader();
+          renderRecords(currentRecordType);
+        });
+      });
+    }
+
+    function showPage(id) {
+      document.querySelectorAll(".page").forEach((page) => page.classList.remove("active"));
+      $(id).classList.add("active");
+      document.querySelector(".bottom-nav").style.display = id === "wheelPage" || id === "recordsPage" ? "none" : "grid";
+      document.querySelectorAll(".bottom-nav .nav-item").forEach((item) => item.classList.remove("active"));
+      if (id === "taskPage") $("navTask").classList.add("active");
+      if (id === "assetsPage") $("navAssets").classList.add("active");
+    }
+
+    function showToast(text) {
+      const toast = $("toast");
+      toast.querySelector(".toast-box").textContent = text;
+      toast.classList.add("show");
+      clearTimeout(showToast.timer);
+      showToast.timer = setTimeout(() => toast.classList.remove("show"), 1800);
+    }
+
+    function showModal(title, text, actions) {
+      $("modalTitle").textContent = title;
+      $("modalText").textContent = text;
+      $("modalActions").innerHTML = "";
+      actions.forEach((action) => {
+        const button = document.createElement("button");
+        button.className = action.primary ? "solid" : "ghost";
+        button.textContent = action.label;
+        button.addEventListener("click", () => {
+          $("modalMask").classList.remove("show");
+          action.onClick && action.onClick();
+        });
+        $("modalActions").appendChild(button);
+      });
+      $("modalMask").classList.add("show");
+    }
+
+    function checkIn() {
+      if (state.checked) {
+        showToast("今日已签到");
+        return;
+      }
+      state.checked = true;
+      state.ginxXp += 20;
+      state.records.unshift({ type: "xp", name: "GinX XP · 签到-2", value: "+20XP", date: "2026-08-25" });
+      $("checkFoot").textContent = "明日继续";
+      $("daysBar").style.setProperty("--progress", "50%");
+      document.querySelector(".day.today").classList.add("past");
+      document.querySelector(".day.today").classList.remove("today");
+      $("celebrateTitle").textContent = "签到成功";
+      $("celebrateText").textContent = "恭喜获得 +20 XP";
+      $("celebrate").classList.add("show");
+      updateHeader();
+      renderRecords(currentRecordType);
+    }
+
+    function spinWheel() {
+      if (state.spinning) return;
+      if (state.account !== "real") {
+        showModal(
+          "切换真实账号参与",
+          "模拟账号可查看转盘奖池，但不能消耗 Drop 或获得交易奖励。",
+          [{ label: "知道了", primary: true }]
+        );
+        return;
+      }
+      if (state.drop < 1000) {
+        showModal(
+          "Drop 不足",
+          "每次抽奖消耗 1000 Drop。完成交易任务或产生真实交易手续费后可获得 Drop。",
+          [{ label: "知道了", primary: true }]
+        );
+        return;
+      }
+      state.spinning = true;
+      state.drop -= 1000;
+      state.records.unshift({ type: "drop", name: "幸运转盘消耗", value: "-1000 Drop", date: "2026-08-25" });
+      state.records.unshift({ type: "spin", name: "抽奖消耗", value: "-1000 Drop", date: "2026-08-25" });
+      updateHeader();
+      const centerButton = $("fixedCenterButton");
+      if (centerButton) centerButton.classList.add("is-spinning");
+      const index = Math.floor(Math.random() * prizes.length);
+      const prize = prizes[index];
+      const centers = [337.5, 22.5, 67.5, 112.5, 157.5, 202.5, 247.5, 292.5];
+      const normalized = ((state.rotation % 360) + 360) % 360;
+      const stopAt = 360 - centers[index];
+      const turns = 5 + Math.floor(Math.random() * 3);
+      state.rotation += turns * 360 + ((stopAt - normalized + 360) % 360);
+      $("rotatingWheelSvg").style.transform = `rotate(${state.rotation}deg)`;
+      setTimeout(() => {
+        state.spinning = false;
+        if (centerButton) centerButton.classList.remove("is-spinning");
+        applyPrize(prize);
+        updateHeader();
+        renderRecords("spin");
+        window.lastPrize = prize.label;
+        window.dispatchEvent(new CustomEvent("lucky-wheel-result", { detail: { index, prize: prize.label } }));
+        console.log("Lucky wheel result:", prize.label);
+      }, 5600);
+    }
+
+    function applyPrize(prize) {
+      state.records.unshift({ type: "spin", name: "获得奖励", value: prize.label, date: "2026-08-25" });
+      if (prize.type === "xp") {
+        state.ginxXp += prize.value;
+        state.records.unshift({ type: "xp", name: "GinX XP · 幸运转盘", value: "+" + prize.value + "XP", date: "2026-08-25" });
+      }
+      if (prize.type === "drop") {
+        state.drop += prize.value;
+        state.records.unshift({ type: "drop", name: "幸运转盘", value: "+" + prize.value + " Drop", date: "2026-08-25" });
+      }
+    }
+
+    let currentRecordType = "xp";
+    function setRecordType(type) {
+      currentRecordType = type;
+      document.querySelectorAll("[data-record]").forEach((btn) => btn.classList.toggle("active", btn.dataset.record === type));
+      renderRecords(type);
+    }
+
+    function renderRecords(type) {
+      const content = $("recordContent");
+      const list = state.records.filter((record) => record.type === type);
+      const captions = { xp: "XP 流水", drop: "Drop 流水", spin: "转盘流水" };
+      setText("recordCaption", captions[type] || "明细");
+      if (!list.length) {
+        content.innerHTML = `<div class="empty"><div><div class="empty-icon"></div><div>暂无数据</div></div></div>`;
+        return;
+      }
+      const titles = type === "xp" ? ["获取方式", "积分", "获取时间"] : type === "drop" ? ["获取方式", "Drop", "获取时间"] : ["获取方式", "奖励", "获取时间"];
+      content.innerHTML = `
+        <div class="table-head"><span>${titles[0]}</span><span>${titles[1]}</span><span>${titles[2]}</span></div>
+        ${list.map((record) => `
+          <div class="record-row">
+            <b>${record.name}</b>
+            <b>${record.value}</b>
+            <span>${record.date}</span>
+          </div>
+        `).join("")}
+      `;
+    }
+
+    function setAccount(account) {
+      state.account = account;
+      document.querySelectorAll("[data-account]").forEach((btn) => btn.classList.toggle("active", btn.dataset.account === account));
+      renderTasks();
+      updateHeader();
+      if (account === "demo") showToast("已切换模拟账号：可查看转盘，仅 XP 可获得");
+    }
+
+    document.querySelectorAll("[data-account]").forEach((btn) => btn.addEventListener("click", () => setAccount(btn.dataset.account)));
+    document.querySelectorAll("[data-task-tab]").forEach((btn) => btn.addEventListener("click", () => {
+      state.taskCategory = btn.dataset.taskTab;
+      document.querySelectorAll("[data-task-tab]").forEach((item) => item.classList.toggle("active", item === btn));
+      renderTasks();
+    }));
+    document.querySelectorAll("[data-record]").forEach((btn) => btn.addEventListener("click", () => setRecordType(btn.dataset.record)));
+    document.querySelectorAll("[data-day]").forEach((btn) => btn.addEventListener("click", (event) => {
+      event.stopPropagation();
+      if (btn.classList.contains("today")) {
+        checkIn();
+      } else if (btn.classList.contains("past")) {
+        showToast("这一天已签到");
+      } else {
+        showToast("还没到这一天");
+      }
+    }));
+    $("goWheel").addEventListener("click", () => showPage("wheelPage"));
+    if ($("backHome")) $("backHome").addEventListener("click", () => showPage("taskPage"));
+    $("recordsBack").addEventListener("click", () => showPage("taskPage"));
+    $("openRecords").addEventListener("click", (event) => {
+      if (!event.target.closest("[data-day]")) {
+        showPage("recordsPage");
+        setRecordType("xp");
+      }
+    });
+    if ($("wheelRecords")) $("wheelRecords").addEventListener("click", () => {
+      showPage("recordsPage");
+      setRecordType("spin");
+    });
+    $("navTask").addEventListener("click", () => showPage("taskPage"));
+    $("navAssets").addEventListener("click", () => showPage("assetsPage"));
+    $("dropInfo").addEventListener("click", () => {
+      showModal(
+        "Drop 与 XP",
+        "新手学校和社交任务发放 XP，模拟账号和真实账号都可以获得。交易任务发放 Drop，只能在真实账号下完成。真实交易产生手续费时，也会按 1 USDT 有效手续费 = 10 Drop 起计算，交易类型和跟单会带来加成。",
+        [{ label: "知道了", primary: true }]
+      );
+    });
+    if ($("ruleBtn")) $("ruleBtn").addEventListener("click", () => {
+      showModal(
+        "转盘规则",
+        "真实账号每次消耗 1000 Drop。模拟账号可查看奖池，但不能获得 Drop、体验金、返佣、入金赠金或保护奖励。奖励发放状态以转盘记录为准。",
+        [{ label: "知道了", primary: true }]
+      );
+    });
+    if ($("spinBtn")) $("spinBtn").addEventListener("click", spinWheel);
+    if ($("centerSpin")) $("centerSpin").addEventListener("click", spinWheel);
+    $("fixedCenterButton").addEventListener("click", spinWheel);
+    $("fixedCenterButton").addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        spinWheel();
+      }
+    });
+    $("modalMask").addEventListener("click", (event) => {
+      if (event.target === $("modalMask")) $("modalMask").classList.remove("show");
+    });
+    $("celebrate").addEventListener("click", () => $("celebrate").classList.remove("show"));
+    $("closeCelebrate").addEventListener("click", () => $("celebrate").classList.remove("show"));
+
+    renderTasks();
+    renderRecords("xp");
+    updateHeader();
+  </script>
+</body>
+</html>

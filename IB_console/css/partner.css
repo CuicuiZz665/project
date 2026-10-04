@@ -1,0 +1,1416 @@
+/* ---------------------------------------------------------------------------
+   合伙人：添加/编辑弹窗 + 合伙人列表页（深色主题，沿用全局 tokens）
+--------------------------------------------------------------------------- */
+
+/* 添加 / 编辑弹窗 ----------------------------------------------------------- */
+
+.ib-partner-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.65);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  animation: ib-overlay-in 0.18s ease;
+}
+
+@keyframes ib-overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.ib-partner-modal {
+  width: min(760px, 100%);
+  max-height: min(88vh, 780px);
+  display: flex;
+  flex-direction: column;
+  background: var(--ib-card-bg);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--ib-radius);
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.55);
+  animation: ib-modal-in 0.2s ease;
+}
+
+@keyframes ib-modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.ib-partner-modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px 12px;
+}
+
+.ib-partner-modal-title {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.ib-partner-modal-close {
+  border: none;
+  background: none;
+  color: var(--ib-text-secondary);
+  font-size: 13px;
+  line-height: 1;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.ib-partner-modal-close:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.ib-partner-modal-body {
+  padding: 4px 20px 8px;
+  overflow-y: auto;
+}
+
+.ib-pf-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 12px 14px;
+}
+
+.ib-pf-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.ib-pf-label {
+  color: #e7eaee;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 必填项：标签后红色星号标识；选填说明以灰色占位小字展示在输入框内 */
+
+.ib-pf-required {
+  color: #ff7a7a;
+  margin-left: 2px;
+}
+
+.ib-pf-error {
+  font-size: 11px;
+  line-height: 1.4;
+  color: #ff8f8f;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ib-pf-input::placeholder {
+  color: var(--ib-text-tertiary);
+  font-size: 12px;
+  text-overflow: ellipsis;
+}
+
+/* 编辑合伙人：比例/UID 锁定提示条 */
+
+.ib-pf-notice {
+  margin-bottom: 12px;
+  padding: 8px 12px;
+  border-radius: var(--ib-radius-sm);
+  background: rgba(247, 147, 26, 0.08);
+  border: 1px solid rgba(247, 147, 26, 0.25);
+  color: #e8b878;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* 比例输入框：右侧固定灰色 % 单位 */
+.ib-pf-input-wrap {
+  position: relative;
+  display: block;
+  min-width: 0;
+}
+
+.ib-pf-input-wrap .ib-pf-input {
+  width: 100%;
+  padding-right: 26px;
+}
+
+.ib-pf-unit {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--ib-text-tertiary);
+  font-size: 12px;
+  pointer-events: none;
+}
+
+/* 时间限制：原生日期控件深色化 */
+.ib-pf-input.is-date {
+  color-scheme: dark;
+}
+
+.ib-pf-optional-tag {
+  color: var(--ib-text-tertiary);
+  font-size: 11px;
+  margin-left: 2px;
+}
+
+.ib-op-none {
+  color: var(--ib-text-tertiary);
+}
+
+/* 取消合伙人确认弹窗 */
+.ib-confirm-modal {
+  width: min(440px, 100%);
+}
+
+.ib-confirm-body {
+  padding: 4px 20px 12px;
+  color: #e7eaee;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.ib-confirm-body p {
+  margin: 0;
+}
+
+/* 折叠条：更多分佣比例设置（默认合上） */
+
+.ib-pf-collapse {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  margin: 4px 0 6px;
+  padding: 8px 0;
+  border: none;
+  border-radius: var(--ib-radius-sm);
+  background: none;
+  color: var(--ib-text-secondary);
+  font-size: 12px;
+  font-family: var(--ib-font);
+  cursor: pointer;
+}
+
+.ib-pf-collapse:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.ib-pf-collapse-caret {
+  font-size: 10px;
+  transition: transform 0.2s;
+}
+
+.ib-pf-collapse.is-open .ib-pf-collapse-caret {
+  transform: rotate(180deg);
+}
+
+/* 折叠区展开后：顶部“暂不生效”提示 + 折叠字段 */
+.ib-pf-more {
+  margin-top: 2px;
+}
+
+/* 保存成功完成态：居中布局 + 绿色对勾（呼应「生效中」徽章成功色） ------------------ */
+
+.ib-partner-modal-success {
+  width: min(560px, 100%);
+}
+
+.ib-ps-head {
+  justify-content: flex-end;
+  padding-bottom: 0;
+}
+
+.ib-ps-body {
+  padding: 10px 28px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  text-align: center;
+}
+
+.ib-ps-check {
+  flex: none;
+  line-height: 0;
+}
+
+.ib-ps-check-svg {
+  width: 56px;
+  height: 56px;
+  filter: drop-shadow(0 0 14px rgba(76, 175, 80, 0.25));
+  animation: ib-ps-pop 0.38s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes ib-ps-pop {
+  from {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.ib-ps-title {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.ib-ps-line {
+  color: var(--ib-text-secondary);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.ib-ps-line strong {
+  color: #fff;
+  font-size: 14px;
+}
+
+/* 成功完成态：Web / Miniapp 两条专属邀请链接 */
+.ib-ps-links {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+}
+
+.ib-ps-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  background: var(--ib-field-bg);
+  border: 1px solid var(--ib-chip-border);
+  border-radius: var(--ib-radius-sm);
+  padding: 10px 12px;
+}
+
+.ib-ps-link-label {
+  color: var(--ib-text-secondary);
+  font-size: 12px;
+  flex: none;
+  min-width: 72px;
+}
+
+.ib-ps-link-value {
+  flex: 1;
+  min-width: 0;
+  color: #fff;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ib-ps-copy {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f7931a 0%, #ea580c 100%);
+  color: #fff;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  flex: none;
+}
+
+.ib-ps-copy:hover {
+  filter: brightness(1.08);
+}
+
+.ib-ps-copy.is-copied {
+  background: var(--ib-success-bg);
+  color: var(--ib-success);
+}
+
+.ib-ps-hint {
+  margin: 0;
+  color: var(--ib-text-secondary);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* 完成按钮居中加宽 */
+.ib-ps-foot {
+  justify-content: center;
+}
+
+.ib-ps-foot .ib-btn-primary {
+  min-width: 160px;
+  justify-content: center;
+}
+
+/* 直客明细页（复用上方表格/工具栏/分页样式） ------------------------------------------- */
+
+.ib-dc-status {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: #2a2d33;
+  color: var(--ib-text-secondary);
+  font-size: 11px;
+}
+
+.ib-dc-status.is-active {
+  background: var(--ib-success-bg);
+  color: var(--ib-success);
+}
+
+.ib-pf-input {
+  height: 34px;
+  padding: 0 10px;
+  background: var(--ib-field-bg);
+  border: 1px solid var(--ib-chip-border);
+  border-radius: var(--ib-radius-sm);
+  color: #fff;
+  font-size: 13px;
+  font-family: var(--ib-font);
+  font-variant-numeric: tabular-nums;
+  outline: none;
+  min-width: 0;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.ib-pf-input:focus {
+  border-color: rgba(247, 147, 26, 0.65);
+  box-shadow: 0 0 0 2px rgba(247, 147, 26, 0.12);
+}
+
+.ib-pf-input.has-error {
+  border-color: rgba(255, 90, 90, 0.7);
+}
+
+.ib-pf-input.is-readonly {
+  color: var(--ib-text-secondary);
+  background: #101214;
+  cursor: default;
+  letter-spacing: 1px;
+}
+
+.ib-partner-modal-foot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 12px 20px 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.ib-btn-cancel {
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  background: var(--ib-pill-bg);
+  color: #cfd4da;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.ib-btn-cancel:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+/* 弹窗响应式：窄屏降列 */
+
+@media (max-width: 860px) {
+  .ib-pf-field {
+    grid-column: span 6 !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .ib-pf-field {
+    grid-column: span 12 !important;
+  }
+}
+
+/* 合伙人列表页 --------------------------------------------------------------- */
+
+.ib-partner-head-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ib-partner-hint {
+  color: #ff9270;
+  font-size: 12px;
+}
+
+.ib-partner-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ib-partner-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* 工具行仅剩右侧搜索框时右对齐 */
+
+.ib-toolbar-end {
+  justify-content: flex-end;
+}
+
+.ib-partner-toolbar-left,
+.ib-partner-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ib-btn-tool-primary {
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 16px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #f7931a 0%, #ea580c 100%);
+  color: #fff;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.ib-btn-tool-primary:hover {
+  filter: brightness(1.08);
+}
+
+.ib-btn-tool-ghost {
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 16px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  background: var(--ib-tab-bg);
+  color: #cfd4da;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.ib-btn-tool-ghost:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.ib-search-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 30px;
+  padding: 0 12px;
+  width: 240px;
+  background: var(--ib-field-bg);
+  border: 1px solid var(--ib-chip-border);
+  border-radius: 999px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.ib-search-input:focus-within {
+  border-color: rgba(247, 147, 26, 0.65);
+  box-shadow: 0 0 0 2px rgba(247, 147, 26, 0.12);
+}
+
+.ib-search-icon {
+  flex: none;
+  width: 13px;
+  height: 13px;
+  color: var(--ib-text-secondary);
+}
+
+.ib-search-input input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: none;
+  color: #fff;
+  font-size: 12px;
+  font-family: var(--ib-font);
+}
+
+.ib-search-input input::placeholder {
+  color: var(--ib-text-tertiary);
+}
+
+.ib-search-clear {
+  flex: none;
+  border: none;
+  background: none;
+  padding: 2px;
+  color: var(--ib-text-secondary);
+  font-size: 11px;
+  line-height: 1;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.ib-search-clear:hover {
+  color: #fff;
+}
+
+/* 页头导出按钮（与页标题同行，右上角，36px 与总览页头按钮一致） */
+
+.ib-btn-export {
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 18px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  background: var(--ib-pill-bg);
+  color: #cfd4da;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.ib-btn-export:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+/* 顶部筛选区（参考线上 Agent 列表搜索栏） */
+
+.ib-filter-bar {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 16px;
+}
+
+/* 「更多分佣比例」「添加」推到筛选排最右侧 */
+
+.ib-filter-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.ib-filter-field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ib-filter-label {
+  color: var(--ib-text-secondary);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.ib-filter-input {
+  height: 30px;
+  width: 150px;
+  padding: 0 12px;
+  background: var(--ib-field-bg);
+  border: 1px solid var(--ib-chip-border);
+  border-radius: 999px;
+  color: #fff;
+  font-size: 12px;
+  font-family: var(--ib-font);
+  font-variant-numeric: tabular-nums;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.ib-filter-input:focus {
+  border-color: rgba(247, 147, 26, 0.65);
+  box-shadow: 0 0 0 2px rgba(247, 147, 26, 0.12);
+}
+
+.ib-filter-input::placeholder {
+  color: var(--ib-text-tertiary);
+}
+
+/* 表格 */
+
+.ib-partner-table-wrap {
+  overflow-x: auto;
+}
+
+.ib-partner-table {
+  width: 100%;
+  min-width: 1180px;
+  border-collapse: collapse;
+}
+
+/* 合伙人列表默认隐藏其余比例列（当前系统暂无这些），压缩最小宽度 */
+
+.ib-partner-table.is-compact {
+  min-width: 860px;
+}
+
+/* 「更多分佣比例」列开关 */
+
+.ib-ratio-toggle .ib-caret {
+  transition: transform 0.2s;
+}
+
+.ib-ratio-toggle.is-open .ib-caret {
+  transform: rotate(180deg);
+}
+
+/* 直客明细列较少，压缩最小宽度：容器内自适应铺满，避免右侧溢出滚动 */
+
+.ib-partner-table.is-customers {
+  min-width: 900px;
+}
+
+.ib-partner-table th {
+  padding: 10px 12px;
+  background: #17181b;
+  border-bottom: 1px solid #232529;
+  color: var(--ib-text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.ib-partner-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #1e2023;
+  color: #e7eaee;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.ib-partner-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.ib-partner-table .ib-col-check {
+  width: 36px;
+  text-align: center;
+}
+
+.ib-partner-table .ib-col-op {
+  width: 76px;
+  text-align: left;
+}
+
+/* 自定义复选框（深色主题，替代原生白底样式） */
+
+.ib-partner-check {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 15px;
+  height: 15px;
+  margin: 0;
+  border: 1px solid #3d424a;
+  border-radius: 4px;
+  background: var(--ib-field-bg);
+  cursor: pointer;
+  position: relative;
+  flex: none;
+  vertical-align: middle;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.ib-partner-check:hover {
+  border-color: rgba(247, 147, 26, 0.6);
+}
+
+.ib-partner-check:checked {
+  background: linear-gradient(135deg, #f7931a 0%, #ea580c 100%);
+  border-color: transparent;
+}
+
+.ib-partner-check:checked::after {
+  content: "";
+  position: absolute;
+  left: 4.4px;
+  top: 1.6px;
+  width: 4px;
+  height: 8px;
+  border: solid #fff;
+  border-width: 0 1.8px 1.8px 0;
+  transform: rotate(45deg);
+}
+
+.ib-partner-check:focus-visible {
+  outline: 2px solid rgba(247, 147, 26, 0.4);
+  outline-offset: 1px;
+}
+
+.ib-partner-empty {
+  text-align: center;
+  color: var(--ib-text-tertiary);
+  font-size: 12px;
+  padding: 30px 0 !important;
+}
+
+/* 分页 */
+
+.ib-partner-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ib-partner-total {
+  color: var(--ib-text-secondary);
+  font-size: 12px;
+}
+
+.ib-pager {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.ib-page-size {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 10px;
+  margin-right: 4px;
+  border-radius: 999px;
+  background: var(--ib-chip-bg);
+  border: 1px solid var(--ib-chip-border);
+  color: #cfd4da;
+  font-size: 11px;
+  line-height: 1;
+}
+
+.ib-page-btn {
+  min-width: 26px;
+  height: 26px;
+  padding: 0 7px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+  color: #cfd4da;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+}
+
+.ib-page-btn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.ib-page-btn.is-active {
+  background: var(--ib-menu-active-bg);
+  border-color: rgba(247, 147, 26, 0.35);
+  color: var(--ib-primary);
+}
+
+.ib-page-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* 邀请码：点击复制该计划专属邀请链接（Web / Miniapp 各一列） */
+.ib-code-copy {
+  border: none;
+  background: none;
+  padding: 2px 6px;
+  margin: -2px -6px;
+  border-radius: 6px;
+  color: #cfd4da;
+  font: inherit;
+  font-size: 13px;
+  font-family: var(--ib-font);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+.ib-code-copy:hover {
+  color: var(--ib-primary);
+  background: rgba(247, 147, 26, 0.08);
+}
+
+.ib-code-copy.is-copied {
+  color: var(--ib-success);
+  letter-spacing: 0;
+}
+
+/* 一页两区：上「分佣比例」+ 下「直客与子代理」 ----------------------------------------- */
+
+.ib-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ib-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* 上区头部右侧：搜索框 + 「增加返佣比例」 */
+
+.ib-section-head-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.ib-section-head-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ib-section-title {
+  margin: 0;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.ib-section-hint {
+  color: var(--ib-text-secondary);
+  font-size: 12px;
+}
+
+.ib-plus-icon {
+  width: 11px;
+  height: 11px;
+  margin-right: 6px;
+}
+
+/* 上区表格：含状态与操作列，最小宽度略高于列自然宽度（约 780），容器更窄时才横向滚动 */
+
+.ib-partner-table.is-plans {
+  min-width: 800px;
+}
+
+/* 注册人数：橙色可点，点击打开该邀请码的注册客户抽屉（选择器带 .ib-partner-table 前缀以保证权重盖过 td 颜色） */
+
+.ib-partner-table .ib-count-link {
+  border: none;
+  background: none;
+  padding: 4px 8px;
+  margin: -4px -8px;
+  border-radius: 6px;
+  color: var(--ib-primary);
+  font: inherit;
+  font-size: 13px;
+  font-family: var(--ib-font);
+  font-variant-numeric: tabular-nums;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: rgba(247, 147, 26, 0.35);
+  text-underline-offset: 3px;
+}
+
+.ib-partner-table .ib-count-link:hover {
+  color: #ffa733;
+  text-decoration-color: currentColor;
+}
+
+/* 下区表格：子代理标签列多，维持宽表横向滚动；直客标签列少，收窄最小宽度 */
+
+.ib-partner-table.is-people {
+  min-width: 1000px;
+}
+
+.ib-partner-table.is-people.is-direct {
+  min-width: 760px;
+}
+
+/* 直客/子代理标签切换（胶囊分段，选中态同选中菜单配色） */
+
+.ib-filter-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 30px;
+  padding: 3px;
+  background: var(--ib-field-bg);
+  border: 1px solid var(--ib-chip-border);
+  border-radius: 999px;
+}
+
+.ib-filter-tab {
+  display: inline-flex;
+  align-items: center;
+  height: 22px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ib-text-secondary);
+  font-size: 12px;
+  font-family: var(--ib-font);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.ib-filter-tab:hover {
+  color: #e7eaee;
+}
+
+.ib-filter-tab.is-active {
+  background: #3a2410;
+  color: var(--ib-primary);
+}
+
+/* 上区状态筛选（搜索框左侧）：深色下拉，配色同 7D 下拉（#26292E / 边框 #33373D） */
+
+.ib-status-filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ib-status-select {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.ib-status-select select {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 30px;
+  padding: 0 26px 0 12px;
+  background: #26292e;
+  border: 1px solid #33373d;
+  border-radius: 999px;
+  color: #e7eaee;
+  font-size: 12px;
+  font-family: var(--ib-font);
+  color-scheme: dark;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.ib-status-select select:focus {
+  border-color: rgba(247, 147, 26, 0.65);
+  box-shadow: 0 0 0 2px rgba(247, 147, 26, 0.12);
+}
+
+.ib-status-caret {
+  position: absolute;
+  right: 11px;
+  color: var(--ib-text-secondary);
+  font-size: 10px;
+  pointer-events: none;
+}
+
+/* 行内操作小按钮（设为合伙人 / 修改比例 / 解除） */
+
+.ib-op-btn {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  background: var(--ib-tab-bg);
+  color: #cfd4da;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ib-op-btn:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.ib-op-btn.is-primary {
+  border-color: rgba(247, 147, 26, 0.45);
+  background: rgba(247, 147, 26, 0.08);
+  color: var(--ib-primary);
+}
+
+.ib-op-btn.is-primary:hover {
+  border-color: rgba(247, 147, 26, 0.7);
+  color: #ffa733;
+}
+
+.ib-ops {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ib-partner-table.is-people .ib-col-op {
+  width: auto;
+  min-width: 176px;
+  text-align: left;
+}
+
+/* 比例被单独修改过的标记（当前生效比例列 / 抽屉内；带表格前缀保证权重） */
+
+.ib-partner-table .ib-rate-tag {
+  display: inline-flex;
+  align-items: center;
+  height: 16px;
+  padding: 0 6px;
+  margin-left: 6px;
+  border-radius: 999px;
+  background: #26292e;
+  border: 1px solid #33373d;
+  color: #e8b878;
+  font-size: 10px;
+  line-height: 1;
+  vertical-align: 1px;
+  cursor: help;
+}
+
+/* 小弹窗（设为合伙人 / 修改固定返佣比例） */
+
+.ib-mini-modal {
+  width: min(560px, 100%);
+}
+
+/* 注册客户抽屉（点击注册人数打开） ----------------------------------------------------- */
+
+.ib-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 950;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  justify-content: flex-end;
+  animation: ib-overlay-in 0.18s ease;
+}
+
+.ib-drawer {
+  display: flex;
+  flex-direction: column;
+  width: min(760px, 94vw);
+  height: 100%;
+  background: var(--ib-card-bg);
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: -18px 0 60px rgba(0, 0, 0, 0.5);
+  animation: ib-drawer-in 0.22s ease;
+}
+
+@keyframes ib-drawer-in {
+  from {
+    transform: translateX(48px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+.ib-drawer-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px 12px;
+  border-bottom: 1px solid #1e2023;
+}
+
+.ib-drawer-head-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.ib-drawer-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.ib-drawer-count {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--ib-menu-active-bg);
+  color: var(--ib-primary);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.ib-drawer-sub {
+  color: var(--ib-text-secondary);
+  font-size: 12px;
+}
+
+.ib-drawer-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  padding: 14px 20px 2px;
+}
+
+.ib-drawer-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 10px 12px;
+  background: var(--ib-field-bg);
+  border: 1px solid var(--ib-chip-border);
+  border-radius: var(--ib-radius-sm);
+}
+
+.ib-drawer-stat-label {
+  color: var(--ib-text-secondary);
+  font-size: 11px;
+}
+
+.ib-drawer-stat-value {
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.ib-drawer-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 20px 16px;
+  overflow-y: auto;
+}
+
+.ib-partner-table.is-drawer {
+  min-width: 680px;
+}
+
+.ib-partner-table.is-drawer th {
+  padding: 8px 10px;
+}
+
+.ib-partner-table.is-drawer td {
+  padding: 8px 10px;
+  font-size: 12px;
+}
+
+@media (max-width: 720px) {
+  .ib-drawer-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* 默认跟踪链接横条（页头下、上区上）：渐变描边一行式，与总览页链接卡同语言 ---------------- */
+
+.ib-linkbar {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--ib-card-bg), var(--ib-card-bg)) padding-box,
+    var(--ib-link-border-grad) border-box;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.ib-linkbar-title {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: none;
+}
+
+.ib-linkbar-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ib-linkbar-name {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.ib-linkbar-fields {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+  min-width: 0;
+}
+
+.ib-linkbar-field {
+  flex: 1;
+  min-width: 0;
+  background: var(--ib-field-bg);
+  border-radius: var(--ib-radius-sm);
+  padding: 9px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.ib-linkbar-field.is-code {
+  flex: 0 0 132px;
+}
+
+.ib-linkbar-field-label {
+  color: var(--ib-text-secondary);
+  font-size: 12px;
+}
+
+.ib-linkbar-field-value {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  color: #fff;
+  font-size: 13px;
+  min-width: 0;
+}
+
+.ib-linkbar-field-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ib-linkbar-field-value.is-code .ib-linkbar-field-text {
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.ib-linkbar-actions {
+  flex: none;
+}
+
+/* 复制成功：图标 1.2s 换绿勾（颜色经 currentColor 传导给 SVG） */
+
+.ib-copy-btn.is-copied {
+  color: var(--ib-success);
+}
+
+/* 二维码浮层：挂在「二维码」按钮下方右对齐，点外部 / Esc 关闭 */
+
+.ib-linkbar-qr-anchor {
+  position: relative;
+  display: inline-flex;
+}
+
+.ib-linkbar-qrpop {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 30;
+  width: 156px;
+  padding: 14px;
+  background: #1c1c1c;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.55);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.ib-linkbar-qrpop::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  right: 24px;
+  width: 8px;
+  height: 8px;
+  background: #1c1c1c;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  transform: rotate(45deg);
+}
+
+/* 白底码 + 深色点阵：贴合扫码识别的视觉习惯 */
+
+.ib-qr-plate {
+  width: 116px;
+  height: 116px;
+  padding: 8px;
+  border-radius: 8px;
+  background: #e8e6e1;
+  color: #171717;
+}
+
+.ib-qr-glyph {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
+}
+
+.ib-linkbar-qrpop-code {
+  color: var(--ib-text-secondary);
+  font-size: 12px;
+}
+
+.ib-linkbar-qrpop-code b {
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+/* 窄屏：标题行与操作保持一行，三个字段块整行换到下方 */
+
+@media (max-width: 1360px) {
+  .ib-linkbar {
+    flex-wrap: wrap;
+  }
+
+  .ib-linkbar-fields {
+    order: 3;
+    flex-basis: 100%;
+  }
+
+  .ib-linkbar-actions {
+    margin-left: auto;
+  }
+}

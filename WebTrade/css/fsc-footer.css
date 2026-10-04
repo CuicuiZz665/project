@@ -1,0 +1,33 @@
+footer .footer-fsc, footer button.footer-fsc {
+      display: inline-flex !important; align-items: center !important; gap: 10px !important; margin: 0 !important;
+      width: auto !important; min-height: 0 !important;
+      padding: 7px 16px 7px 8px !important; border-radius: 999px !important; cursor: pointer !important;
+      border: 1px solid rgba(247,147,26,.25) !important; background: rgba(247,147,26,.06) !important;
+      box-shadow: none !important; font-family: inherit !important; text-align: left !important;
+      transition: border-color .2s ease, background .2s ease, transform .2s ease !important;
+    }
+    footer .footer-fsc:hover { border-color: transparent !important; background: linear-gradient(135deg, #FFD166, #F7931A) !important; transform: translateY(-1px) !important; }
+    footer .footer-fsc:focus, footer .footer-fsc:focus-visible, footer .footer-fsc:active { outline: none !important; box-shadow: none !important; border-color: rgba(247,147,26,.25); }
+    footer .footer-fsc img { width: 38px !important; height: 38px !important; object-fit: contain !important; display: block !important; margin: 0 !important; }
+    footer .footer-fsc-text { display: flex !important; flex-direction: column !important; gap: 1px !important; text-align: left !important; line-height: 1.25 !important; color: rgba(246,247,251,.6) !important; font-size: 11px !important; font-weight: 400 !important; letter-spacing: normal !important; text-transform: none !important; transition: color .2s ease !important; }
+    footer .footer-fsc-text strong { color: #f0d3ab !important; font-size: 13px !important; font-weight: 700 !important; }
+    footer .footer-fsc:hover .footer-fsc-text, footer .footer-fsc:hover .footer-fsc-text strong { color: #000 !important; }
+    #fsc-lightbox {
+      position: fixed; inset: 0; z-index: 9999; display: none;
+      align-items: center; justify-content: center;
+      background: rgba(4,5,8,.82); backdrop-filter: blur(6px);
+      opacity: 0; transition: opacity .25s;
+    }
+    #fsc-lightbox.open { display: flex; opacity: 1; }
+    #fsc-lightbox img {
+      width: min(92vw, 900px); height: auto; max-height: 88vh; display: block; border-radius: 12px;
+      filter: drop-shadow(0 24px 60px rgba(0,0,0,.6));
+      transform: scale(.9); transition: transform .25s;
+    }
+    #fsc-lightbox.open img { transform: scale(1); }
+    #fsc-lightbox .fsc-close {
+      position: absolute; top: 22px; right: 26px; width: 44px; height: 44px;
+      border-radius: 50%; border: 1px solid rgba(255,255,255,.25);
+      background: rgba(255,255,255,.06); color: #fff; font-size: 22px;
+      cursor: pointer; display: grid; place-items: center;
+    }

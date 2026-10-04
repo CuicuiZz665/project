@@ -1,0 +1,3 @@
+interface:
+  display_name: "操作手册同款"
+  short_description: "生成清晰、傻瓜式、带截图和字段说明的中文操作手册"

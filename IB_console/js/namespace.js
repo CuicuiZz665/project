@@ -1,0 +1,1 @@
+window.IBApp = window.IBApp || {};

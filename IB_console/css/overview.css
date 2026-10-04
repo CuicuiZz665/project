@@ -1,0 +1,586 @@
+/* ---------------------------------------------------------------------------
+   工作台总览页（按线上截图 1:1 还原 · 深色主题）
+--------------------------------------------------------------------------- */
+
+/* 指标块 3×3 ---------------------------------------------------------------- */
+
+.ib-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--ib-gap);
+}
+
+@media (max-width: 1100px) {
+  .ib-metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 680px) {
+  .ib-metric-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ib-card {
+  background: var(--ib-card-bg);
+  border-radius: var(--ib-radius);
+  padding: 16px 18px;
+}
+
+.ib-metric-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ib-metric-label {
+  color: var(--ib-text-secondary);
+  font-size: 13px;
+}
+
+.ib-metric-value {
+  margin-top: 10px;
+  color: #fff;
+  font-size: 24px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.2px;
+}
+
+.ib-metric-sub {
+  margin-top: 8px;
+  color: var(--ib-text-secondary);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ib-metric-sub .ib-sub-strong {
+  color: #cfd4da;
+}
+
+/* 卡内小按钮统一尺寸：30px 高 / 12px 字号（与线上按钮体系一致）。
+   出金 / 资金流水 宽度对齐（78px，文字居中）。 */
+
+.ib-btn-fund {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  width: 78px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: var(--ib-primary-grad);
+  color: var(--ib-text);
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 500;
+  cursor: pointer;
+  flex: none;
+}
+
+.ib-btn-fund:hover {
+  filter: brightness(1.08);
+}
+
+/* 小字行：说明文字 + 灰色次级按钮（资金流水） */
+
+.ib-metric-sub-row {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-width: 0;
+}
+
+.ib-metric-sub-row .ib-metric-sub {
+  margin-top: 0;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ib-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  width: 78px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  background: var(--ib-pill-bg);
+  color: var(--ib-text);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  flex: none;
+}
+
+.ib-btn-ghost:hover {
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+/* 当前等级 + 默认跟踪链接 行 -------------------------------------------------- */
+
+.ib-duo-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: var(--ib-gap);
+  align-items: stretch;
+}
+
+@media (max-width: 1100px) {
+  .ib-duo-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ib-card-title {
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* 当前等级卡 */
+
+.ib-level-card {
+  display: flex;
+  gap: 24px;
+}
+
+.ib-level-left {
+  flex: 0 0 30%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+
+.ib-level-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 2px;
+}
+
+.ib-badge-level {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 5px;
+  background: var(--ib-badge-bg);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.ib-level-row {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  color: var(--ib-text-secondary);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.ib-level-row .ib-level-val {
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.ib-level-row.is-primary .ib-level-val {
+  color: var(--ib-primary);
+}
+
+.ib-level-right {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 18px;
+}
+
+.ib-progress-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ib-progress-label-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ib-progress-name {
+  color: var(--ib-text-secondary);
+  font-size: 13px;
+}
+
+.ib-progress-value {
+  color: #fff;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ib-progress-track {
+  height: 7px;
+  border-radius: 999px;
+  background: var(--ib-track);
+  overflow: hidden;
+}
+
+.ib-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--ib-progress-grad);
+}
+
+/* 固定比例身份：右侧升级进度替换为说明块（等级体系不适用） */
+
+.ib-level-note {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 18px 20px;
+  border-radius: var(--ib-radius-sm);
+  background: var(--ib-field-bg);
+}
+
+.ib-level-note-title {
+  color: #fff;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ib-level-note-text {
+  color: var(--ib-text-secondary);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* 默认跟踪链接卡（渐变描边） */
+
+.ib-link-card {
+  border: 1px solid transparent;
+  background:
+    linear-gradient(var(--ib-card-bg), var(--ib-card-bg)) padding-box,
+    var(--ib-link-border-grad) border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ib-link-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ib-link-head-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ib-badge-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: var(--ib-success-bg);
+  color: var(--ib-success);
+  font-size: 11px;
+}
+
+.ib-badge-live::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ib-success);
+}
+
+.ib-btn-qr {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 14px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: var(--ib-tab-bg);
+  color: var(--ib-text);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.ib-btn-qr:hover {
+  color: #fff;
+}
+
+.ib-link-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+@media (max-width: 1400px) {
+  .ib-link-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ib-link-field {
+  background: var(--ib-field-bg);
+  border-radius: var(--ib-radius-sm);
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.ib-link-field-label {
+  color: var(--ib-text-secondary);
+  font-size: 12px;
+}
+
+.ib-link-field-value {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  color: #fff;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+  min-width: 0;
+}
+
+.ib-link-field-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ib-link-field-value.is-code .ib-link-field-text {
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+.ib-copy-icon {
+  flex: none;
+  width: 14px;
+  height: 14px;
+  color: var(--ib-text-secondary);
+  cursor: pointer;
+}
+
+.ib-copy-icon:hover {
+  color: #fff;
+}
+
+/* 复制地址按钮：包住复制图标，点击仅复制地址 */
+
+.ib-copy-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  margin-right: -4px;
+  border: none;
+  border-radius: 6px;
+  background: none;
+  color: var(--ib-text-secondary);
+  cursor: pointer;
+  flex: none;
+}
+
+.ib-copy-btn .ib-copy-icon {
+  color: inherit;
+}
+
+.ib-copy-btn:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* 分享按钮：跟随链接卡标题旁，点击跳转合伙人列表 */
+
+.ib-share-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: var(--ib-tab-bg);
+  color: var(--ib-text);
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  flex: none;
+}
+
+.ib-share-btn:hover {
+  color: var(--ib-primary);
+  background: rgba(247, 147, 26, 0.12);
+}
+
+.ib-share-icon {
+  width: 14px;
+  height: 14px;
+}
+
+/* 图表 + 收入构成 行 ----------------------------------------------------------- */
+
+.ib-chart-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.ib-chart-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.ib-chart-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ib-tab {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--ib-text-secondary);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.ib-tab:hover {
+  color: #e7eaee;
+}
+
+.ib-tab.is-active {
+  background: var(--ib-tab-bg);
+  color: #fff;
+}
+
+/* 收入构成 */
+
+.ib-income-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.ib-income-sub {
+  color: var(--ib-text-secondary);
+  font-size: 12px;
+}
+
+.ib-income-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 4px;
+}
+
+.ib-income-row-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.ib-income-name {
+  color: #e7eaee;
+  font-size: 13px;
+}
+
+.ib-income-value {
+  color: #fff;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ib-income-percent {
+  color: var(--ib-text-secondary);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+.ib-income-bar {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--ib-track);
+  overflow: hidden;
+}
+
+.ib-income-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--ib-progress-grad);
+}
+
+/* 底部：交易产品分布 / 返佣贡献 ------------------------------------------------ */
+
+.ib-foot-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: var(--ib-gap);
+}
+
+@media (max-width: 1100px) {
+  .ib-foot-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ib-foot-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ib-foot-sub {
+  color: var(--ib-text-secondary);
+  font-size: 12px;
+}
+
+.ib-foot-body {
+  min-height: 120px;
+  display: grid;
+  place-items: center;
+  color: var(--ib-text-tertiary);
+  font-size: 12px;
+}

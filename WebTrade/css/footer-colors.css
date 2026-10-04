@@ -1,0 +1,13 @@
+/* Footer colors standardized to homepage (index.html) */
+footer.reg-footer { background: #030406 !important; background-image: none !important; color: rgba(246,247,251,.6) !important; }
+footer.reg-footer .footer-contact-item { color: rgba(246,247,251,.66) !important; }
+footer.reg-footer .footer-contact-item:hover,
+footer.reg-footer .footer-contact-item:active { color: #fff !important; }
+footer.reg-footer .footer-baseline-link { color: rgba(246,247,251,.7) !important; }
+footer.reg-footer .footer-column a:hover,
+footer.reg-footer .footer-columns a:hover,
+footer.reg-footer .footer-quick-links a:hover,
+footer.reg-footer .footer-legal-links a:hover,
+footer.reg-footer .footer-baseline-link:hover,
+footer.reg-footer .footer-risk-trigger:hover { color: #f7931a !important; }
+footer.reg-footer .footer-lang:hover { border-color: rgba(247,147,26,.4) !important; background: rgba(247,147,26,.08) !important; }

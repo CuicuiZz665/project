@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#e2d8d1">
+  <title>邀请海报</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --page-bg: #e7ded8;
+      --poster-bg: #ded3cc;
+      --shadow: 0 24px 72px rgba(47, 30, 20, .18);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      min-height: 100%;
+    }
+
+    body {
+      margin: 0;
+      display: grid;
+      place-items: center;
+      padding: clamp(0px, 3vw, 32px);
+      background: var(--page-bg);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+      letter-spacing: 0;
+    }
+
+    .poster {
+      width: min(100%, 1254px, calc(100vh - clamp(0px, 6vw, 64px)));
+      aspect-ratio: 1;
+      overflow: hidden;
+      background: var(--poster-bg);
+      box-shadow: var(--shadow);
+    }
+
+    .poster img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 0;
+      }
+
+      .poster {
+        width: 100vw;
+        box-shadow: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="poster" aria-label="邀请码海报">
+    <img src="gin-invite-poster-clean.png" alt="已去除顶部文字的邀请码海报">
+  </main>
+</body>
+</html>
