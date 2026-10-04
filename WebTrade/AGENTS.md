@@ -1,6 +1,6 @@
 # AGENTS.md
 
-GinX 官网静态站（WebTrade）：**根目录 14 个页面 = 13 个自解压离线包 + 1 个拆分页 `rewards.html`（奖励中心）**（2026-10-04 删除 404 页、account-offline 页）。与同级目录的 `IB_console`（合伙控制台）、`IB_admin`（管理后台）同在一个 git 仓库（仓库根在上一级 `amyZ_project/`）。
+GinX 官网静态站（WebTrade）：**根目录 13 个页面 = 12 个自解压离线包 + 1 个拆分页 `rewards.html`（奖励中心）**（2026-10-04 删除 404 页、account-offline 页、article-gold-xauusd-demo-offline 页）。与同级目录的 `IB_console`（合伙控制台）、`IB_admin`（管理后台）同在一个 git 仓库（仓库根在上一级 `amyZ_project/`）。
 
 本地预览：`python3 -m http.server 8643 --bind 0.0.0.0` → http://127.0.0.1:8643/index.html。不使用 Node、npm、打包器。**必须 http 访问**：i18n 的 fetch 不支持 file://，直接双击 html 能看页面但语言切换不工作。
 
@@ -10,7 +10,7 @@ GinX 官网静态站（WebTrade）：**根目录 14 个页面 = 13 个自解压�
 
 ```text
 WebTrade/
-|-- 14 个页面 html          # 见下表：13 个离线包 + rewards.html
+|-- 13 个页面 html          # 见下表：12 个离线包 + rewards.html
 |-- css/  (9 个)            # 只有 rewards.html 引用
 |   |-- base.css            # 基础变量与站点底样式
 |   |-- site.css            # 主站通用样式（导航/页脚等，最大的一块）
@@ -31,13 +31,13 @@ WebTrade/
 
 ★ = 积分记录逻辑与福利内容所在文件，改这两处需求时动 `rewards.css` / `rewards-page.js` / `checkin-points.js`。
 
-### 14 个页面
+### 13 个页面
 
 | 页面 | 类型 | 说明 |
 | --- | --- | --- |
 | index.html | 离线包（31MB） | 官网首页（英文为主） |
 | rewards.html | 拆分页（47KB，中文） | 奖励中心，样式/逻辑在 css/ js/ 直改 |
-| academy / articles / article-gold-xauusd-demo-offline | 离线包 | 学院、文章列表、文章详情 |
+| academy / articles | 离线包 | 学院、文章列表 |
 | activities / activity-detail / competition-offline | 离线包 | 活动列表、活动详情、比赛 |
 | login | 离线包 | 登录 |
 | invite-friends-new / refer-friends / refer-IB-friends-standalone / refer-IB-friends-standalone-ginx-style | 离线包 | 邀请与推荐（后三个未登录只显示 Login 界面） |
@@ -45,7 +45,7 @@ WebTrade/
 
 ## 两类页面，两种改法（口径）
 
-- **离线包页面（13 个）**：单文件自解压（`<script type="__bundler/manifest">` 内嵌 uuid→base64 资源表，运行时整体替换 documentElement），资源基本内嵌，不依赖本地 css/。**不要手工拆改包体**；改文案走 `i18n/<lang>/<page>.json`；要改结构/样式 = 重新导出整包后整个替换 html 文件，并重做 i18n 双处插入（见下文）。
+- **离线包页面（12 个）**：单文件自解压（`<script type="__bundler/manifest">` 内嵌 uuid→base64 资源表，运行时整体替换 documentElement），资源基本内嵌，不依赖本地 css/。**不要手工拆改包体**；改文案走 `i18n/<lang>/<page>.json`；要改结构/样式 = 重新导出整包后整个替换 html 文件，并重做 i18n 双处插入（见下文）。
 - **rewards.html（拆分页）**：与 IB_admin 同款组织方式——html 只是骨架，样式在 `css/`、逻辑在 `js/`、图片在 `assets/`，直接改文件。
 
 ## 奖励中心（rewards.html）两处需求的落点
@@ -99,7 +99,7 @@ js/i18n.js           # fetch 动态切换引擎（唯一脚本，所有页面共
 
 ### 改动约定
 
-- **改译文**：直接编辑 `i18n/<lang>/<page>.json` 即可——词条请求已强制 no-store，**无需 bump 任何 `?v=`**；仅当 `js/i18n.js` 引擎代码变化时，才 VER bump + 14 个 html 的 `?v=` 同步（当前 `20260924n`）。rewards.html 自己引用的 css/js 版本号仍按原约定各自 bump。**每次 bump 后同步更新本文档里记录的「当前版本号」。**
+- **改译文**：直接编辑 `i18n/<lang>/<page>.json` 即可——词条请求已强制 no-store，**无需 bump 任何 `?v=`**；仅当 `js/i18n.js` 引擎代码变化时，才 VER bump + 13 个 html 的 `?v=` 同步（当前 `20260924n`）。rewards.html 自己引用的 css/js 版本号仍按原约定各自 bump。**每次 bump 后同步更新本文档里记录的「当前版本号」。**
 - **页面改了文案**：对应改 JSON 的 key（key 必须与新渲染 DOM 中的原文字符串完全一致，多余空白会被归一化）；新增语言 = 新建 `i18n/<lang>/` 目录放同名 JSON，并在 `js/i18n.js` 的 `SUPPORTED` 数组加代码。
 - **必须 http 访问**（fetch 不支持 file://）：用 pm2 的 8643 服务预览。改完后硬刷新或加 `?cb=随机数`（见上文约定）。
 - **已知限制**：refer-friends / refer-IB-* 未登录只渲染 Login 界面（mock 登录到验证码一步是死胡同），词条只覆盖登录屏文案；competition-offline 排行榜里的人名/XP 数字为中性词条不做翻译。
