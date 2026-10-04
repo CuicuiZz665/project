@@ -16,7 +16,8 @@
  *    data-i18n-widget="off" 可隐藏（页面自带切换器时用）。
  *  - 必须通过 http 访问（fetch 不支持 file://），本地用
  *    python3 -m http.server 8643 预览。
- *  - 改 JSON 后把下方 VER 与页面引用的 ?v= 一起 bump。
+ *  - 词条请求强制 no-store（改 JSON 即时生效，无需 bump 任何 ?v=）；
+ *    仅引擎代码本身变化时才 VER bump + 离线包页面 ?v= 同步。
  * ============================================================ */
 (function () {
   'use strict';
@@ -28,7 +29,7 @@
   // 必须在脚本执行瞬间捕获（延迟启动后 document.currentScript 为 null）
   var ownScript = document.currentScript;
 
-  var VER = '20260924m';
+  var VER = '20260924n';
   var SUPPORTED = ['en', 'zh'];
   var STORE_KEY = 'ginx_i18n_lang';
   var ATTRS = ['placeholder', 'title', 'alt', 'aria-label'];
@@ -151,7 +152,7 @@
   function fetchMap(lang) {
     if (lang in cache) return Promise.resolve(cache[lang]);
     var url = 'i18n/' + lang + '/' + state.page + '.json?v=' + VER;
-    return fetch(url).then(function (r) {
+    return fetch(url, { cache: 'no-store' }).then(function (r) {
       if (!r.ok) throw new Error('i18n: ' + url + ' -> ' + r.status);
       return r.json();
     }).then(function (m) {

@@ -99,7 +99,7 @@ js/i18n.js           # fetch 动态切换引擎（唯一脚本，所有页面共
 
 ### 改动约定
 
-- **改译文**：直接编辑 `i18n/<lang>/<page>.json`，同时 bump `js/i18n.js` 内 `VER` 常量 + 14 个 html 里的 `?v=`（当前 `20260924m`），否则浏览器缓存旧词条。**每次 bump 后同步更新本文档里记录的「当前版本号」，保持文档与实际一致。**
+- **改译文**：直接编辑 `i18n/<lang>/<page>.json` 即可——词条请求已强制 no-store，**无需 bump 任何 `?v=`**；仅当 `js/i18n.js` 引擎代码变化时，才 VER bump + 14 个 html 的 `?v=` 同步（当前 `20260924n`）。rewards.html 自己引用的 css/js 版本号仍按原约定各自 bump。**每次 bump 后同步更新本文档里记录的「当前版本号」。**
 - **页面改了文案**：对应改 JSON 的 key（key 必须与新渲染 DOM 中的原文字符串完全一致，多余空白会被归一化）；新增语言 = 新建 `i18n/<lang>/` 目录放同名 JSON，并在 `js/i18n.js` 的 `SUPPORTED` 数组加代码。
 - **必须 http 访问**（fetch 不支持 file://）：用 pm2 的 8643 服务预览。改完后硬刷新或加 `?cb=随机数`（见上文约定）。
 - **已知限制**：refer-friends / refer-IB-* 未登录只渲染 Login 界面（mock 登录到验证码一步是死胡同），词条只覆盖登录屏文案；competition-offline 排行榜里的人名/XP 数字为中性词条不做翻译。
