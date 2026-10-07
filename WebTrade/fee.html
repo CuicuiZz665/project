@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GinX 费率总览 | 点差、手续费与隔夜利息</title>
+  <meta name="description" content="GinX 费率总览：外汇、贵金属、能源、指数与加密资产 CFD 的点差与手续费一览，手续费按名义价值费率收取、0 平台费；查看隔夜利息，所有交易成本在下单前透明可见。">
+  <meta name="keywords" content="费率总览, 点差, 交易手续费, 隔夜利息, 掉期费, GinX 费率">
+  <link rel="icon" href="assets/favicon.png" type="image/png">
+  <link rel="stylesheet" href="css/base.css?v=20260916a">
+  <link rel="stylesheet" href="css/site.css?v=20260920a">
+  <link rel="stylesheet" href="css/subpage-theme.css?v=20260920a">
+  <link rel="stylesheet" href="css/nav-sync.css?v=20260916a">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+  <link rel="stylesheet" href="css/fonts.css?v=20260916a">
+  <link rel="stylesheet" href="css/rewards.css?v=20260918n">
+  <link rel="stylesheet" href="css/fee.css?v=20261005e">
+  <script src="js/reveal-motion.js?v=20260916a"></script>
+
+<link rel="stylesheet" href="css/footer-colors.css?v=20260916a">
+
+  
+</head>
+<body>
+
+  <div class="page">
+  <nav class="nav ginfx-mega-nav" data-nav="">
+      <a class="brand" href="index.html#top"><img class="brand-lockup" src="assets/brand-lockup.png" alt="Gin Growth Infinity" style="height:48px;width:auto;display:block"></a>
+      <div class="nav-links">
+        <div class="nav-item">
+          <a class="nav-trigger" href="index.html#download" aria-haspopup="true">产品</a>
+          <div class="mega-menu" role="menu" aria-label="产品菜单">
+            <div class="mega-menu-grid">
+              <div class="mega-menu-links">
+                <a class="mega-menu-link" href="index.html#download"><strong>Gin MiniFX</strong><span>Telegram 小程序交易入口</span></a>
+                <a class="mega-menu-link" href="index.html#download"><strong>网页交易平台</strong><span>完整看盘与交易面板</span></a>
+                <a class="mega-menu-link" href="copy-trading.html"><strong>跟单交易</strong><span>查看透明风险数据，跟随交易大师</span></a>
+                <a class="mega-menu-link" href="index.html#demo"><strong>模拟交易</strong><span>使用虚拟资金，在实盘前进行练习</span></a>
+                <a class="mega-menu-link" href="index.html#demo"><strong>XP 任务</strong><span>学习、练习并完成活动任务</span></a>
+                <a class="mega-menu-link" href="fee.html"><strong>费率总览</strong><span>点差、手续费与隔夜利息</span></a>
+              </div>
+              <article class="mega-menu-card tg-card">
+                <img class="tg-3d" src="assets/tg-3d.png" alt="Telegram">
+                <div>
+                  <span class="tg-badge"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.9 4.3 18.6 20c-.25 1.1-.9 1.37-1.83.85l-5.05-3.72-2.44 2.35c-.27.27-.5.5-1 .5l.36-5.13L17 5.1c.4-.36-.09-.56-.62-.2L6.3 11.32 1.3 9.75C.22 9.4.2 8.66 1.53 8.14l19-7.32c.9-.33 1.68.2 1.37 3.48z"></path></svg>Telegram 小程序</span>
+                  <h3>从 Telegram 开始</h3>
+                  <p>打开 Gin MiniFX，在模拟模式中练习；需要更完整的面板时再进入网页交易平台。</p>
+                </div>
+                <div class="mega-menu-card-actions"><a class="btn primary tg-btn" href="index.html#download"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M21.9 4.3 18.6 20c-.25 1.1-.9 1.37-1.83.85l-5.05-3.72-2.44 2.35c-.27.27-.5.5-1 .5l.36-5.13L17 5.1c.4-.36-.09-.56-.62-.2L6.3 11.32 1.3 9.75C.22 9.4.2 8.66 1.53 8.14l19-7.32c.9-.33 1.68.2 1.37 3.48z"></path></svg>启动小程序</a></div>
+              </article>
+              <p class="mega-menu-risk">CFD 与跟单交易存在风险。模拟交易使用虚拟资金。过往表现不代表未来结果。</p>
+            </div>
+          </div>
+        </div>
+        <div class="nav-item">
+          <a class="nav-trigger" href="index.html#products" aria-haspopup="true">市场</a>
+          <div class="mega-menu" role="menu" aria-label="市场菜单">
+            <div class="mega-menu-grid">
+              <div class="mega-menu-links">
+                <a class="mega-menu-link" href="index.html#products"><strong>外汇</strong><span>EUR/USD · GBP/USD · USD/JPY</span></a>
+                <a class="mega-menu-link" href="index.html#products"><strong>黄金与金属</strong><span>XAUUSD · XAGUSD</span></a>
+                <a class="mega-menu-link" href="index.html#products"><strong>能源</strong><span>WTI · 布伦特原油 · 天然气</span></a>
+                <a class="mega-menu-link" href="index.html#products"><strong>加密资产</strong><span>BTC/USDT · ETH/USDT · TON</span></a>
+                <a class="mega-menu-link" href="index.html#products"><strong>指数</strong><span>纳斯达克 100 · 英国 100 · 标普 500</span></a>
+              </div>
+              <article class="mega-menu-card mkt-card">
+                <div>
+                  <span class="mkt-live"><i></i>实时</span>
+                  <h3>实时行情监控</h3>
+                  <div class="mkt-quote">
+                    <div class="mkt-quote-top"><small>XAUUSD · 黄金</small><span class="mkt-chg">+0.48%</span></div>
+                    <strong class="mkt-price">2,336.80</strong>
+                    <svg class="mkt-spark" viewBox="0 0 240 56" preserveAspectRatio="none" aria-hidden="true">
+                      <defs>
+                        <linearGradient id="mktFill" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0" stop-color="#2bd69f" stop-opacity=".34"></stop>
+                          <stop offset="1" stop-color="#2bd69f" stop-opacity="0"></stop>
+                        </linearGradient>
+                      </defs>
+                      <path class="mkt-area" d="M0,40 L20,36 L40,42 L60,30 L80,34 L100,22 L120,26 L140,16 L160,24 L180,12 L200,18 L220,8 L240,14 L240,56 L0,56 Z" fill="url(#mktFill)"></path>
+                      <path class="mkt-line" d="M0,40 L20,36 L40,42 L60,30 L80,34 L100,22 L120,26 L140,16 L160,24 L180,12 L200,18 L220,8 L240,14" fill="none" stroke="#2bd69f" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"></path>
+                      <circle class="mkt-dot" cx="240" cy="14" r="3.4" fill="#2bd69f"></circle>
+                    </svg>
+                  </div>
+                </div>
+                <div class="mega-menu-card-actions"><a class="btn primary" href="index.html#products">查看市场</a></div>
+              </article>
+              <p class="mega-menu-risk">CFD 与跟单交易存在风险。模拟交易使用虚拟资金。过往表现不代表未来结果。</p>
+            </div>
+          </div>
+        </div>
+        <div class="nav-item">
+          <a class="nav-trigger" href="academy.html" aria-haspopup="true">学院</a>
+          <div class="mega-menu" role="menu" aria-label="学院菜单">
+            <div class="mega-menu-grid">
+              <div class="mega-menu-links">
+                <a class="mega-menu-link" href="academy.html#course-1"><strong>新手村</strong><span>外汇、CFD、Web3 基础与首次模拟交易</span></a>
+                <a class="mega-menu-link" href="academy.html#course-2"><strong>模拟交易战场</strong><span>使用虚拟资金，在实盘前进行练习</span></a>
+                <a class="mega-menu-link" href="academy.html#course-4"><strong>跟单交易学院</strong><span>风险标签、交易员数据与策略复盘</span></a>
+                <a class="mega-menu-link" href="academy.html#course-5"><strong>钱包安全</strong><span>网络、地址与钓鱼风险基础</span></a>
+                <a class="mega-menu-link" href="articles.html"><strong>全部文章</strong><span>交易技巧、市场解读与教育笔记</span></a>
+                <a class="mega-menu-link" href="academy.html#tools"><strong>交易术语表</strong><span>下单前先掌握关键术语</span></a>
+              </div>
+              <article class="mega-menu-card edu-card">
+                <div>
+                  <span class="edu-badge"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 3 1 8.5 12 14l9-4.5V15h2V8.5L12 3zM5 12.2V16c0 1.7 3.1 3 7 3s7-1.3 7-3v-3.8l-7 3.5-7-3.5z"></path></svg>学院学习路径</span>
+                  <h3>先学习，再承担风险</h3>
+                  <p>进入实盘持仓前，先完成引导课程、模拟练习与检查清单。</p>
+                  <div class="edu-track">
+                    <div class="edu-track-head"><span>新手路径</span><b>60%</b></div>
+                    <div class="edu-bar"><i></i></div>
+                    <div class="edu-steps">
+                      <span class="done">基础</span>
+                      <span class="done">模拟</span>
+                      <span class="done">风险</span>
+                      <span>实盘</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="mega-menu-card-actions"><a class="btn primary" href="academy.html#course-1">开始课程</a><a class="btn dark" href="index.html#demo">练习模拟交易</a></div>
+              </article>
+              <p class="mega-menu-risk">CFD 与跟单交易存在风险。模拟交易使用虚拟资金。过往表现不代表未来结果。</p>
+            </div>
+          </div>
+        </div>
+        <div class="nav-item">
+          <a class="nav-trigger" href="index.html#contact" aria-haspopup="true">社区与直播</a>
+          <div class="mega-menu" role="menu" aria-label="社区与直播菜单">
+            <div class="mega-menu-grid">
+              <div class="mega-menu-links">
+                <a class="mega-menu-link" href="index.html#contact"><strong>官方频道</strong><span>产品更新与活动公告</span></a>
+                <a class="mega-menu-link" href="index.html#contact"><strong>Telegram 社区</strong><span>加入讨论，参与新手问答</span></a>
+                <a class="mega-menu-link" href="index.html#market"><strong>市场台频道</strong><span>每日市场笔记与直播间更新</span></a>
+                <a class="mega-menu-link" href="index.html#market"><strong>直播间</strong><span>每周黄金与外汇专场</span></a>
+                <a class="mega-menu-link" href="index.html#market"><strong>社区观点</strong><span>以教育为先的市场观点</span></a>
+              </div>
+              <article class="mega-menu-card com-card">
+                <div>
+                  <h3>加入社区生态</h3>
+                  <p>从社区讨论快速进入市场教育与模拟练习。</p>
+                  <div class="com-panel">
+                    <div class="com-avatars">
+                      <span style="background:linear-gradient(135deg,#f7931a,#ffcf87)">A</span>
+                      <span style="background:linear-gradient(135deg,#2aabee,#7fd0f7)">K</span>
+                      <span style="background:linear-gradient(135deg,#2bd69f,#7ff0cf)">M</span>
+                      <span style="background:linear-gradient(135deg,#b06ef7,#e0b6ff)">S</span>
+                      <span class="com-more">+2.4k</span>
+                    </div>
+                    <div class="com-stat"><b>1,208</b><small>正在观看直播</small></div>
+                  </div>
+                </div>
+                <div class="mega-menu-card-actions"><a class="btn primary" href="index.html#contact">加入社区</a></div>
+              </article>
+              <p class="mega-menu-risk">CFD 与跟单交易存在风险。模拟交易使用虚拟资金。过往表现不代表未来结果。</p>
+            </div>
+          </div>
+        </div>
+        <div class="nav-item">
+          <a class="nav-trigger" href="activities.html" aria-haspopup="true">活动与奖励</a>
+          <div class="mega-menu" role="menu" aria-label="活动与奖励菜单">
+            <div class="mega-menu-grid">
+              <div class="mega-menu-links">
+                <a class="mega-menu-link" href="index.html#demo"><strong>大学生交易大赛</strong><span>全球模拟交易挑战赛</span></a>
+                <a class="mega-menu-link" href="activities.html"><strong>活动中心</strong><span>活动列表、精选活动与日历</span></a>
+                <a class="mega-menu-link" href="activity-detail.html"><strong>精选活动</strong><span>查看完整活动详情预览</span></a>
+                <a class="mega-menu-link" href="index.html#demo"><strong>排行榜</strong><span>追踪模拟活动排名</span></a>
+                <a class="mega-menu-link" href="rewards.html"><strong>XP 奖励</strong><span>完成任务并赚取活动积分</span></a>
+                <a class="mega-menu-link" href="index.html#demo"><strong>模拟挑战</strong><span>使用虚拟资金练习</span></a>
+                <a class="mega-menu-link" href="index.html#contact"><strong>活动规则</strong><span>查看参与资格、奖励与风险提示</span></a>
+              </div>
+              <article class="mega-menu-card rwd-card">
+                <div>
+                  <span class="rwd-badge"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M5 3h14a1 1 0 0 1 1 1v3a4 4 0 0 1-3 3.87A5 5 0 0 1 13 14v2h2.5a1 1 0 0 1 0 2h-7a1 1 0 0 1 0-2H11v-2a5 5 0 0 1-4-3.13A4 4 0 0 1 4 7V4a1 1 0 0 1 1-1zm-1 4a2 2 0 0 0 1 1.73V5H4v2zm16 0V5h-1v3.73A2 2 0 0 0 20 7z"></path></svg>奖励计划</span>
+                  <h3>10,000 USDT 模拟余额</h3>
+                  <p>参加模拟活动、完成 XP 任务，在不承担真实本金风险的情况下学习市场行为。</p>
+                  <div class="rwd-media"><img src="assets/mega-menu-1.jpg" alt="GinX 冠军奖杯"></div>
+                </div>
+                <div class="mega-menu-card-actions"><a class="btn primary" href="index.html#demo">参加比赛</a></div>
+              </article>
+              <p class="mega-menu-risk">CFD 与跟单交易存在风险。模拟交易使用虚拟资金。过往表现不代表未来结果。</p>
+            </div>
+          </div>
+        </div>
+        <div class="nav-item">
+          <a class="nav-trigger" href="index.html#partners" aria-haspopup="true">合作伙伴计划</a>
+          <div class="mega-menu" role="menu" aria-label="合作伙伴计划菜单">
+            <div class="mega-menu-grid">
+              <div class="mega-menu-links">
+                <a class="mega-menu-link" href="invite-friends.html"><strong>邀请增长</strong><span>邀请用户，拓展本地社区</span></a>
+                <a class="mega-menu-link" href="partners-ib.html"><strong>IB 代理计划</strong><span>建立区域增长渠道</span></a>
+                <a class="mega-menu-link" href="copy-trading.html"><strong>交易大师计划</strong><span>成为上榜策略提供者</span></a>
+                <a class="mega-menu-link" href="index.html#demo"><strong>学生合作伙伴</strong><span>与金融社团和 Web3 俱乐部合作</span></a>
+                <a class="mega-menu-link" href="index.html#contact"><strong>媒体与社区合作伙伴</strong><span>共同开展活动与教育项目</span></a>
+              </div>
+              <article class="mega-menu-card ptn-card">
+                <div>
+                  <span class="ptn-badge"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16 11a4 4 0 1 0-4-4 4 4 0 0 0 4 4zm-8 1a3.5 3.5 0 1 0-3.5-3.5A3.5 3.5 0 0 0 8 12zm0 2c-2.7 0-6 1.34-6 4v2h8v-2c0-1.1.55-2.02 1.4-2.72A9.5 9.5 0 0 0 8 14zm8 0c-.6 0-1.27.07-1.95.2A4.2 4.2 0 0 1 16 18v2h6v-2c0-2.66-3.3-4-6-4z"></path></svg>合作伙伴计划</span>
+                  <h3>与 GinX 一起成长</h3>
+                  <p>通过邀请增长、IB 渠道、学生社区与交易大师计划，与 GinX 开展合作。</p>
+                  <div class="ptn-panel">
+                    <div class="ptn-stats">
+                      <div><b>3,600+</b><small>活跃合作伙伴</small></div>
+                      <div><b>全球</b><small>IB 与联盟网络</small></div>
+                    </div>
+                  </div>
+                </div>
+                <div class="mega-menu-card-actions"><a class="btn primary" href="index.html#contact">联系合作团队</a></div>
+              </article>
+              <p class="mega-menu-risk">CFD 与跟单交易存在风险。模拟交易使用虚拟资金。过往表现不代表未来结果。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="nav-actions">
+        <a class="btn primary" href="trading-audcad.html">开始交易</a>
+      </div>
+      <button class="mobile-menu-toggle" type="button" aria-label="打开导航菜单" aria-controls="mobile-menu" aria-expanded="false" data-mobile-menu-toggle=""><span aria-hidden="true"></span></button>
+      <div class="mobile-menu" id="mobile-menu" data-mobile-menu="">
+        <details class="mobile-accordion"><summary>产品</summary><div class="mobile-accordion-panel"><a href="index.html#download">Gin MiniFX<span>Telegram 小程序交易入口</span></a><a href="index.html#download">网页交易平台<span>完整看盘与交易面板</span></a><a href="copy-trading.html">跟单交易<span>查看透明风险数据，跟随交易大师</span></a><a href="index.html#demo">模拟交易<span>使用虚拟资金，在实盘前进行练习</span></a><a href="index.html#demo">XP 任务<span>学习、练习并完成活动任务</span></a><a href="fee.html">费率总览<span>点差、手续费与隔夜利息</span></a></div></details>
+        <details class="mobile-accordion"><summary>市场</summary><div class="mobile-accordion-panel"><a href="index.html#products">外汇<span>EUR/USD · GBP/USD · USD/JPY</span></a><a href="index.html#products">黄金与金属<span>XAUUSD · XAGUSD</span></a><a href="index.html#products">能源<span>WTI · 布伦特原油 · 天然气</span></a><a href="index.html#products">加密资产<span>BTC/USDT · ETH/USDT · TON</span></a><a href="index.html#products">指数<span>纳斯达克 100 · 英国 100 · 标普 500</span></a></div></details>
+        <details class="mobile-accordion"><summary>学院</summary><div class="mobile-accordion-panel"><a href="academy.html#course-1">新手村<span>从市场基础开始</span></a><a href="academy.html#course-2">模拟交易战场<span>实盘前先练习</span></a><a href="academy.html#course-4">跟单交易学院<span>查看交易员数据与风险标签</span></a><a href="academy.html#course-5">钱包安全<span>Web3 转账与钓鱼风险基础</span></a><a href="academy.html#tools">交易术语表<span>掌握关键术语</span></a></div></details>
+        <details class="mobile-accordion"><summary>社区与直播</summary><div class="mobile-accordion-panel"><a href="index.html#contact">官方频道<span>产品更新与活动公告</span></a><a href="index.html#contact">Telegram 社区<span>加入讨论，参与新手问答</span></a><a href="index.html#market">市场台频道<span>市场笔记与直播间更新</span></a><a href="index.html#market">直播间<span>每周黄金与外汇专场</span></a><a href="index.html#market">社区观点<span>以教育为先的市场观点</span></a></div></details>
+        <details class="mobile-accordion"><summary>活动与奖励</summary><div class="mobile-accordion-panel"><a href="index.html#demo">大学生交易大赛<span>全球模拟交易挑战赛</span></a><a href="activities.html">活动中心<span>活动列表、精选活动与日历</span></a><a href="activity-detail.html">精选活动<span>查看完整活动详情预览</span></a><a href="index.html#demo">排行榜<span>追踪模拟活动排名</span></a><a href="rewards.html">XP 奖励<span>完成任务并赚取活动积分</span></a><a href="index.html#demo">模拟挑战<span>使用虚拟资金练习</span></a><a href="index.html#contact">活动规则<span>参与资格、奖励与风险提示</span></a></div></details>
+        <details class="mobile-accordion"><summary>合作伙伴计划</summary><div class="mobile-accordion-panel"><a href="invite-friends.html">邀请增长<span>邀请用户，拓展本地社区</span></a><a href="partners-ib.html">IB 代理计划<span>建立区域增长渠道</span></a><a href="copy-trading.html">交易大师计划<span>成为上榜策略提供者</span></a><a href="index.html#demo">学生合作伙伴<span>金融社团与 Web3 俱乐部</span></a><a href="index.html#contact">媒体与社区合作伙伴<span>活动与教育合作</span></a></div></details>
+        <div class="mobile-menu-ctas"><a class="btn primary" href="trading-audcad.html">开始交易</a></div>
+      </div>
+    </nav>
+
+  <main>
+    <section class="fee-hero" aria-labelledby="fee-title">
+      <div class="fee-hero-copy">
+        <p class="hero-kicker">Fees · 费率</p>
+        <h1 id="fee-title">费率总览</h1>
+        <p class="fee-hero-sub">所有交易成本在下单前透明可见，无隐藏收费</p>
+        <div class="hero-actions">
+          <a class="btn primary" href="trading-audcad.html">开始交易</a>
+        </div>
+      </div>
+      <div class="fee-visual" aria-hidden="true">
+        <svg class="fee-trophy-scene" viewBox="0 0 420 460" fill="none" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false">
+          <defs>
+            <radialGradient id="feeGlowG" cx="50%" cy="42%" r="55%">
+              <stop offset="0%" stop-color="rgba(247,147,26,.22)"/>
+              <stop offset="60%" stop-color="rgba(247,147,26,.07)"/>
+              <stop offset="100%" stop-color="rgba(247,147,26,0)"/>
+            </radialGradient>
+            <linearGradient id="feeMetal" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#585b63"/>
+              <stop offset=".18" stop-color="#d7dae0"/>
+              <stop offset=".38" stop-color="#f7f8fa"/>
+              <stop offset=".55" stop-color="#b9bcc5"/>
+              <stop offset=".72" stop-color="#7e828c"/>
+              <stop offset=".88" stop-color="#dfe1e6"/>
+              <stop offset="1" stop-color="#969aa4"/>
+            </linearGradient>
+            <linearGradient id="feeGold" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#8a6420"/>
+              <stop offset=".35" stop-color="#ffe3a8"/>
+              <stop offset=".6" stop-color="#d9a441"/>
+              <stop offset="1" stop-color="#8a6420"/>
+            </linearGradient>
+            <linearGradient id="feeMarble" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#2e2f35"/>
+              <stop offset=".5" stop-color="#1d1e23"/>
+              <stop offset="1" stop-color="#141519"/>
+            </linearGradient>
+            <radialGradient id="feeShadow" cx="50%" cy="50%" r="50%">
+              <stop offset="0" stop-color="rgba(0,0,0,.55)"/>
+              <stop offset="100%" stop-color="rgba(0,0,0,0)"/>
+            </radialGradient>
+            <radialGradient id="feeMouth" cx="50%" cy="38%" r="70%">
+              <stop offset="0" stop-color="#43454c"/>
+              <stop offset="100%" stop-color="#15161a"/>
+            </radialGradient>
+          </defs>
+          <ellipse class="fee-glow" cx="210" cy="205" rx="165" ry="185" fill="url(#feeGlowG)"/>
+          <ellipse cx="210" cy="414" rx="190" ry="17" fill="url(#feeShadow)"/>
+          <rect x="86" y="368" width="264" height="26" rx="13" fill="url(#feeMarble)"/>
+          <rect x="86" y="368" width="264" height="2.5" rx="1.25" fill="rgba(255,255,255,.14)"/>
+          <rect x="94" y="390" width="248" height="1.5" fill="rgba(255,209,102,.25)"/>
+          <rect x="60" y="344" width="304" height="24" rx="12" fill="url(#feeMarble)"/>
+          <rect x="60" y="344" width="304" height="2.5" rx="1.25" fill="rgba(255,255,255,.16)"/>
+          <rect x="68" y="365" width="288" height="1.5" fill="rgba(255,209,102,.28)"/>
+          <rect x="92" y="321" width="240" height="23" rx="11.5" fill="url(#feeMarble)"/>
+          <rect x="92" y="321" width="240" height="2.5" rx="1.25" fill="rgba(255,255,255,.18)"/>
+          <rect x="100" y="341.5" width="224" height="1.5" fill="rgba(255,209,102,.3)"/>
+          <g>
+            <path d="M160 56 C164 150 184 214 199 254 C193 272 187 288 185 301 L235 301 C233 288 227 272 221 254 C236 214 256 150 260 56 Z" fill="url(#feeMetal)"/>
+            <ellipse cx="210" cy="56" rx="50" ry="13" fill="url(#feeMouth)"/>
+            <ellipse cx="210" cy="56" rx="50" ry="13" stroke="rgba(255,255,255,.5)" stroke-width="2"/>
+            <path d="M186 82 C191 150 199 204 207 246" stroke="rgba(58,60,68,.4)" stroke-width="3" stroke-linecap="round"/>
+            <path d="M210 72 L210 248" stroke="rgba(58,60,68,.28)" stroke-width="3" stroke-linecap="round"/>
+            <path d="M234 82 C229 150 221 204 213 246" stroke="rgba(58,60,68,.4)" stroke-width="3" stroke-linecap="round"/>
+            <path d="M176 84 C180 148 190 200 198 240" stroke="rgba(255,255,255,.45)" stroke-width="1.4" stroke-linecap="round"/>
+            <rect x="182" y="299" width="56" height="7" rx="3.5" fill="url(#feeGold)"/>
+            <path d="M186 306 C190 310 192 313 193 317 L227 317 C228 313 230 310 234 306 Z" fill="url(#feeMetal)"/>
+            <ellipse cx="210" cy="318" rx="30" ry="7.5" fill="url(#feeMetal)"/>
+          </g>
+          <g fill="#ffd777">
+            <path class="fee-spark fee-spark--1" transform="translate(132 118) scale(.9)" d="M0 -7 L1.8 -1.8 L7 0 L1.8 1.8 L0 7 L-1.8 1.8 L-7 0 L-1.8 -1.8 Z"/>
+            <path class="fee-spark fee-spark--2" transform="translate(300 86) scale(.65)" d="M0 -7 L1.8 -1.8 L7 0 L1.8 1.8 L0 7 L-1.8 1.8 L-7 0 L-1.8 -1.8 Z"/>
+            <path class="fee-spark fee-spark--3" transform="translate(322 216) scale(.8)" d="M0 -7 L1.8 -1.8 L7 0 L1.8 1.8 L0 7 L-1.8 1.8 L-7 0 L-1.8 -1.8 Z"/>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <section class="page-shell fee-tabs-row" aria-label="费率分区">
+      <div class="tabs" role="tablist" aria-label="费率分类">
+        <button class="top-tab is-active" type="button" role="tab" aria-selected="true" data-fee-tab="fx">外汇</button>
+        <button class="top-tab" type="button" role="tab" aria-selected="false" data-fee-tab="metal">贵金属</button>
+        <button class="top-tab" type="button" role="tab" aria-selected="false" data-fee-tab="energy">能源</button>
+        <button class="top-tab" type="button" role="tab" aria-selected="false" data-fee-tab="index">指数</button>
+        <button class="top-tab" type="button" role="tab" aria-selected="false" data-fee-tab="crypto">加密资产</button>
+      </div>
+    </section>
+
+    <section class="page-shell" aria-label="费率明细">
+      <!-- ======== 外汇 ======== -->
+      <div class="fee-panel is-active" data-fee-panel="fx">
+        <div class="fee-panel-head">
+          <div>
+            <h2>外汇</h2>
+          </div>
+        </div>
+        <div class="fee-chips">
+          <span class="fee-chip fee-chip--green">30 个货币对</span>
+          <span class="fee-chip fee-chip--green">0 平台费</span>
+          <span class="fee-chip">手续费每手固定</span>
+        </div>
+        <div class="fee-block">
+          <div class="fee-block-head"><h3>点差与手续费</h3><span>点差按最小报价单位（点）计 · 手续费为占合约名义价值的单边费率</span></div>
+          <div class="fee-table-wrap">
+            <table class="fee-table">
+              <thead>
+                <tr><th>品种</th><th>代码</th><th>点差（近7日均值）</th><th>开仓手续费（每手）</th><th>平仓手续费（每手）</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="fee-strong">澳元/加元</td><td>AUD/CAD</td><td class="fee-hl">5 点</td><td class="fee-hl">0.007%</td><td class="fee-hl">0.007%</td></tr>
+                <tr><td class="fee-strong">澳元/瑞郎</td><td>AUD/CHF</td><td class="fee-hl">3 点</td><td class="fee-hl">0.0125%</td><td class="fee-hl">0.0125%</td></tr>
+                <tr><td class="fee-strong">澳元/日元</td><td>AUD/JPY</td><td class="fee-hl">5 点</td><td class="fee-hl">0.0061%</td><td class="fee-hl">0.0061%</td></tr>
+                <tr><td class="fee-strong">澳元/纽元</td><td>AUD/NZD</td><td class="fee-hl">5 点</td><td class="fee-hl">0.0083%</td><td class="fee-hl">0.0083%</td></tr>
+                <tr><td class="fee-strong">澳元/美元</td><td>AUD/USD</td><td class="fee-hl">3 点</td><td class="fee-hl">0.007%</td><td class="fee-hl">0.007%</td></tr>
+                <tr><td class="fee-strong">加元/瑞郎</td><td>CAD/CHF</td><td class="fee-hl">4 点</td><td class="fee-hl">0.0122%</td><td class="fee-hl">0.0122%</td></tr>
+                <tr><td class="fee-strong">加元/日元</td><td>CAD/JPY</td><td class="fee-hl">5 点</td><td class="fee-hl">0.006%</td><td class="fee-hl">0.006%</td></tr>
+                <tr><td class="fee-strong">瑞郎/日元</td><td>CHF/JPY</td><td class="fee-hl">10 点</td><td class="fee-hl">0.0034%</td><td class="fee-hl">0.0034%</td></tr>
+                <tr><td class="fee-strong">欧元/澳元</td><td>EUR/AUD</td><td class="fee-hl">7 点</td><td class="fee-hl">0.0043%</td><td class="fee-hl">0.0043%</td></tr>
+                <tr><td class="fee-strong">欧元/加元</td><td>EUR/CAD</td><td class="fee-hl">6 点</td><td class="fee-hl">0.0062%</td><td class="fee-hl">0.0062%</td></tr>
+                <tr><td class="fee-strong">欧元/瑞郎</td><td>EUR/CHF</td><td class="fee-hl">5 点</td><td class="fee-hl">0.0076%</td><td class="fee-hl">0.0076%</td></tr>
+                <tr><td class="fee-strong">欧元/英镑</td><td>EUR/GBP</td><td class="fee-hl">2 点</td><td class="fee-hl">0.0081%</td><td class="fee-hl">0.0081%</td></tr>
+                <tr><td class="fee-strong">欧元/日元</td><td>EUR/JPY</td><td class="fee-hl">5 点</td><td class="fee-hl">0.0037%</td><td class="fee-hl">0.0037%</td></tr>
+                <tr><td class="fee-strong">欧元/纽元</td><td>EUR/NZD</td><td class="fee-hl">11 点</td><td class="fee-hl">0.007%</td><td class="fee-hl">0.007%</td></tr>
+                <tr><td class="fee-strong">欧元/美元</td><td>EUR/USD</td><td class="fee-hl">1 点</td><td class="fee-hl">0.0034%</td><td class="fee-hl">0.0034%</td></tr>
+                <tr><td class="fee-strong">英镑/澳元</td><td>GBP/AUD</td><td class="fee-hl">9 点</td><td class="fee-hl">0.0053%</td><td class="fee-hl">0.0053%</td></tr>
+                <tr><td class="fee-strong">英镑/加元</td><td>GBP/CAD</td><td class="fee-hl">10 点</td><td class="fee-hl">0.0054%</td><td class="fee-hl">0.0054%</td></tr>
+                <tr><td class="fee-strong">英镑/瑞郎</td><td>GBP/CHF</td><td class="fee-hl">6 点</td><td class="fee-hl">0.0095%</td><td class="fee-hl">0.0095%</td></tr>
+                <tr><td class="fee-strong">英镑/日元</td><td>GBP/JPY</td><td class="fee-hl">9 点</td><td class="fee-hl">0.0046%</td><td class="fee-hl">0.0046%</td></tr>
+                <tr><td class="fee-strong">英镑/纽元</td><td>GBP/NZD</td><td class="fee-hl">12 点</td><td class="fee-hl">0.0079%</td><td class="fee-hl">0.0079%</td></tr>
+                <tr><td class="fee-strong">英镑/美元</td><td>GBP/USD</td><td class="fee-hl">4 点</td><td class="fee-hl">0.0037%</td><td class="fee-hl">0.0037%</td></tr>
+                <tr><td class="fee-strong">纽元/瑞郎</td><td>NZD/CHF</td><td class="fee-hl">4 点</td><td class="fee-hl">0.0217%</td><td class="fee-hl">0.0217%</td></tr>
+                <tr><td class="fee-strong">纽元/日元</td><td>NZD/JPY</td><td class="fee-hl">5 点</td><td class="fee-hl">0.0106%</td><td class="fee-hl">0.0106%</td></tr>
+                <tr><td class="fee-strong">纽元/美元</td><td>NZD/USD</td><td class="fee-hl">2 点</td><td class="fee-hl">0.0135%</td><td class="fee-hl">0.0135%</td></tr>
+                <tr><td class="fee-strong">美元/加元</td><td>USD/CAD</td><td class="fee-hl">5 点</td><td class="fee-hl">0.0059%</td><td class="fee-hl">0.0059%</td></tr>
+                <tr><td class="fee-strong">美元/瑞郎</td><td>USD/CHF</td><td class="fee-hl">3 点</td><td class="fee-hl">0.0064%</td><td class="fee-hl">0.0064%</td></tr>
+                <tr><td class="fee-strong">美元/离岸人民币</td><td>USD/CNH</td><td class="fee-hl">27 点</td><td class="fee-hl">0.0044%</td><td class="fee-hl">0.0044%</td></tr>
+                <tr><td class="fee-strong">美元/港元</td><td>USD/HKD</td><td class="fee-hl">33 点</td><td class="fee-hl">0.0013%</td><td class="fee-hl">0.0013%</td></tr>
+                <tr><td class="fee-strong">美元/日元</td><td>USD/JPY</td><td class="fee-hl">3 点</td><td class="fee-hl">0.0031%</td><td class="fee-hl">0.0031%</td></tr>
+                <tr><td class="fee-strong">美元/新加坡元</td><td>USD/SGD</td><td class="fee-hl">6 点</td><td class="fee-hl">0.0079%</td><td class="fee-hl">0.0079%</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <ul class="fee-notes">
+            <li>重要新闻发布、市场开盘收盘与流动性稀薄时段，点差可能临时扩大。</li>
+          </ul>
+        </div>
+        <div class="fee-block">
+          <div class="fee-block-head"><h3>隔夜利息</h3><span>隔夜利息 = 名义价值 × 每日费率 × 天数</span></div>
+          <div class="fee-table-wrap">
+            <table class="fee-table">
+              <thead>
+                <tr><th>品种</th><th>代码</th><th>多头（每日）</th><th>空头（每日）</th><th>三倍利息日</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="fee-strong">澳元/加元</td><td>AUD/CAD</td><td class="fee-neg">−0.0003%</td><td class="fee-neg">−0%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">澳元/瑞郎</td><td>AUD/CHF</td><td class="fee-free">＋0.0023%</td><td class="fee-neg">−0.005%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">澳元/日元</td><td>AUD/JPY</td><td class="fee-free">＋0.0087%</td><td class="fee-neg">−0.0111%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">澳元/纽元</td><td>AUD/NZD</td><td class="fee-neg">−0.0059%</td><td class="fee-free">＋0.001%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">澳元/美元</td><td>AUD/USD</td><td class="fee-neg">−0.0047%</td><td class="fee-free">＋0.0022%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">加元/瑞郎</td><td>CAD/CHF</td><td class="fee-free">＋0.0008%</td><td class="fee-neg">−0.0069%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">加元/日元</td><td>CAD/JPY</td><td class="fee-free">＋0.011%</td><td class="fee-neg">−0.0164%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">瑞郎/日元</td><td>CHF/JPY</td><td class="fee-free">＋0.0081%</td><td class="fee-neg">−0.0106%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">欧元/澳元</td><td>EUR/AUD</td><td class="fee-free">＋0.0048%</td><td class="fee-neg">−0.0077%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">欧元/加元</td><td>EUR/CAD</td><td class="fee-neg">−0.0045%</td><td class="fee-neg">−0.0006%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">欧元/瑞郎</td><td>EUR/CHF</td><td class="fee-free">＋0.0057%</td><td class="fee-neg">−0.0085%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">欧元/英镑</td><td>EUR/GBP</td><td class="fee-neg">−0.0035%</td><td class="fee-free">＋0.0007%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">欧元/日元</td><td>EUR/JPY</td><td class="fee-free">＋0.0095%</td><td class="fee-neg">−0.012%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">欧元/纽元</td><td>EUR/NZD</td><td class="fee-neg">−0.0058%</td><td class="fee-free">＋0.0006%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">欧元/美元</td><td>EUR/USD</td><td class="fee-neg">−0.0097%</td><td class="fee-free">＋0.0071%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">英镑/澳元</td><td>GBP/AUD</td><td class="fee-free">＋0.0019%</td><td class="fee-neg">−0.0048%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">英镑/加元</td><td>GBP/CAD</td><td class="fee-neg">−0.0019%</td><td class="fee-neg">−0.0032%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">英镑/瑞郎</td><td>GBP/CHF</td><td class="fee-free">＋0.0085%</td><td class="fee-neg">−0.0114%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">英镑/日元</td><td>GBP/JPY</td><td class="fee-free">＋0.017%</td><td class="fee-neg">−0.0195%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">英镑/纽元</td><td>GBP/NZD</td><td class="fee-neg">−0.0032%</td><td class="fee-neg">−0.0019%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">英镑/美元</td><td>GBP/USD</td><td class="fee-neg">−0.002%</td><td class="fee-neg">−0.0007%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">纽元/瑞郎</td><td>NZD/CHF</td><td class="fee-free">＋0.0084%</td><td class="fee-neg">−0.0145%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">纽元/日元</td><td>NZD/JPY</td><td class="fee-free">＋0.015%</td><td class="fee-neg">−0.0204%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">纽元/美元</td><td>NZD/USD</td><td class="fee-neg">−0.0028%</td><td class="fee-neg">−0.0028%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">美元/加元</td><td>USD/CAD</td><td class="fee-neg">−0.0014%</td><td class="fee-neg">−0.0041%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">美元/瑞郎</td><td>USD/CHF</td><td class="fee-free">＋0.0098%</td><td class="fee-neg">−0.0128%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">美元/离岸人民币</td><td>USD/CNH</td><td class="fee-neg">−0.0002%</td><td class="fee-neg">−0.0181%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">美元/港元</td><td>USD/HKD</td><td class="fee-neg">−0.0069%</td><td class="fee-neg">−0.0097%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">美元/日元</td><td>USD/JPY</td><td class="fee-free">＋0.0135%</td><td class="fee-neg">−0.0161%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">美元/新加坡元</td><td>USD/SGD</td><td class="fee-free">＋0.0036%</td><td class="fee-neg">−0.0066%</td><td>周三</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <ul class="fee-notes">
+            <li>外汇三倍利息日为周三。</li>
+            <li>隔夜利息随基准利率与银行间掉期市场波动，实时费率以交易终端「品种规格」面板展示为准。</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ======== 贵金属 ======== -->
+      <div class="fee-panel" data-fee-panel="metal">
+        <div class="fee-panel-head">
+          <div>
+            <h2>贵金属</h2>
+            <p>黄金与白银，以美元计价；点差为近 7 日均值，手续费按名义价值的固定费率收取、开平各计一次。</p>
+          </div>
+        </div>
+        <div class="fee-chips">
+          <span class="fee-chip fee-chip--green">2 个品种</span>
+          <span class="fee-chip fee-chip--green">0 平台费</span>
+          <span class="fee-chip">手续费每手固定</span>
+        </div>
+        <div class="fee-block">
+          <div class="fee-block-head"><h3>点差与手续费</h3><span>点差按最小报价单位（点）计 · 手续费为占合约名义价值的单边费率</span></div>
+          <div class="fee-table-wrap">
+            <table class="fee-table">
+              <thead>
+                <tr><th>品种</th><th>代码</th><th>点差（近7日均值）</th><th>开仓手续费（每手）</th><th>平仓手续费（每手）</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="fee-strong">黄金</td><td>XAU/USD</td><td class="fee-hl">18 点</td><td class="fee-hl">0.0021%</td><td class="fee-hl">0.0021%</td></tr>
+                <tr><td class="fee-strong">白银</td><td>XAG/USD</td><td class="fee-hl">160 点</td><td class="fee-hl">0.0064%</td><td class="fee-hl">0.0064%</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <ul class="fee-notes">
+            <li>重要新闻发布、市场开盘收盘与流动性稀薄时段，点差可能临时扩大。</li>
+          </ul>
+        </div>
+        <div class="fee-block">
+          <div class="fee-block-head"><h3>隔夜利息</h3><span>隔夜利息 = 名义价值 × 每日费率 × 天数</span></div>
+          <div class="fee-table-wrap">
+            <table class="fee-table">
+              <thead>
+                <tr><th>品种</th><th>代码</th><th>多头（每日）</th><th>空头（每日）</th><th>三倍利息日</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="fee-strong">黄金</td><td>XAU/USD</td><td class="fee-neg">−0.0042%</td><td class="fee-free">＋0.0018%</td><td>周三</td></tr>
+                <tr><td class="fee-strong">白银</td><td>XAG/USD</td><td class="fee-neg">−0.0061%</td><td class="fee-free">＋0.0042%</td><td>周三</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <ul class="fee-notes">
+            <li>贵金属三倍利息日为周三。</li>
+            <li>隔夜利息随基准利率与银行间掉期市场波动，实时费率以交易终端「品种规格」面板展示为准。</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ======== 能源 ======== -->
+      <div class="fee-panel" data-fee-panel="energy">
+        <div class="fee-panel-head">
+          <div>
+            <h2>能源</h2>
+            <p>布伦特与 WTI 原油，以美元计价；点差为近 7 日均值，手续费按名义价值的固定费率收取、开平各计一次。</p>
+          </div>
+        </div>
+        <div class="fee-chips">
+          <span class="fee-chip fee-chip--green">2 个品种</span>
+          <span class="fee-chip fee-chip--green">0 平台费</span>
+          <span class="fee-chip">手续费每手固定</span>
+        </div>
+        <div class="fee-block">
+          <div class="fee-block-head"><h3>点差与手续费</h3><span>点差按最小报价单位（点）计 · 手续费为占合约名义价值的单边费率</span></div>
+          <div class="fee-table-wrap">
+            <table class="fee-table">
+              <thead>
+                <tr><th>品种</th><th>代码</th><th>点差（近7日均值）</th><th>开仓手续费（每手）</th><th>平仓手续费（每手）</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="fee-strong">布伦特原油</td><td>XBR/USD</td><td class="fee-hl">16 点</td><td class="fee-hl">0.0263%</td><td class="fee-hl">0.0263%</td></tr>
+                <tr><td class="fee-strong">WTI 原油</td><td>XTI/USD</td><td class="fee-hl">17 点</td><td class="fee-hl">0.0278%</td><td class="fee-hl">0.0278%</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <ul class="fee-notes">
+            <li>重要新闻发布、市场开盘收盘与流动性稀薄时段，点差可能临时扩大。</li>
+          </ul>
+        </div>
+        <div class="fee-block">
+          <div class="fee-block-head"><h3>隔夜利息</h3><span>隔夜利息 = 名义价值 × 每日费率 × 天数</span></div>
+          <div class="fee-table-wrap">
+            <table class="fee-table">
+              <thead>
+                <tr><th>品种</th><th>代码</th><th>多头（每日）</th><th>空头（每日）</th><th>三倍利息日</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="fee-strong">布伦特原油</td><td>XBR/USD</td><td class="fee-neg">−0.0052%</td><td class="fee-neg">−0.0155%</td><td>周五</td></tr>
+                <tr><td class="fee-strong">WTI 原油</td><td>XTI/USD</td><td class="fee-neg">−0.0055%</td><td class="fee-neg">−0.0164%</td><td>周五</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <ul class="fee-notes">
+            <li>能源三倍利息日为周五。</li>
+            <li>隔夜利息随基准利率与银行间掉期市场波动，实时费率以交易终端「品种规格」面板展示为准。</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ======== 指数 ======== -->
+      <div class="fee-panel" data-fee-panel="index">
+        <div class="fee-panel-head">
+          <div>
+            <h2>指数</h2>
+            <p>全球主要股指，以指数点计价；点差为近 7 日均值，手续费按名义价值的固定费率收取、开平各计一次。</p>
+          </div>
+        </div>
+        <div class="fee-chips">
+          <span class="fee-chip fee-chip--green">6 个指数</span>
+          <span class="fee-chip fee-chip--green">0 平台费</span>
+          <span class="fee-chip">手续费每手固定</span>
+        </div>
+        <div class="fee-block">
+          <div class="fee-block-head"><h3>点差与手续费</h3><span>点差按最小报价单位（点）计 · 手续费为占合约名义价值的单边费率</span></div>
+          <div class="fee-table-wrap">
+            <table class="fee-table">
+              <thead>
+                <tr><th>品种</th><th>代码</th><th>点差（近7日均值）</th><th>开仓手续费（每手）</th><th>平仓手续费（每手）</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="fee-strong">香港恒生 50</td><td>HK50</td><td class="fee-hl">609 点</td><td class="fee-hl">0.0107%</td><td class="fee-hl">0.0107%</td></tr>
+                <tr><td class="fee-strong">日经 225</td><td>JPN225</td><td class="fee-hl">1327 点</td><td class="fee-hl">0.0002%</td><td class="fee-hl">0.0002%</td></tr>
+                <tr><td class="fee-strong">纳斯达克 100</td><td>NAS100</td><td class="fee-hl">112 点</td><td class="fee-hl">0.0011%</td><td class="fee-hl">0.0011%</td></tr>
+                <tr><td class="fee-strong">英国富时 100</td><td>UK100</td><td class="fee-hl">99 点</td><td class="fee-hl">0.0067%</td><td class="fee-hl">0.0067%</td></tr>
+                <tr><td class="fee-strong">道琼斯 30</td><td>US30</td><td class="fee-hl">234 点</td><td class="fee-hl">0.0011%</td><td class="fee-hl">0.0011%</td></tr>
+                <tr><td class="fee-strong">标普 500</td><td>USA500</td><td class="fee-hl">41 点</td><td class="fee-hl">0.0007%</td><td class="fee-hl">0.0007%</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <ul class="fee-notes">
+            <li>重要新闻发布、市场开盘收盘与流动性稀薄时段，点差可能临时扩大。</li>
+          </ul>
+        </div>
+        <div class="fee-block">
+          <div class="fee-block-head"><h3>隔夜利息</h3><span>隔夜利息 = 名义价值 × 每日费率 × 天数</span></div>
+          <div class="fee-table-wrap">
+            <table class="fee-table">
+              <thead>
+                <tr><th>品种</th><th>代码</th><th>多头（每日）</th><th>空头（每日）</th><th>三倍利息日</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="fee-strong">香港恒生 50</td><td>HK50</td><td class="fee-neg">−0.0151%</td><td class="fee-free">＋0.0054%</td><td>周五</td></tr>
+                <tr><td class="fee-strong">日经 225</td><td>JPN225</td><td class="fee-neg">−0.0032%</td><td class="fee-neg">−0.0035%</td><td>周五</td></tr>
+                <tr><td class="fee-strong">纳斯达克 100</td><td>NAS100</td><td class="fee-neg">−0.011%</td><td class="fee-free">＋0.0041%</td><td>周五</td></tr>
+                <tr><td class="fee-strong">英国富时 100</td><td>UK100</td><td class="fee-neg">−0.014%</td><td class="fee-free">＋0.0047%</td><td>周五</td></tr>
+                <tr><td class="fee-strong">道琼斯 30</td><td>US30</td><td class="fee-neg">−0.0144%</td><td class="fee-free">＋0.0054%</td><td>周五</td></tr>
+                <tr><td class="fee-strong">标普 500</td><td>USA500</td><td class="fee-neg">−0.0116%</td><td class="fee-free">＋0.0034%</td><td>周五</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <ul class="fee-notes">
+            <li>指数三倍利息日为周五。</li>
+            <li>隔夜利息随基准利率与银行间掉期市场波动，实时费率以交易终端「品种规格」面板展示为准。</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- ======== 加密资产 ======== -->
+      <div class="fee-panel" data-fee-panel="crypto">
+        <div class="fee-panel-head">
+          <div>
+            <h2>加密资产</h2>
+            <p>主流加密资产，全天候交易；点差为近 7 日均值，手续费按名义价值的固定费率收取。</p>
+          </div>
+        </div>
+        <div class="fee-chips">
+          <span class="fee-chip fee-chip--green">7 个币种</span>
+          <span class="fee-chip fee-chip--green">0 平台费</span>
+          <span class="fee-chip">手续费每手固定</span>
+        </div>
+        <div class="fee-block">
+          <div class="fee-block-head"><h3>点差与手续费</h3><span>点差按最小报价单位（点）计 · 手续费为占合约名义价值的单边费率</span></div>
+          <div class="fee-table-wrap">
+            <table class="fee-table">
+              <thead>
+                <tr><th>品种</th><th>代码</th><th>点差（近7日均值）</th><th>开仓手续费（每手）</th><th>平仓手续费（每手）</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="fee-strong">比特币现金</td><td>BCH/USD</td><td class="fee-hl">62 点</td><td class="fee-hl">0.0853%</td><td class="fee-hl">0.0853%</td></tr>
+                <tr><td class="fee-strong">比特币</td><td>BTC/USD</td><td class="fee-hl">255 点</td><td class="fee-hl">0.0641%</td><td class="fee-hl">0.0641%</td></tr>
+                <tr><td class="fee-strong">波卡</td><td>DOT/USD</td><td class="fee-hl">147 点</td><td class="fee-hl">0.5%</td><td class="fee-hl">0.5%</td></tr>
+                <tr><td class="fee-strong">以太坊</td><td>ETH/USD</td><td class="fee-hl">61 点</td><td class="fee-hl">0.1006%</td><td class="fee-hl">0.1006%</td></tr>
+                <tr><td class="fee-strong">Chainlink</td><td>LNK/USD</td><td class="fee-hl">37 点</td><td class="fee-hl">0.2629%</td><td class="fee-hl">0.2629%</td></tr>
+                <tr><td class="fee-strong">莱特币</td><td>LTC/USD</td><td class="fee-hl">153 点</td><td class="fee-hl">0.7512%</td><td class="fee-hl">0.7512%</td></tr>
+                <tr><td class="fee-strong">瑞波币</td><td>XRP/USD</td><td class="fee-hl">31 点</td><td class="fee-hl">1.3442%</td><td class="fee-hl">1.3442%</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <ul class="fee-notes">
+            <li>重要新闻发布、市场开盘收盘与流动性稀薄时段，点差可能临时扩大。</li>
+          </ul>
+        </div>
+        <div class="fee-block">
+          <div class="fee-block-head"><h3>隔夜利息</h3><span>隔夜利息 = 名义价值 × 每日费率 × 天数</span></div>
+          <div class="fee-table-wrap">
+            <table class="fee-table">
+              <thead>
+                <tr><th>品种</th><th>代码</th><th>多头（每日）</th><th>空头（每日）</th><th>三倍利息日</th></tr>
+              </thead>
+              <tbody>
+                <tr><td class="fee-strong">比特币现金</td><td>BCH/USD</td><td class="fee-neg">−0.0333%</td><td class="fee-neg">−0.0333%</td><td>无（7×24）</td></tr>
+                <tr><td class="fee-strong">比特币</td><td>BTC/USD</td><td class="fee-neg">−0.0154%</td><td class="fee-neg">−0.0154%</td><td>无（7×24）</td></tr>
+                <tr><td class="fee-strong">波卡</td><td>DOT/USD</td><td class="fee-neg">−0.1799%</td><td class="fee-neg">−0.1799%</td><td>无（7×24）</td></tr>
+                <tr><td class="fee-strong">以太坊</td><td>ETH/USD</td><td class="fee-neg">−0.0305%</td><td class="fee-neg">−0.0305%</td><td>无（7×24）</td></tr>
+                <tr><td class="fee-strong">Chainlink</td><td>LNK/USD</td><td class="fee-neg">−0.0222%</td><td class="fee-neg">−0.0222%</td><td>无（7×24）</td></tr>
+                <tr><td class="fee-strong">莱特币</td><td>LTC/USD</td><td class="fee-neg">−0.0534%</td><td class="fee-neg">−0.0534%</td><td>无（7×24）</td></tr>
+                <tr><td class="fee-strong">瑞波币</td><td>XRP/USD</td><td class="fee-neg">−0.0173%</td><td class="fee-neg">−0.0173%</td><td>无（7×24）</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <ul class="fee-notes">
+            <li>加密资产 7×24 交易，不设三倍利息日。</li>
+            <li>隔夜利息随基准利率与银行间掉期市场波动，实时费率以交易终端「品种规格」面板展示为准。</li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="fee-footnote">* 本页费率为既定公布口径，仅供参考；最终费率以交易终端与法律文件的披露为准。CFD 与跟单交易存在风险，可能损失全部本金。</p>
+    </section>
+
+    <section class="page-shell" aria-label="名词解释">
+      <div class="fee-panel-head">
+        <div>
+          <h2>名词解释</h2>
+          <p>理解费率页常用术语，下单前先弄清每一项成本的含义。</p>
+        </div>
+      </div>
+      <div class="fee-glossary">
+        <div class="fee-term"><b>点差</b><p>买入价与卖出价之间的差额，是 CFD 交易的主要成本，已包含在报价中。</p></div>
+        <div class="fee-term"><b>点差（近7日均值）</b><p>表中点差为近 7 个交易日的平均值，按各品种最小报价单位（点）计；流动性稀薄时段可能临时扩大。</p></div>
+        <div class="fee-term"><b>手续费</b><p>按占合约名义价值的固定费率收取，开仓与平仓各计一次；GinX 不收取任何额外平台费。</p></div>
+        <div class="fee-term"><b>隔夜利息</b><p>持仓过夜产生的掉期费用或收益，方向与利率差有关，多空费率不同。</p></div>
+        <div class="fee-term"><b>三倍利息日</b><p>为补足周末休市两天的利息，外汇与贵金属在周三、能源与指数在周五按三倍计收。</p></div>
+      </div>
+    </section>
+
+    <section class="page-shell" aria-label="费率常见问题">
+      <div class="fee-panel-head">
+        <div>
+          <h2>常见问题</h2>
+          <p>关于费率的常见疑问，可联系客服。</p>
+        </div>
+      </div>
+      <div class="fee-faq">
+        <details>
+          <summary>GinX 如何收取手续费？</summary>
+          <p>按占合约名义价值的固定费率收取，开仓与平仓各计一次（见各品种表格）；此外成本只有点差，不收取任何平台费。</p>
+        </details>
+        <details>
+          <summary>为什么周三的隔夜利息是三倍？</summary>
+          <p>外汇与贵金属市场周末休市，但银行间利率照常计息两天，因此这两类品种在周三按三倍计收以补足周末；能源与指数的三倍利息日为周五；加密资产 7×24 交易，不设三倍日。</p>
+        </details>
+        <details>
+          <summary>在哪里查看实时费率？</summary>
+          <p>交易终端的「品种规格」面板实时展示点差与隔夜利息；本页为既定公布口径，仅用于了解费率结构。</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="page-shell" aria-label="费率页底部行动">
+      <div class="fee-bottom-cta">
+        <div>
+          <h2>对费率还有疑问？</h2>
+          <p>客服在线解答，或先阅读法律文件了解完整收费条款。</p>
+        </div>
+        <div class="hero-actions" style="margin-top:0">
+          <a class="btn primary" href="index.html#contact">联系客服</a>
+          <a class="btn ghost" href="index.html#faq">查看法律文件</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+<footer class="reg-footer">
+      <div class="shell">
+        <div class="footer-top">
+          <div class="footer-contact">
+            <h2 class="footer-contact-title">联系我们</h2>
+            <div class="footer-contact-rows">
+              <a class="footer-contact-item" href="mailto:info@ginx.com"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h18a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1Zm1 2.2V17h16V7.2l-8 5-8-5Zm.8-.2 7.2 4.5L19.2 7H4.8Z"></path></svg>info@ginx.com</a>
+              <a class="footer-contact-item" href="mailto:support@ginx.com"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7v3.6l-1.7 2.9A1 1 0 0 0 4.2 17H8a4 4 0 0 0 8 0h3.8a1 1 0 0 0 .9-1.5L19 12.6V9a7 7 0 0 0-7-7Zm2 15h-4a2 2 0 0 0 4 0Z"></path></svg>support@ginx.com</a>
+              <a class="footer-contact-item" href="index.html#faq"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h8l4 4v16H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm7 1.5V7h3.5L13 3.5ZM8 12h8v1.6H8V12Zm0 3.4h8V17H8v-1.6Z"></path></svg>法律文件</a>
+              <button type="button" class="footer-fsc" onclick="document.getElementById('fsc-lightbox').classList.add('open')">
+                <img src="assets/fsc-cert.png" alt="毛里求斯 FSC 许可证">
+                <span class="footer-fsc-text"><strong>FSC 持牌</strong>毛里求斯金融服务委员会</span>
+              </button>
+            </div>
+            <link rel="stylesheet" href="css/footer-social.css?v=20260916a">
+            <div class="footer-socials" aria-label="GinX 官方社交频道">
+              <div class="footer-social-dd">
+                <button type="button" class="footer-social-btn" aria-haspopup="true" aria-expanded="false" aria-label="GinX 的 X 账号" onclick="toggleSocialDd(this)"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.9 3h3.3l-7.2 8.2L23.5 21h-6.7l-5.2-6.4L5.6 21H2.3l7.7-8.8L1.8 3h6.9l4.7 5.8L18.9 3Zm-1.2 16.3h1.8L7.7 4.6H5.8l11.9 14.7Z"></path></svg></button>
+                <div class="footer-social-menu" role="menu">
+                  <a href="https://x.com/GinX_global" target="_blank" rel="noopener noreferrer" role="menuitem">GinX 英文官方频道</a>
+                  <a href="https://x.com/GinX_CN" target="_blank" rel="noopener noreferrer" role="menuitem">GinX 中文官方频道</a>
+                </div>
+              </div>
+              <a href="https://www.instagram.com/ginfx_en/" target="_blank" rel="noopener noreferrer" aria-label="GinX 的 Instagram 账号"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.2 2h9.6A5.2 5.2 0 0 1 22 7.2v9.6a5.2 5.2 0 0 1-5.2 5.2H7.2A5.2 5.2 0 0 1 2 16.8V7.2A5.2 5.2 0 0 1 7.2 2Zm0 2.2a3 3 0 0 0-3 3v9.6a3 3 0 0 0 3 3h9.6a3 3 0 0 0 3-3V7.2a3 3 0 0 0-3-3H7.2ZM12 7.1A4.9 4.9 0 1 1 12 17a4.9 4.9 0 0 1 0-9.9Zm0 2.2a2.7 2.7 0 1 0 0 5.4 2.7 2.7 0 0 0 0-5.4Zm5.2-2.9a1.1 1.1 0 1 1 0 2.2 1.1 1.1 0 0 1 0-2.2Z"></path></svg></a>
+              <div class="footer-social-dd">
+                <button type="button" class="footer-social-btn" aria-haspopup="true" aria-expanded="false" aria-label="GinX 的 Telegram 账号" onclick="toggleSocialDd(this)"><svg viewBox="0 0 448 512" aria-hidden="true"><path d="M446.7 98.6l-67.6 318.8c-5.1 22.5-18.4 28.1-37.3 17.5l-103-75.9-49.7 47.8c-5.5 5.5-10.1 10.1-20.7 10.1l7.4-104.9 190.9-172.5c8.3-7.4-1.8-11.5-12.9-4.1L117.8 284 16.2 252.2c-22.1-6.9-22.5-22.1 4.6-32.7L418.2 66.4c18.4-6.9 34.5 4.1 28.5 32.2z"></path></svg></button>
+                <div class="footer-social-menu" role="menu">
+                  <a href="https://t.me/ginxen/1" target="_blank" rel="noopener noreferrer" role="menuitem">GinX 英文社区群</a>
+                  <a href="https://t.me/ginxcn/1" target="_blank" rel="noopener noreferrer" role="menuitem">GinX 中文交流群</a>
+                  <a href="https://t.me/ginxcommunity" target="_blank" rel="noopener noreferrer" role="menuitem">GinX 社区</a>
+                  <a href="https://t.me/GinfxNigeria" target="_blank" rel="noopener noreferrer" role="menuitem">GinFX 尼日利亚线上交易社区</a>
+                </div>
+              </div>
+              <a href="https://www.youtube.com/@GinFX_official" target="_blank" rel="noopener noreferrer" aria-label="GinX 的 YouTube 账号"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.3 7.2a3 3 0 0 0-2.1-2.1C19.4 4.6 12 4.6 12 4.6s-7.4 0-9.2.5A3 3 0 0 0 .7 7.2 31.2 31.2 0 0 0 .2 12c0 1.7.2 3.3.5 4.8a3 3 0 0 0 2.1 2.1c1.8.5 9.2.5 9.2.5s7.4 0 9.2-.5a3 3 0 0 0 2.1-2.1c.3-1.5.5-3.1.5-4.8s-.2-3.3-.5-4.8ZM9.8 15.3V8.7l6.2 3.3-6.2 3.3Z"></path></svg></a>
+              <a href="https://www.tiktok.com/@ginfxofficial" target="_blank" rel="noopener noreferrer" aria-label="GinX 的 TikTok 账号"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.4 2.5c.3 2.6 2 4.6 4.6 4.8v3.4a8 8 0 0 1-4.5-1.4v6.5c0 4.3-3.2 7.2-7.1 6.7-4.8-.6-6.8-6.3-3.8-9.7a6.2 6.2 0 0 1 5.4-2v3.6c-.5-.2-1-.2-1.6-.1-2.2.4-2.8 3.4-.9 4.6 1.5.9 3.8.1 3.8-2.6V2.5h4.1Z"></path></svg></a>
+            </div>
+            <script src="js/footer-social-dd.js?v=20260916a"></script>
+          </div>
+          <div class="footer-divider" aria-hidden="true"></div>
+          <div class="footer-columns" aria-label="页脚导航">
+            <div class="footer-column">
+              <h3>交易</h3>
+              <a href="index.html#products">概览</a>
+              <a href="index.html#products">全部交易产品</a>
+              <a href="index.html#market">市场</a>
+              <a href="index.html#download">交易账户</a>
+              <a href="fee.html">交易费用</a>
+              <a href="index.html#download">充值与提现</a>
+            </div>
+            <div class="footer-column">
+              <h3>平台</h3>
+              <a href="index.html#download">概览</a>
+              <a href="index.html#download">Gin MiniFX</a>
+              <a href="index.html#download">桌面端访问</a>
+              <a href="index.html#download">iOS</a>
+              <a href="index.html#download">Android</a>
+              <a href="copy-trading.html">跟单交易</a>
+              <a href="index.html#demo">模拟交易</a>
+            </div>
+            <div class="footer-column">
+              <h3>学院</h3>
+              <a href="index.html#start">概览</a>
+              <a href="index.html#products">行情滚动条</a>
+              <a href="index.html#start">课程</a>
+              <a href="index.html#market">实盘</a>
+              <a href="index.html#faq">术语</a>
+              <a href="index.html#faq">常见问题</a>
+            </div>
+            <div class="footer-column">
+              <h3>市场分析</h3>
+              <a href="index.html#market">概览</a>
+              <a href="index.html#market">每日简报</a>
+              <a href="index.html#market">新闻与分析</a>
+              <a href="index.html#market">客户情绪</a>
+              <a href="index.html#market">交易信号</a>
+              <a href="index.html#market">通知</a>
+            </div>
+            <div class="footer-column">
+              <h3>合作伙伴计划</h3>
+              <a href="index.html#partners">概览</a>
+              <a href="invite-friends.html">邀请好友</a>
+              <a href="partners-ib.html">IB</a>
+              <a href="index.html#partners">交易大师计划</a>
+              <a href="activities.html">活动与奖励</a>
+            </div>
+            <div class="footer-column">
+              <h3>关于</h3>
+              <a href="index.html#impact">概览</a>
+              <a href="index.html#products">为什么选择 GinX？</a>
+              <a href="index.html#demo">社区网络</a>
+              <a href="index.html#safety">资金安全</a>
+              <a href="index.html#impact">影响力联盟</a>
+              <a href="activities.html">活动</a>
+            </div>
+          </div>
+        </div>
+
+        <details class="footer-disclosures" hidden="">
+          <summary class="footer-disclosures-toggle">
+            <span class="footer-disclosures-label"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2 1 21h22L12 2Zm0 5.6 7.5 12.9h-15L12 7.6ZM11 10v5h2v-5h-2Zm0 6.5V18h2v-1.5h-2Z"></path></svg>风险警告与披露</span>
+            <svg class="footer-disclosures-caret" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5H7Z"></path></svg>
+          </summary>
+          <div class="footer-regulatory">
+          <p>GinX, Gin MiniFX and related services may be offered by one or more group, affiliated or service entities. The contracting entity, registration details, licence references, payment terms and client-money arrangements should be reviewed in the applicable 法律文件 and account-opening flow before any live trading activity.</p>
+          <p>GinX provides general product information, education content, market commentary and community access pathways. The content on this website should not be treated as investment advice, a personal recommendation or an offer to residents of any jurisdiction where such access would be contrary to local law or regulation.</p>
+          <p>*不代表保证表现。CFD、外汇、加密相关工具与跟单策略存在重大风险，可能并不适合所有投资者。</p>
+
+          <h3>RISK WARNING :</h3>
+          <p>Trading derivatives carries significant risks. You may lose some or all of your invested capital. When acquiring derivative products, you may have no entitlement, right or obligation to the underlying financial assets. Past performance is not an indication of future performance and demo results use virtual funds only.</p>
+          <p>The information on this website is general in nature and does not take into account your personal objectives, financial circumstances or needs. Before making any trading decision, consider whether the product is suitable for you and seek independent advice where necessary. Please read the applicable <a href="index.html#faq">法律文件</a> 并确保你充分理解相关风险。</p>
+
+          <h3>REGIONAL RESTRICTIONS :</h3>
+          <p>产品 and services are not intended for distribution to any person in any country or jurisdiction where such distribution or use would be contrary to local law or regulation, or where GinX is not permitted to provide access. Users are responsible for confirming local eligibility before opening an account or trading.</p>
+          <ul class="footer-entity-list">
+            <li>GinX 与 Gin MiniFX 可能根据产品可用性和用户所在地，通过不同实体、服务提供商或渠道安排运营。</li>
+            <li>在进行实盘交易或入金前，应在适用的账户文件中核实注册地址、许可证信息与支付服务详情。</li>
+            <li>如果服务提供商负责支付、技术、社区或活动服务，该提供商可能不提供受监管的金融产品或交易服务。</li>
+          </ul>
+        </div>
+        </details>
+        <script src="js/footer-risk.js?v=20260916a"></script>
+
+        <nav class="footer-legal-links" aria-label="法律与政策链接" hidden="" style="display:none">
+          <a href="index.html#faq">法律文件</a>
+          <a href="index.html#contact">数据保护声明</a>
+          <a href="index.html#contact">隐私政策</a>
+          <a href="index.html#safety">反洗钱政策</a>
+          <a href="index.html#contact">Cookie 政策</a>
+          <a href="index.html#contact">条款与条件</a>
+        </nav>
+
+        <div class="footer-baseline">
+          <div class="footer-baseline-left">
+            <img class="footer-baseline-logo" src="assets/footer-baseline-logo.png" alt="Gin Growth Infinity">
+            <span class="footer-baseline-copy">版权所有 © 2026 GinX。保留所有权利。</span>
+            <a class="footer-baseline-link footer-risk-trigger">风险警告与披露</a>
+            <a class="footer-baseline-link" href="index.html#contact">隐私政策</a>
+            <a class="footer-baseline-link" href="index.html#contact">条款与条件</a>
+          </div>
+          <button class="footer-lang" type="button" aria-label="语言：简体中文">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="1.6" d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 0c2.5 2.4 3.8 5.6 3.8 9s-1.3 6.6-3.8 9c-2.5-2.4-3.8-5.6-3.8-9S9.5 5.4 12 3ZM3.5 12h17"></path></svg>
+            <span>中</span>
+            <svg class="footer-lang-caret" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 10l5 5 5-5H7Z"></path></svg>
+          </button>
+        </div>
+      </div>
+    </footer>
+
+
+  </div>
+
+  <script src="js/nav-height.js?v=20260916a"></script>
+  <script src="js/fee-page.js?v=20260920b"></script>
+
+  <div id="fsc-lightbox" onclick="if(event.target===this||event.target.classList.contains('fsc-close'))this.classList.remove('open')">
+    <button type="button" class="fsc-close" aria-label="关闭">×</button>
+    <img src="assets/fsc-lightbox.jpg" alt="毛里求斯 FSC 证券交易许可证">
+  </div>
+  <link rel="stylesheet" href="css/fsc-footer.css?v=20260916a">
+
+
+</body></html>

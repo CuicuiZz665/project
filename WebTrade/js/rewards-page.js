@@ -184,7 +184,7 @@ const tabButtons = document.querySelectorAll("[data-tab]");
       if (wornBox) {
         wornBox.classList.toggle("empty", !wornBadge);
         wornBox.innerHTML = wornBadge
-          ? '<span class="ww-medal">' + (badgeIcons[wornBadge.icon] || "") + '</span><span class="ww-txt"><small>佩戴中徽章</small><b>' + wornBadge.name + '</b></span>'
+          ? '<span class="ww-medal">' + (badgeIcons[wornBadge.icon] || "") + '</span><span class="ww-txt"><small>佩戴中徽章</small><b>' + wornBadge.name + '</b></span><span class="ww-tip">' + wornBadge.name + '</span>'
           : "";
       }
     }

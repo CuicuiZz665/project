@@ -19,10 +19,11 @@ WebTrade/
 |   |-- fonts.css           # Manrope @font-face（woff2 为抓包残留 GUID，本地 404 → 回退 Inter/Helvetica）
 |   |-- rewards.css         # ★ 奖励页主样式（hero/任务卡/福利中心/徽章墙/弹窗）
 |   `-- footer-colors.css / footer-social.css / fsc-footer.css
-|-- js/  (8 个)             # rewards.html 用 7 个 + i18n.js 全站共用
+|-- js/  (9 个)             # rewards.html 用 7 个 + i18n.js / academy-demo-flow.js 离线包外壳注入
 |   |-- rewards-page.js     # ★ 主 tab 切换 + 福利中心（优惠券/积分商城/徽章 三子面板、计数、佩戴、使用弹窗、toast）
 |   |-- checkin-points.js   # ★ 积分记录逻辑：任务卡光环、每周签到、积分余额、补签（消耗 10 积分）、新手礼包状态机
 |   |-- i18n.js             # 全站共用多语言引擎（见下文 i18n 体系）
+|   |-- academy-demo-flow.js # academy.html 外壳注入：全页「开设模拟账户」入口（hero ghost/课程弹窗，不注入任何可见元素）统一接弹窗（版本B文案）→ localStorage 记状态；点击恒弹窗不跳转、不改按钮文案；注入节点后须调 I18N.reapply() 补翻（observer 随解包失效）（当前 ?v=20261005f，改后 bump academy.html 外壳引用；文案词条在 i18n/*/academy.json）
 |   `-- reveal-motion.js / hero-confetti.js / nav-height.js / footer-social-dd.js / footer-risk.js
 |-- assets/  (23 个, 15MB)  # rewards.html 的图片 + 离线包外链的页面级资源（three.min.js / site-motion.js / orange-black-subpages.css / ginfx 系列图等）
 |-- i18n/                   # en/ zh/ 词条，文件名与现存页面对应（详见下文 i18n 体系）
@@ -55,7 +56,7 @@ WebTrade/
 
 ## 约定
 
-- 改 css/js 后**必须同步 bump `rewards.html` 里对应 `?v=`**（rewards.css 当前 `20260923p`），否则浏览器缓存会跑旧代码。
+- 改 css/js 后**必须同步 bump `rewards.html` 里对应 `?v=`**（rewards.css 当前 `20261005d`），否则浏览器缓存会跑旧代码。
 - 数据（优惠券/商城/徽章/任务）都是 `rewards-page.js` / `checkin-points.js` 里的内存 mock，无接口。
 - 无自动化测试（本机无 node，语法检查可用 `osascript -l JavaScript` 的 `new Function(code)`）。改 rewards 后浏览器过一遍：控制台无报错；两个主 tab 与三个福利子标签切换；签到/补签/佩戴/使用弹窗各走一遍；EN|中文 切换正常。
 - python http.server 无缓存头，改完 HTML/JSON 后浏览器要硬刷新（Cmd+Shift+R）或地址加 `?cb=随机数`。

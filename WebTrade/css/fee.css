@@ -1,0 +1,193 @@
+/* ============ FEE OVERVIEW — 费率总览（GinX 风格，参考 Bitget 费率页结构） ============ */
+
+    /* ---------- HERO ---------- */
+    main .fee-hero{
+      display:grid; grid-template-columns:minmax(0,1fr) minmax(300px,380px);
+      align-items:center; gap:clamp(24px,4vw,60px);
+      width:100vw; max-width:none;
+      margin-left:calc(50% - 50vw); margin-right:calc(50% - 50vw);
+      margin-top:calc(-1 * var(--nav-h, 72px));
+      min-height:58vh;
+      padding:calc(var(--nav-h, 72px) + clamp(20px,3.4vh,44px)) max(24px, calc((100vw - 1180px) / 2)) clamp(28px,4.4vh,52px) max(24px, calc((100vw - 1180px) / 2));
+      background:
+        linear-gradient(90deg, rgba(6,6,5,.92) 0%, rgba(6,6,5,.66) 34%, rgba(6,6,5,.1) 60%, rgba(6,6,5,0) 80%),
+        url("../assets/fee-hero-banner.png") center right / cover no-repeat,
+        #060605 !important;
+    }
+    main .fee-hero-copy{ max-width:640px; }
+    main .fee-hero h1{
+      margin:0; font-weight:840; font-size:clamp(40px,5.2vw,68px); line-height:1.02;
+      letter-spacing:-.035em; color:#fff !important; text-wrap:balance;
+    }
+    main .fee-hero-sub{ margin:18px 0 0; max-width:520px; font-size:15.5px; line-height:1.7; color:rgba(246,247,251,.62) !important; }
+    main .fee-hero .hero-actions{ margin-top:30px; }
+    main .fee-jump{ display:flex; flex-wrap:wrap; gap:8px; margin-top:26px; }
+    main .fee-jump a{
+      display:inline-flex; align-items:center; gap:7px; padding:7px 14px; border-radius:999px;
+      font-size:12.5px; font-weight:750; color:rgba(246,247,251,.72) !important;
+      background:rgba(255,255,255,.045); border:1px solid rgba(255,255,255,.1);
+      transition:color .2s ease, border-color .2s ease, background .2s ease, transform .2s ease;
+    }
+    main .fee-jump a:hover{ color:#ffcf87 !important; border-color:rgba(255,209,102,.42); background:rgba(247,147,26,.1); transform:translateY(-1px); }
+    main .fee-jump a::before{ content:""; width:5px; height:5px; border-radius:50%; background:linear-gradient(180deg,#ffd777,#f7931a); box-shadow:0 0 7px rgba(247,147,26,.7); }
+
+    /* ---------- HERO 右侧装饰（banner 图承载视觉，奖杯场景隐藏保留，恢复时删掉本行 display:none 即可） ---------- */
+    main .fee-visual{ display:none; }
+    main .fee-trophy-scene{ width:min(100%,410px); height:auto; display:block; overflow:visible; }
+    main .fee-spark{ opacity:.2; }
+    @media (prefers-reduced-motion: no-preference){
+      main .fee-glow{ animation:feeGlowPulse 7s ease-in-out infinite; }
+      main .fee-spark{ animation:feeSparkTwinkle 3.6s ease-in-out infinite; }
+      main .fee-spark--2{ animation-delay:1.2s; }
+      main .fee-spark--3{ animation-delay:2.2s; }
+    }
+    @keyframes feeGlowPulse{ 0%,100%{ opacity:.7; } 50%{ opacity:1; } }
+    @keyframes feeSparkTwinkle{ 0%,100%{ opacity:.12; } 50%{ opacity:.95; } }
+
+    main .fee-chip{
+      display:inline-flex; align-items:center; gap:6px; padding:4px 11px; border-radius:999px;
+      font-size:11px; font-weight:800; letter-spacing:.05em; text-transform:uppercase;
+      color:#ffcf87; background:rgba(247,147,26,.12); border:1px solid rgba(247,147,26,.3);
+    }
+
+    /* ---------- TAB BAR ---------- */
+    main .fee-tabs-row{ padding-top:6px; padding-bottom:6px; }
+    main .fee-tabs-row .tabs{ max-width:100%; overflow-x:auto; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
+    main .fee-tabs-row .tabs::-webkit-scrollbar{ display:none; }
+    main .fee-tabs-row .top-tab{ white-space:nowrap; }
+
+    /* ---------- PANELS ---------- */
+    main .fee-panel{ display:none; padding:6px 0 8px; }
+    main .fee-panel.is-active{ display:block; animation:feePanelIn .35s cubic-bezier(.22,.9,.3,1) both; }
+    @keyframes feePanelIn{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
+    @media (prefers-reduced-motion: reduce){ main .fee-panel.is-active{ animation:none; } }
+
+    main .fee-panel-head{ display:flex; align-items:flex-start; justify-content:space-between; gap:14px; flex-wrap:wrap; margin:22px 0 4px; }
+    main .fee-panel-head h2{ margin:0; font-size:24px; font-weight:900; color:#fff; letter-spacing:-.015em; }
+    main .fee-panel-head p{ margin:7px 0 0; font-size:13px; color:rgba(246,247,251,.55) !important; }
+    main .fee-chips{ display:flex; flex-wrap:wrap; gap:8px; margin:16px 0 4px; }
+    main .fee-chips .fee-chip{ text-transform:none; letter-spacing:0; font-size:12px; padding:6px 13px; }
+    main .fee-chip.fee-chip--green{ color:#8fe6b0; background:rgba(56,199,130,.12); border-color:rgba(96,224,150,.32); }
+
+    /* ---------- BLOCK（每组一张表的标题行） ---------- */
+    main .fee-block{ margin-top:30px; }
+    main .fee-block-head{ display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; margin-bottom:13px; }
+    main .fee-block-head h3{ margin:0; font-size:17px; font-weight:850; color:#fff; letter-spacing:-.01em; }
+    main .fee-block-head span{ font-size:12px; color:rgba(246,247,251,.5) !important; }
+
+    /* ---------- 表格 ---------- */
+    main .fee-table-wrap{
+      overflow-x:auto; border-radius:18px;
+      background:linear-gradient(160deg, rgba(255,255,255,.045), rgba(255,255,255,.012)) !important;
+      border:1px solid rgba(255,255,255,.09) !important;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.045) !important;
+    }
+    main table.fee-table{ width:100%; min-width:620px; border-collapse:collapse; font-size:13.5px; }
+    main .fee-table th{
+      padding:13px 18px; text-align:left; white-space:nowrap;
+      font-size:11px; font-weight:850; letter-spacing:.08em; text-transform:uppercase;
+      color:rgba(246,247,251,.52) !important;
+      background:rgba(10,10,12,.62); border-bottom:1px solid rgba(255,255,255,.1);
+    }
+    main .fee-table td{
+      padding:12px 18px; white-space:nowrap;
+      color:rgba(246,247,251,.78) !important;
+      border-bottom:1px solid rgba(255,255,255,.055);
+      font-variant-numeric:tabular-nums;
+    }
+    main .fee-table tbody tr:last-child td{ border-bottom:0; }
+    main .fee-table tbody tr{ transition:background .16s ease; }
+    main .fee-table tbody tr:hover{ background:rgba(247,147,26,.05); }
+    main .fee-table td.fee-strong{ color:#fff !important; font-weight:800; }
+    main .fee-table td.fee-hl{ color:#ffcf87 !important; font-weight:850; }
+    main .fee-table td.fee-free{ color:#8fe6b0 !important; font-weight:800; }
+    main .fee-table td.fee-neg{ color:#ff9b8e !important; }
+    main .fee-table td .fee-mini{
+      display:inline-block; margin-left:8px; padding:2px 8px; border-radius:999px; vertical-align:1px;
+      font-size:10px; font-weight:850; letter-spacing:.05em;
+      color:#ffcf87; background:rgba(247,147,26,.13); border:1px solid rgba(255,209,102,.32);
+    }
+    main .fee-table tr.is-current td{ background:linear-gradient(90deg, rgba(247,147,26,.12), rgba(247,147,26,.03)); }
+    main .fee-table tr.is-current td:first-child{ box-shadow:inset 3px 0 0 #f7931a; }
+
+    /* ---------- 说明 / 注释 ---------- */
+    main .fee-notes{ margin:14px 0 0; padding:0; list-style:none; }
+    main .fee-notes li{
+      position:relative; padding:3px 0 3px 18px;
+      font-size:12.5px; line-height:1.65; color:rgba(246,247,251,.55) !important;
+    }
+    main .fee-notes li::before{
+      content:""; position:absolute; left:2px; top:.85em; width:7px; height:1.6px; border-radius:2px;
+      background:linear-gradient(90deg,#ffd777,#f7931a);
+    }
+    main .fee-footnote{ margin:26px 0 0; font-size:11.5px; line-height:1.6; color:rgba(246,247,251,.4) !important; }
+
+    /* ---------- 公式 / 说明卡 ---------- */
+    main .fee-formula{
+      display:flex; flex-wrap:wrap; align-items:center; gap:10px 16px;
+      margin:18px 0 4px; padding:16px 20px; border-radius:16px;
+      background:rgba(247,147,26,.08) !important; border:1px dashed rgba(255,209,102,.3) !important;
+    }
+    main .fee-formula b{ font-size:12px; font-weight:850; letter-spacing:.06em; text-transform:uppercase; color:#ffcf87 !important; }
+    main .fee-formula code{
+      font-size:13.5px; font-weight:750; color:#fff !important;
+      font-family:ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+
+    /* ---------- 名词解释 ---------- */
+    main .fee-glossary{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:14px; }
+    main .fee-term{ padding:18px; border-radius:16px;
+      background:linear-gradient(150deg, rgba(255,255,255,.045), rgba(255,255,255,.012)) !important;
+      border:1px solid rgba(255,255,255,.08) !important; box-shadow:inset 0 1px 0 rgba(255,255,255,.045) !important;
+      transition:transform .25s ease, border-color .25s ease, box-shadow .25s ease; }
+    main .fee-term:hover{ transform:translateY(-4px); border-color:rgba(255,209,102,.32) !important; box-shadow:0 18px 44px rgba(247,147,26,.14) !important; }
+    main .fee-term b{ display:flex; align-items:center; gap:8px; font-size:14px; font-weight:850; color:#fff; }
+    main .fee-term b::before{ content:""; flex:none; width:6px; height:6px; border-radius:50%; background:linear-gradient(180deg,#ffd777,#f7931a); box-shadow:0 0 8px rgba(247,147,26,.6); }
+    main .fee-term p{ margin:9px 0 0; font-size:12.5px; line-height:1.6; color:rgba(246,247,251,.55) !important; }
+
+    /* ---------- FAQ ---------- */
+    main .fee-faq{ display:flex; flex-direction:column; gap:10px; }
+    main .fee-faq details{
+      border-radius:16px; padding:0;
+      background:linear-gradient(150deg, rgba(255,255,255,.04), rgba(255,255,255,.012)) !important;
+      border:1px solid rgba(255,255,255,.09) !important;
+      overflow:hidden; transition:border-color .2s ease;
+    }
+    main .fee-faq details[open]{ border-color:rgba(255,209,102,.3) !important; }
+    main .fee-faq summary{
+      display:flex; align-items:center; justify-content:space-between; gap:14px;
+      padding:16px 20px; cursor:pointer; list-style:none;
+      font-size:14.5px; font-weight:800; color:#fff;
+    }
+    main .fee-faq summary::-webkit-details-marker{ display:none; }
+    main .fee-faq summary::after{
+      content:""; flex:none; width:9px; height:9px; margin-top:-4px;
+      border-right:2px solid rgba(246,247,251,.5); border-bottom:2px solid rgba(246,247,251,.5);
+      transform:rotate(45deg); transition:transform .2s ease, border-color .2s ease;
+    }
+    main .fee-faq details[open] summary::after{ transform:rotate(-135deg); margin-top:4px; border-color:#ffcf87; }
+    main .fee-faq details p{ margin:0; padding:0 20px 18px; font-size:13px; line-height:1.7; color:rgba(246,247,251,.58) !important; }
+
+    /* ---------- 底部 CTA ---------- */
+    main .fee-bottom-cta{
+      display:flex; align-items:center; justify-content:space-between; gap:18px; flex-wrap:wrap;
+      margin-top:44px; padding:26px 28px; border-radius:22px;
+      background:
+        radial-gradient(420px 220px at 90% -20%, rgba(247,147,26,.16), transparent 64%),
+        linear-gradient(155deg, rgba(22,22,25,.84), rgba(8,9,12,.94)) !important;
+      border:1px solid rgba(255,255,255,.1) !important;
+      box-shadow:inset 0 1px 0 rgba(255,255,255,.06), 0 26px 66px rgba(0,0,0,.3) !important;
+    }
+    main .fee-bottom-cta h2{ margin:0; font-size:20px; font-weight:880; color:#fff; letter-spacing:-.015em; }
+    main .fee-bottom-cta p{ margin:6px 0 0; font-size:13px; color:rgba(246,247,251,.58) !important; }
+
+    /* ---------- 响应式 ---------- */
+    @media (max-width: 960px){
+      main .fee-hero{ min-height:auto; }
+      main .fee-visual{ display:none; }
+      main .fee-glossary{ grid-template-columns:repeat(2,1fr); }
+    }
+    @media (max-width: 560px){
+      main .fee-glossary{ grid-template-columns:1fr; }
+      main .fee-bottom-cta{ flex-direction:column; align-items:flex-start; }
+    }
