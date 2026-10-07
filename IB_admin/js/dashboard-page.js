@@ -494,11 +494,11 @@
         width: 400,
         destroyOnClose: true
       }, [
-        e("section", { className: "dashboard-config-section", key: "count" }, [
+        e("section", { className: "dashboard-config-section drawer-form-card", key: "count" }, [
           e("div", { className: "dashboard-config-label", key: "label" }, "展示数量"),
           e(Segmented, { value: chartCount, onChange: setTrendDisplayCount, options: chartCountOptions, key: "segmented" })
         ]),
-        e("section", { className: "dashboard-config-section", key: "metrics" }, [
+        e("section", { className: "dashboard-config-section drawer-form-card", key: "metrics" }, [
           e("div", { className: "dashboard-config-label", key: "label" }, "展示指标"),
           e("p", { className: "dashboard-config-hint", key: "hint" }, "勾选指标后，可拖动已选项调整图表展示顺序。"),
           e("div", { className: "dashboard-config-list", key: "list" }, trendOptions.map(item => {

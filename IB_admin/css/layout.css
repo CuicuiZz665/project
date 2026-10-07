@@ -136,7 +136,16 @@
 .admin-sider {
   border-right: 1px solid #e9edf2;
   background: #fff !important;
+  /* 侧边栏独立滚动：吸顶占满视口，菜单过长时自身出滚动条，不随内容区拉长页面 */
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
 }
+
+.admin-sider::-webkit-scrollbar { width: 4px; }
+.admin-sider::-webkit-scrollbar-thumb { border-radius: 2px; background: #e4e7ec; }
+.admin-sider::-webkit-scrollbar-track { background: transparent; }
 
 .admin-sider .ant-menu {
   border-inline-end: 0 !important;
@@ -960,6 +969,10 @@
   width: 220px;
 }
 
+.keyword-select {
+  width: 220px;
+}
+
 .select-input {
   width: 160px;
 }
@@ -967,6 +980,7 @@
 .keyword-input.ant-input,
 .keyword-input.ant-input-affix-wrapper,
 .select-input.ant-select-single,
+.keyword-select.ant-select-single,
 .toolbar .ant-btn {
   height: 34px !important;
   min-height: 34px !important;
@@ -982,14 +996,18 @@
   min-height: 0 !important;
 }
 
-.select-input.ant-select-single .ant-select-selector {
+.select-input.ant-select-single .ant-select-selector,
+.keyword-select.ant-select-single .ant-select-selector {
   height: 34px !important;
   min-height: 34px !important;
 }
 
 .select-input.ant-select-single .ant-select-selection-search-input,
 .select-input.ant-select-single .ant-select-selection-item,
-.select-input.ant-select-single .ant-select-selection-placeholder {
+.select-input.ant-select-single .ant-select-selection-placeholder,
+.keyword-select.ant-select-single .ant-select-selection-search-input,
+.keyword-select.ant-select-single .ant-select-selection-item,
+.keyword-select.ant-select-single .ant-select-selection-placeholder {
   height: 32px !important;
   line-height: 32px !important;
 }
@@ -1020,7 +1038,8 @@
 }
 
 .login-log-page .ant-table-tbody > tr > td {
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: break-word;
 }
 
 .cell-link {
@@ -1037,10 +1056,61 @@
 .ua-cell {
   display: inline-block;
   max-width: 100%;
+  vertical-align: bottom;
+}
+
+.cell-ellipsis {
+  display: inline-block;
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   vertical-align: bottom;
+}
+
+.login-log-column-panel {
+  width: 352px;
+}
+
+.login-log-column-panel .column-panel-count {
+  color: #1677ff;
+}
+
+.login-log-column-actions {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.login-log-column-actions .ant-btn {
+  flex: 1;
+}
+
+.login-log-column-list {
+  padding: 12px;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+}
+
+.login-log-column-list-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  color: #8a919c;
+  font-size: 12px;
+}
+
+.login-log-column-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+  max-height: 264px;
+  overflow: auto;
+}
+
+.login-log-column-grid .ant-checkbox-wrapper {
+  margin-inline-start: 0;
 }
 
 .agent-toolbar {
@@ -1049,6 +1119,255 @@
   align-items: center;
   gap: 10px 16px;
 }
+
+.commission-detail-filters .keyword-input {
+  width: 150px;
+}
+
+.commission-detail-filters .select-input {
+  width: 132px;
+}
+
+.commission-detail-filters .keyword-select.ant-select-single {
+  width: 150px;
+}
+
+/* 代理管理各页搜索框改为可搜索下拉后，沿用原输入框宽度 */
+.agent-filter-item .keyword-select.ant-select-single,
+.config-filter-item .keyword-select.ant-select-single {
+  width: 200px;
+}
+
+/* 抽奖配置：奖池配置行 */
+.prize-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.prize-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.prize-row .ant-form-item {
+  margin-bottom: 0;
+}
+
+.prize-thanks {
+  color: #8a919c;
+  font-size: 13px;
+  white-space: nowrap;
+  line-height: 32px;
+}
+
+/* 黑名单 / 白名单：堆叠单元格、竖排更多筛选、分组列设置面板 */
+.stacked-cell {
+  line-height: 1.5;
+}
+
+.stacked-strong {
+  font-weight: 600;
+}
+
+.stacked-muted {
+  color: #8a919c;
+  font-size: 12px;
+}
+
+.blacklist-more-area {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 4px 0 12px;
+}
+
+.group-column-panel {
+  width: 700px;
+}
+
+.group-column-title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.group-column-merge {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 12px 0;
+  padding: 10px 14px;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+}
+
+.group-column-actions {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.group-column-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  max-height: 320px;
+  overflow: auto;
+}
+
+.group-column-card {
+  padding: 12px 14px;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+}
+
+.group-column-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  color: #8a919c;
+  font-size: 12px;
+}
+
+.group-column-checks {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
+}
+
+.group-column-checks .ant-checkbox-wrapper {
+  margin-inline-start: 0;
+}
+
+.restriction-tag {
+  margin-inline-end: 0;
+}
+
+.restriction-modal-label {
+  margin-bottom: 10px;
+}
+
+.restriction-modal-group {
+  display: flex;
+  gap: 4px 18px;
+}
+
+.restriction-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.whitelist-add-input {
+  width: 220px;
+}
+
+.whitelist-add-input.ant-input {
+  height: 34px !important;
+  min-height: 34px !important;
+}
+
+/* 抽屉统一：分组卡片（基本信息/获取条件/语言配置等模块各一块） */
+.drawer-form-card {
+  margin-bottom: 16px;
+  padding: 14px 16px 4px;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.drawer-form-card .form-section-title {
+  margin: 0 0 14px;
+}
+
+.drawer-form-card .ant-form-item {
+  margin-bottom: 14px;
+}
+
+/* 徽章列表：图标、详情抽屉、语言配置表单 */
+.badge-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+  display: block;
+}
+
+.badge-detail-icon {
+  display: flex;
+  justify-content: center;
+  padding: 8px 0 18px;
+}
+
+.badge-detail-icon img {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+}
+
+.badge-lang-title {
+  margin: 6px 0 10px;
+  font-weight: 600;
+}
+
+.badge-lang-card {
+  margin-bottom: 12px;
+  padding: 12px 16px;
+  border: 1px solid #f0f0f0;
+  border-radius: 8px;
+}
+
+.badge-lang-card > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 10px;
+}
+
+.badge-lang-card > div:last-child {
+  margin-bottom: 0;
+}
+
+.badge-icon-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 96px;
+  height: 96px;
+  border: 1px dashed #d9d9d9;
+  border-radius: 8px;
+  cursor: pointer;
+  background: #fafafa;
+}
+
+.badge-icon-upload:hover {
+  border-color: #1677ff;
+}
+
+.badge-icon-upload img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.badge-icon-plus {
+  font-size: 22px;
+  color: #8a919c;
+  line-height: 1;
+}
+
+.badge-icon-text {
+  color: #8a919c;
+  font-size: 12px;
+}
+
+
 
 .agent-filter-row,
 .agent-action-row,
@@ -1440,5 +1759,63 @@
 .commission-rate-item > span {
   font-size: 13px;
   color: #30343b;
+}
+
+/* 佣金配置 - 新增佣金规则页 */
+.commission-create-page {
+  gap: 0;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.commission-create-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--line);
+}
+
+.commission-create-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #30343b;
+}
+
+.commission-create-body {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  padding: 20px;
+}
+
+.commission-create-base {
+  display: flex;
+  align-items: flex-start;
+  gap: 28px;
+  flex-wrap: wrap;
+}
+
+.commission-create-section {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.commission-create-section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.commission-create-section-title {
+  font-weight: 600;
+  font-size: 13px;
+  color: #30343b;
+}
+
+.symbol-off-text {
+  color: #999;
 }
 

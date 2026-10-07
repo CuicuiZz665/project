@@ -1,13 +1,11 @@
 (function registerAgentLevelPage(app) {
   const {
     Button,
-    Col,
+    Drawer,
     Form,
     Input,
     InputNumber,
     Modal,
-    Radio,
-    Row,
     Select,
     Space,
     Switch,
@@ -19,16 +17,7 @@
   const { Text } = Typography;
   const e = React.createElement;
 
-  const levelColorOptions = [
-    { value: "#8c8c8c", label: "石墨灰" },
-    { value: "#13c2c2", label: "靛青" },
-    { value: "#52c41a", label: "草木绿" },
-    { value: "#1677ff", label: "品牌蓝" },
-    { value: "#722ed1", label: "星紫" },
-    { value: "#faad14", label: "鎏金" },
-    { value: "#fa541c", label: "熔岩橙" },
-    { value: "#f5222d", label: "绯红" }
-  ];
+  const LANGUAGE_OPTIONS = ["简体中文", "English", "繁體中文", "日本語", "한국어", "Tiếng Việt"];
 
   function formatAmount(value) {
     return Number(value).toLocaleString("en-US");
@@ -50,9 +39,12 @@
   }
 
   function AgentLevelPage({ levels, setLevels, rules, agents }) {
-    const [keyword, setKeyword] = React.useState("");
+    const [keyword, setKeyword] = React.useState();
     const [statusFilter, setStatusFilter] = React.useState();
     const [editing, setEditing] = React.useState(null);
+    const [langTabs, setLangTabs] = React.useState(["英语"]);
+    const [activeLang, setActiveLang] = React.useState("英语");
+    const [langNames, setLangNames] = React.useState({});
     const [form] = Form.useForm();
 
     const sortedLevels = React.useMemo(
@@ -69,13 +61,12 @@
     }
 
     const visibleLevels = sortedLevels.filter(level => {
-      const term = keyword.trim().toLowerCase();
-      return (!term || level.name.toLowerCase().includes(term))
+      return (!keyword || level.name === keyword)
         && (!statusFilter || level.status === statusFilter);
     });
 
     function resetFilters() {
-      setKeyword("");
+      setKeyword(undefined);
       setStatusFilter(undefined);
     }
 
@@ -84,30 +75,67 @@
         ? Math.max(...sortedLevels.map(level => level.sort)) + 1
         : 1;
       setEditing({ id: null, sort: nextSort });
+      setLangTabs(["英语"]);
+      setActiveLang("英语");
+      setLangNames({});
       form.setFieldsValue({
-        name: "",
-        color: "#1677ff",
-        upgrade: { match: "任意", directCustomers: 0, teamMembers: 0, netDeposit: 0, teamLots: 0 },
-        rebateRate: 40,
-        marketingRate: 0,
-        protectionDays: 0,
         commissionRuleId: undefined,
-        remark: ""
+        activeCustomers: undefined,
+        teamHoldings: undefined
+      });
+    }
+
+    function prefillEditor(level, nameSuffix) {
+      const langs = (level.languages && level.languages.length
+        ? level.languages
+        : [{ lang: "简体中文", name: level.name }]
+      ).map(item => ({ ...item, name: nameSuffix ? `${item.name}${nameSuffix}` : item.name }));
+      setLangTabs(langs.map(item => item.lang));
+      setActiveLang(langs[0].lang);
+      setLangNames(Object.fromEntries(langs.map(item => [item.lang, item.name])));
+      form.setFieldsValue({
+        commissionRuleId: level.commissionRuleId ? String(level.commissionRuleId) : undefined,
+        activeCustomers: level.upgrade.activeCustomers || undefined,
+        teamHoldings: level.upgrade.teamHoldings || undefined
       });
     }
 
     function openEdit(level) {
       setEditing(level);
-      form.setFieldsValue({
-        name: level.name,
-        color: level.color,
-        upgrade: { ...level.upgrade },
-        rebateRate: level.rebateRate,
-        marketingRate: level.marketingRate,
-        protectionDays: level.protectionDays,
-        commissionRuleId: level.commissionRuleId ? String(level.commissionRuleId) : undefined,
-        remark: level.remark || ""
-      });
+      prefillEditor(level);
+    }
+
+    function openCopy(level) {
+      const nextSort = sortedLevels.length
+        ? Math.max(...sortedLevels.map(item => item.sort)) + 1
+        : 1;
+      setEditing({ ...level, id: null, sort: nextSort, mode: "copy" });
+      prefillEditor(level, "-副本");
+    }
+
+    function switchLang(lang) {
+      setActiveLang(lang);
+    }
+
+    function removeLang(lang) {
+      if (langTabs.length <= 1) {
+        message.warning("至少保留一个语言配置");
+        return;
+      }
+      const next = langTabs.filter(item => item !== lang);
+      setLangTabs(next);
+      if (activeLang === lang) setActiveLang(next[0]);
+    }
+
+    function addLang() {
+      const next = LANGUAGE_OPTIONS.find(item => !langTabs.includes(item));
+      if (!next) {
+        message.warning("全部语言均已添加");
+        return;
+      }
+      setLangTabs([...langTabs, next]);
+      setActiveLang(next);
+      message.success(`已添加${next}`);
     }
 
     function closeEditor() {
@@ -122,29 +150,51 @@
       } catch {
         return;
       }
+      const primaryName = String(langNames[langTabs[0]] || "").trim();
+      if (!primaryName) {
+        message.error("请输入等级名称");
+        setActiveLang(langTabs[0]);
+        return;
+      }
+      const langs = langTabs
+        .map(lang => ({ lang, name: String(langNames[lang] || "").trim() }))
+        .filter(item => item.name);
+      const primary = langs.find(item => item.lang === "简体中文") || langs[0];
       const isEditing = Boolean(editing.id);
+      if (levels.some(level => level.name === primary.name && level.id !== editing.id)) {
+        message.error(`等级名称「${primary.name}」已存在`);
+        return;
+      }
       const payload = {
-        name: values.name.trim(),
-        color: values.color,
-        upgrade: values.upgrade,
-        rebateRate: values.rebateRate,
-        marketingRate: values.marketingRate || 0,
-        protectionDays: values.protectionDays || 0,
-        commissionRuleId: values.commissionRuleId || null,
-        remark: values.remark || ""
+        name: primary.name,
+        languages: langs,
+        upgrade: {
+          match: isEditing ? (editing.upgrade.match || "任意") : "任意",
+          activeCustomers: values.activeCustomers || 0,
+          teamHoldings: values.teamHoldings || 0
+        },
+        commissionRuleId: values.commissionRuleId || null
       };
       const commit = () => {
         setLevels(list => isEditing
-          ? list.map(item => (item.id === editing.id ? { ...item, ...payload } : item))
+          ? list.map(item => (item.id === editing.id ? { ...item, ...payload, operator: "Amy" } : item))
           : [...list, {
             id: `level-${Date.now()}`,
             sort: editing.sort,
             status: "启用",
             isDefault: false,
+            color: editing.color || "#1677ff",
+            rebateRate: editing.rebateRate ?? 40,
+            marketingRate: editing.marketingRate ?? 0,
+            protectionDays: editing.protectionDays ?? 0,
+            remark: editing.remark || "",
+            operator: "Amy",
             ...payload
           }]
         );
-        message.success(isEditing ? `等级「${payload.name}」已更新` : `等级「${payload.name}」已创建`);
+        message.success(isEditing
+          ? `等级「${payload.name}」已更新`
+          : editing.mode === "copy" ? `等级「${payload.name}」已复制` : `等级「${payload.name}」已创建`);
         closeEditor();
       };
       const count = isEditing ? agentCountOf(editing.name) : 0;
@@ -182,20 +232,6 @@
           message.success(`等级「${level.name}」已删除`);
         }
       });
-    }
-
-    function moveLevel(level, direction) {
-      const index = sortedLevels.findIndex(item => item.id === level.id);
-      const target = direction === "up" ? index - 1 : index + 1;
-      if (target < 0 || target >= sortedLevels.length) return;
-      const current = sortedLevels[index];
-      const neighbor = sortedLevels[target];
-      setLevels(list => list.map(item => {
-        if (item.id === current.id) return { ...item, sort: neighbor.sort };
-        if (item.id === neighbor.id) return { ...item, sort: current.sort };
-        return item;
-      }));
-      message.success(`已将「${level.name}」${direction === "up" ? "上移" : "下移"}`);
     }
 
     function setDefaultLevel(level) {
@@ -244,13 +280,11 @@
     function renderUpgrade(level) {
       const { upgrade } = level;
       const conditions = [
-        upgrade.directCustomers > 0 ? `直客 ≥ ${upgrade.directCustomers} 人` : null,
-        upgrade.teamMembers > 0 ? `团队 ≥ ${upgrade.teamMembers} 人` : null,
-        upgrade.netDeposit > 0 ? `净入金 ≥ ${formatAmount(upgrade.netDeposit)} USDT` : null,
-        upgrade.teamLots > 0 ? `手数 ≥ ${formatAmount(upgrade.teamLots)} 手` : null
+        upgrade.activeCustomers > 0 ? `活跃客户 ≥ ${formatAmount(upgrade.activeCustomers)} 人` : null,
+        upgrade.teamHoldings > 0 ? `团队持仓 ≥ ${formatAmount(upgrade.teamHoldings)} USDT` : null
       ].filter(Boolean);
       if (!conditions.length) {
-        return e(Text, { type: "secondary" }, "新代理默认等级，无需升级条件");
+        return e(Text, { type: "secondary" }, "新代理默认等级，无需等级考核");
       }
       return e("div", { className: "level-upgrade-cell" }, [
         e("div", { className: "level-condition-pills", key: "pills" },
@@ -282,8 +316,8 @@
           record.isDefault ? e(Tag, { key: "default", color: "blue" }, "默认") : null
         ])
       },
-      { title: "升级条件", key: "upgrade", width: 280, render: (_, record) => renderUpgrade(record) },
-      { title: "可获返佣", dataIndex: "rebateRate", width: 100, render: value => `${value}%` },
+      { title: "等级考核规则", key: "upgrade", width: 280, render: (_, record) => renderUpgrade(record) },
+      { title: "分佣比例", dataIndex: "rebateRate", width: 100, render: value => `${value}%` },
       { title: "营销激励", dataIndex: "marketingRate", width: 100, render: value => `${value}%` },
       {
         title: "保护期",
@@ -292,12 +326,6 @@
         render: value => (value ? `${value} 天` : "-")
       },
       { title: "关联佣金规则", key: "rule", width: 150, render: (_, record) => renderLinkedRule(record) },
-      {
-        title: "代理数",
-        key: "agentCount",
-        width: 90,
-        render: (_, record) => e("strong", null, String(agentCountOf(record.name)))
-      },
       {
         title: "状态",
         dataIndex: "status",
@@ -308,45 +336,30 @@
           onChange: value => toggleLevelStatus(record, value)
         })
       },
+      { title: "操作人", dataIndex: "operator", width: 90, render: value => value || "-" },
       {
         title: "操作",
         key: "actions",
         fixed: "right",
-        width: 290,
-        render: (_, record) => {
-          const index = sortedLevels.findIndex(item => item.id === record.id);
-          return e(Space, { size: 0, wrap: true }, [
-            e(Button, { key: "edit", type: "link", size: "small", onClick: () => openEdit(record) }, "编辑"),
-            e(Button, {
-              key: "up",
-              type: "link",
-              size: "small",
-              disabled: index <= 0,
-              onClick: () => moveLevel(record, "up")
-            }, "上移"),
-            e(Button, {
-              key: "down",
-              type: "link",
-              size: "small",
-              disabled: index >= sortedLevels.length - 1,
-              onClick: () => moveLevel(record, "down")
-            }, "下移"),
-            e(Button, {
-              key: "default",
-              type: "link",
-              size: "small",
-              disabled: record.isDefault,
-              onClick: () => setDefaultLevel(record)
-            }, "设为默认"),
-            e(Button, {
-              key: "delete",
-              type: "link",
-              size: "small",
-              danger: true,
-              onClick: () => removeLevel(record)
-            }, "删除")
-          ]);
-        }
+        width: 230,
+        render: (_, record) => e(Space, { size: 0, wrap: true }, [
+          e(Button, { key: "edit", type: "link", size: "small", onClick: () => openEdit(record) }, "编辑"),
+          e(Button, { key: "copy", type: "link", size: "small", onClick: () => openCopy(record) }, "复制"),
+          e(Button, {
+            key: "default",
+            type: "link",
+            size: "small",
+            disabled: record.isDefault,
+            onClick: () => setDefaultLevel(record)
+          }, "设为默认"),
+          e(Button, {
+            key: "delete",
+            type: "link",
+            size: "small",
+            danger: true,
+            onClick: () => removeLevel(record)
+          }, "删除")
+        ])
       }
     ];
 
@@ -355,11 +368,15 @@
         e("div", { className: "config-filter-row", key: "filters" }, [
           e("label", { className: "config-filter-item", key: "name" }, [
             e("span", null, "等级名称："),
-            e(Input, {
+            e(Select, {
               value: keyword,
-              onChange: event => setKeyword(event.target.value),
+              onChange: setKeyword,
               placeholder: "请输入等级名称",
-              allowClear: true
+              allowClear: true,
+              showSearch: true,
+              optionFilterProp: "label",
+              className: "keyword-select",
+              options: sortedLevels.map(level => ({ value: level.name, label: level.name }))
             })
           ]),
           e("label", { className: "config-filter-item", key: "status" }, [
@@ -386,126 +403,84 @@
         columns,
         dataSource: visibleLevels,
         pagination: false,
-        scroll: { x: 1500 }
+        scroll: { x: 1390 }
       }),
-      e(Modal, {
+      e(Drawer, {
         key: "editor",
-        title: editing?.id ? `编辑等级「${editing.name}」` : "新增等级",
+        title: editing?.id
+          ? `编辑代理等级「${editing.name}」`
+          : editing?.mode === "copy" ? `复制代理等级「${editing.name}」` : "新增代理等级",
         open: Boolean(editing),
-        onCancel: closeEditor,
-        onOk: saveLevel,
-        okText: "保存",
-        cancelText: "取消",
-        width: 640,
-        destroyOnClose: true
-      }, editing && e(Form, { form, layout: "vertical", requiredMark: "optional" }, [
-        e(Row, { key: "base", gutter: 16 }, [
-          e(Col, { span: 12, key: "name" }, e(Form.Item, {
-            label: "等级名称",
-            name: "name",
-            rules: [
-              { required: true, message: "请输入等级名称" },
-              {
-                validator: (_, value) => {
-                  if (!value) return Promise.resolve();
-                  const duplicated = levels.some(level => (
-                    level.name === value.trim() && level.id !== editing.id
-                  ));
-                  return duplicated
-                    ? Promise.reject(new Error("等级名称已存在"))
-                    : Promise.resolve();
-                }
+        onClose: closeEditor,
+        width: 720,
+        destroyOnClose: true,
+        footer: e("div", { className: "drawer-footer-actions" }, [
+          e(Button, { key: "cancel", onClick: closeEditor }, "取 消"),
+          e(Button, { key: "ok", type: "primary", onClick: saveLevel }, "确 定")
+        ])
+      }, editing && e(Form, { form, layout: "vertical", requiredMark: true }, [
+        e("div", { className: "form-section-title", key: "lang-title" }, [
+          e("span", { key: "req", style: { color: "#ff4d4f", marginRight: 4 } }, "*"),
+          "语言配置"
+        ]),
+        e("div", { className: "tabs", key: "lang-tabs" }, [
+          ...langTabs.map(lang => e("span", {
+            key: lang,
+            className: `tab${lang === activeLang ? " active" : ""}`,
+            onClick: () => switchLang(lang)
+          }, [
+            lang,
+            lang !== langTabs[0] ? e("button", {
+              key: "rm",
+              type: "button",
+              title: "移除该语言",
+              onClick: event => {
+                event.stopPropagation();
+                removeLang(lang);
               }
-            ]
-          }, e(Input, { maxLength: 20, placeholder: "如 V7" }))),
-          e(Col, { span: 12, key: "color" }, e(Form.Item, {
-            label: "等级颜色",
-            name: "color"
-          }, e(Select, {
-            options: levelColorOptions.map(option => ({
-              value: option.value,
-              label: e("span", null, [
-                e("span", { key: "dot", className: "color-dot", style: { background: option.value } }),
-                option.label
-              ])
-            }))
-          })))
+            }, "×") : null
+          ])),
+          e("span", { key: "add", className: "tab", onClick: addLang }, "+ 添加语言")
         ]),
-        e("div", { className: "form-section-title", key: "upgrade-title" }, "升级条件"),
-        e(Form.Item, { key: "match", label: "满足方式", name: ["upgrade", "match"] }, e(Radio.Group, {
-          optionType: "button",
-          buttonStyle: "solid",
-          options: [
-            { value: "任意", label: "满足任意条件" },
-            { value: "全部", label: "满足全部条件" }
-          ]
+        e(Form.Item, { key: "name", label: "等级名称", required: true }, e(Input, {
+          maxLength: 20,
+          placeholder: "请输入等级名称",
+          value: langNames[activeLang] || "",
+          onChange: event => setLangNames(prev => ({ ...prev, [activeLang]: event.target.value }))
         })),
-        e(Row, { key: "conditions", gutter: 16 }, [
-          e(Col, { span: 12, key: "direct" }, e(Form.Item, {
-            label: "直客数量（人）",
-            name: ["upgrade", "directCustomers"]
-          }, e(InputNumber, { min: 0, precision: 0, style: { width: "100%" }, placeholder: "0" }))),
-          e(Col, { span: 12, key: "members" }, e(Form.Item, {
-            label: "团队成员数（人）",
-            name: ["upgrade", "teamMembers"]
-          }, e(InputNumber, { min: 0, precision: 0, style: { width: "100%" }, placeholder: "0" }))),
-          e(Col, { span: 12, key: "deposit" }, e(Form.Item, {
-            label: "团队净入金（USDT）",
-            name: ["upgrade", "netDeposit"]
-          }, e(InputNumber, { min: 0, style: { width: "100%" }, placeholder: "0" }))),
-          e(Col, { span: 12, key: "lots" }, e(Form.Item, {
-            label: "团队交易手数（手）",
-            name: ["upgrade", "teamLots"]
-          }, e(InputNumber, { min: 0, precision: 0, style: { width: "100%" }, placeholder: "0" })))
-        ]),
-        e(Text, { type: "secondary", key: "upgrade-hint" }, "填写 0 表示该条件不参与判定；默认等级无需配置升级条件。"),
-        e("div", { className: "form-section-title", key: "benefit-title" }, "等级权益"),
-        e(Row, { key: "benefits", gutter: 16 }, [
-          e(Col, { span: 12, key: "rebate" }, e(Form.Item, {
-            label: "可获返佣比例（%）",
-            name: "rebateRate",
-            rules: [{ required: true, message: "请输入可获返佣比例" }]
-          }, e(InputNumber, {
-            min: 0,
-            max: 100,
-            style: { width: "100%" },
-            formatter: value => (value === null || value === undefined ? "" : `${value}%`),
-            parser: value => value.replace("%", "")
-          }))),
-          e(Col, { span: 12, key: "marketing" }, e(Form.Item, {
-            label: "营销激励比例（%）",
-            name: "marketingRate"
-          }, e(InputNumber, {
-            min: 0,
-            max: 100,
-            style: { width: "100%" },
-            formatter: value => (value === null || value === undefined ? "" : `${value}%`),
-            parser: value => value.replace("%", "")
-          })))
-        ]),
-        e(Form.Item, {
-          key: "protection",
-          label: "等级保护期（天）",
-          name: "protectionDays",
-          extra: "保护期内代理不因业绩下滑被降级，0 表示不设置保护期"
-        }, e(InputNumber, { min: 0, max: 365, precision: 0, style: { width: "100%" }, placeholder: "0" })),
         e(Form.Item, {
           key: "rule",
-          label: "关联佣金规则",
+          label: "佣金配置",
           name: "commissionRuleId",
-          extra: "该等级代理默认绑定的佣金规则，可在代理商列表单独调整"
+          rules: [{ required: true, message: "请选择佣金配置" }]
         }, e(Select, {
-          placeholder: "请选择佣金规则",
+          placeholder: "请选择佣金配置",
           allowClear: true,
           options: rules.map(rule => ({
             value: String(rule.id),
             label: `${rule.name}（${rule.status}）`
           }))
         })),
-        e(Form.Item, { key: "remark", label: "备注", name: "remark" }, e(Input.TextArea, {
-          rows: 2,
-          maxLength: 100,
-          placeholder: "选填"
+        e(Form.Item, {
+          key: "active",
+          label: "活跃客户数≥",
+          name: "activeCustomers",
+          rules: [{ required: true, message: "请输入活跃客户数门槛" }]
+        }, e(InputNumber, {
+          min: 0,
+          precision: 0,
+          style: { width: "100%" },
+          placeholder: "请输入活跃客户数门槛"
+        })),
+        e(Form.Item, {
+          key: "holdings",
+          label: "团队持仓量≥",
+          name: "teamHoldings",
+          rules: [{ required: true, message: "请输入团队持仓量门槛" }]
+        }, e(InputNumber, {
+          min: 0,
+          style: { width: "100%" },
+          placeholder: "请输入团队持仓量门槛"
         }))
       ]))
     ]);

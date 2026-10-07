@@ -23,7 +23,7 @@
       $("#breadcrumb").innerHTML = this.breadcrumbs[page];
       this.syncNavigation(page);
       $("#columnPanel").classList.add("hidden");
-      this.toast.show(page === "rules" ? "已切换到积分获取设置" : "已切换到投递管理");
+      this.toast.show(page === "rules" ? "已切换到积分配置" : "已切换到投递管理");
     }
 
     toggleGroup(button) {

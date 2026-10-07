@@ -34,17 +34,25 @@
     },
     {
       value: "市场活动", label: "市场活动", children: [
-        { value: "活动管理", label: "活动管理", children: [{ value: "报名列表", label: "报名列表" }, { value: "活动配置", label: "活动配置" }] },
-        { value: "投递管理", label: "投递管理", children: [{ value: "投递记录", label: "投递记录" }, { value: "投递列表", label: "投递列表" }, { value: "投递操作设置", label: "投递操作设置" }] },
-        { value: "优惠券管理", label: "优惠券管理", children: [{ value: "优惠券核销", label: "优惠券核销" }, { value: "优惠券操作管理", label: "优惠券操作管理" }, { value: "优惠券列表", label: "优惠券列表" }] },
-        { value: "积分", label: "积分", children: [{ value: "积分明细", label: "积分明细" }, { value: "积分获取设置", label: "积分获取设置" }] },
-        { value: "徽章系统", label: "徽章系统", children: [{ value: "徽章列表", label: "徽章列表" }] },
+        { value: "活动配置", label: "活动配置" },
+        { value: "报名列表", label: "报名列表" },
         {
           value: "Prop", label: "Prop", children: [
             { value: "资金管理", label: "资金管理", children: [{ value: "返现结算", label: "返现结算" }, { value: "费用流水", label: "费用流水" }, { value: "财务明细", label: "财务明细" }] },
             { value: "比赛用户统计", label: "比赛用户统计" }, { value: "资格赛设置", label: "资格赛设置" }, { value: "比赛列表", label: "比赛列表" }
           ]
         }
+      ]
+    },
+    {
+      value: "激励中心", label: "激励中心", children: [
+        { value: "积分配置", label: "积分配置" }, { value: "积分明细", label: "积分明细" }, { value: "徽章列表", label: "徽章列表" }
+      ]
+    },
+    {
+      value: "发放管理", label: "发放管理", children: [
+        { value: "优惠券管理", label: "优惠券管理", children: [{ value: "优惠券核销", label: "优惠券核销" }, { value: "优惠券操作管理", label: "优惠券操作管理" }, { value: "优惠券列表", label: "优惠券列表" }] },
+        { value: "投递管理", label: "投递管理", children: [{ value: "投递记录", label: "投递记录" }, { value: "投递列表", label: "投递列表" }, { value: "投递操作设置", label: "投递操作设置" }] }
       ]
     },
     {

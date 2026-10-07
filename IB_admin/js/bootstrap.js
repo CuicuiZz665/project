@@ -10,18 +10,26 @@
     "js/mock-data.js",
     "js/customer-page.js",
     "js/login-log-page.js",
+    "js/blacklist-page.js",
+    "js/whitelist-page.js",
     "js/agent-page.js",
+    "js/agent-application-page.js",
     "js/agent-level-page.js",
     "js/commission-page.js",
+    "js/commission-record-page.js",
     "js/dashboard-page.js",
     "js/activity-page.js",
     "js/activity-application-page.js",
+    "js/point-details-page.js",
+    "js/wheel-page.js",
+    "js/coupon-page.js",
+    "js/badge-page.js",
     "js/role-settings-page.js",
     "js/user-settings-page.js",
     "js/global-nav.js",
     "js/antd-app.js"
   ];
-  const appVersion = "20260922-topbar-merge";
+  const appVersion = "20261006-all-drawers-cards";
   const scriptTimeout = 12000;
 
   function showDependencyError(detail) {

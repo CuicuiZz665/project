@@ -66,19 +66,15 @@
     }));
   }
   function rewardNode(record) {
-    const tags = [];
-    if (Number(record.rewardXp) > 0) tags.push(/*#__PURE__*/React.createElement(Tag, {
-      color: "blue",
-      key: "xp"
-    }, record.rewardXp, " XP"));
-    if (Number(record.rewardDrop) > 0) tags.push(/*#__PURE__*/React.createElement(Tag, {
-      color: "gold",
-      key: "drop"
-    }, record.rewardDrop, " Drop"));
-    return tags.length ? /*#__PURE__*/React.createElement(Space, {
-      size: 4,
-      wrap: true
-    }, tags) : /*#__PURE__*/React.createElement(Text, {
+    const xp = Number(record.rewardXp) || 0;
+    const drop = Number(record.rewardDrop) || 0;
+    if (xp > 0) return /*#__PURE__*/React.createElement(Tag, {
+      color: "blue"
+    }, xp, " XP");
+    if (drop > 0) return /*#__PURE__*/React.createElement(Tag, {
+      color: "gold"
+    }, drop, " Drop");
+    return /*#__PURE__*/React.createElement(Text, {
       type: "secondary"
     }, "-");
   }
@@ -98,49 +94,162 @@
     "跟单笔数": 1,
     "签到天数": 5
   };
+  function LessonRow({
+    form,
+    field
+  }) {
+    const videoType = Form.useWatch(["courseLessons", field.name, "videoType"], form);
+    return /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement(Form.Item, {
+      name: [field.name, "title"],
+      label: "讲次标题",
+      rules: [{
+        required: true,
+        message: "请输入讲次标题"
+      }],
+      style: {
+        marginBottom: 10
+      }
+    }, /*#__PURE__*/React.createElement(Input, {
+      placeholder: "如：什么是外汇与 CFD 市场",
+      maxLength: 40
+    })), /*#__PURE__*/React.createElement(Form.Item, {
+      name: [field.name, "videoType"],
+      label: "视频来源",
+      style: {
+        marginBottom: 10
+      }
+    }, /*#__PURE__*/React.createElement(antd.Radio.Group, {
+      options: [{
+        value: "视频链接",
+        label: "视频链接"
+      }, {
+        value: "上传视频",
+        label: "上传视频"
+      }]
+    })), videoType === "上传视频" ? /*#__PURE__*/React.createElement(Form.Item, {
+      label: "视频文件",
+      style: {
+        marginBottom: 10
+      }
+    }, /*#__PURE__*/React.createElement(Button, {
+      onClick: () => {
+        form.setFieldValue(["courseLessons", field.name, "videoUrl"], `uploads/courses/${Date.now()}.mp4`);
+        message.success("视频已模拟上传");
+      }
+    }, "上传视频（模拟）")) : /*#__PURE__*/React.createElement(Form.Item, {
+      name: [field.name, "videoUrl"],
+      label: "视频链接",
+      rules: [{
+        required: true,
+        message: "请填写视频链接"
+      }],
+      style: {
+        marginBottom: 10
+      }
+    }, /*#__PURE__*/React.createElement(Input, {
+      placeholder: "https://…（MP4 直链或视频平台地址）",
+      allowClear: true
+    })));
+  }
+  function LessonTabs({
+    form,
+    fields,
+    add,
+    remove
+  }) {
+    const keyList = fields.map(field => String(field.key));
+    const [activeKey, setActiveKey] = React.useState();
+    React.useEffect(() => {
+      if (!keyList.includes(activeKey)) setActiveKey(keyList[keyList.length - 1]);
+    }, [keyList.join("|")]);
+    return /*#__PURE__*/React.createElement(Tabs, {
+      type: "editable-card",
+      activeKey,
+      onChange: setActiveKey,
+      onEdit: (targetKey, action) => {
+        if (action === "add") {
+          add({
+            title: "",
+            videoType: "视频链接",
+            videoUrl: ""
+          });
+        } else if (action === "remove") {
+          const index = fields.findIndex(field => String(field.key) === targetKey);
+          if (index > -1) remove(index);
+        }
+      },
+      items: fields.map((field, index) => ({
+        key: String(field.key),
+        label: `讲次 ${index + 1}`,
+        forceRender: true,
+        closable: fields.length > 1,
+        children: /*#__PURE__*/React.createElement(LessonRow, {
+          form: form,
+          field: field
+        })
+      }))
+    });
+  }
   function RuleDrawer({
     open,
     mode,
     rule,
+    courses,
+    lessons,
     onCancel,
     onSave
   }) {
     const [form] = Form.useForm();
+    const [activeTab, setActiveTab] = React.useState("daily");
     const [languages, setLanguages] = React.useState(["英语"]);
     const [activeLang, setActiveLang] = React.useState("英语");
     const triggerEvent = Form.useWatch("triggerEvent", form);
     const accountScope = Form.useWatch("accountScope", form);
-    const accountTypes = Form.useWatch("accountTypes", form) || [];
     const conditions = Form.useWatch("conditions", form) || [];
     const relation = Form.useWatch("relation", form);
-    const jumpType = Form.useWatch("jumpType", form);
-    const mediaMode = Form.useWatch("mediaMode", form);
-    const cyclePeriod = Form.useWatch("cyclePeriod", form);
     React.useEffect(() => {
       if (!open) return;
+      setActiveTab(rule?.ruleType === "课程任务" ? "course" : "daily");
       setLanguages(["英语"]);
       setActiveLang("英语");
+      const linkedCourse = rule?.courseId && courses ? courses.find(course => course.id === rule.courseId) : null;
+      const linkedLessons = rule?.courseId && lessons ? lessons.filter(lesson => lesson.courseId === rule.courseId) : [];
       form.setFieldsValue({
-        internalName: rule?.internalName ? mode === "copy" ? `${rule.internalName}-副本` : rule.internalName : "",
-        taskType: rule?.taskType || "全部",
+        courseTitle: rule?.courseName ? mode === "copy" ? `${rule.courseName}-副本` : rule.courseName : "",
+        courseIntro: linkedCourse?.intro || "",
+        courseTriggerEvent: rule?.ruleType === "课程任务" && rule.triggerEvent ? rule.triggerEvent : "课程",
+        courseLessons: linkedLessons.map(lesson => ({
+          title: lesson.title,
+          videoType: lesson.videoType === "上传" ? "上传视频" : "视频链接",
+          videoUrl: lesson.videoUrl
+        })),
+        externalName: rule && rule.ruleType !== "课程任务" ? mode === "copy" ? `${rule.externalName.replace(/^英语:\s*/, "")}-副本` : rule.externalName.replace(/^英语:\s*/, "") : "",
+        internalName: rule && rule.ruleType !== "课程任务" ? mode === "copy" ? `${rule.internalName}-副本` : rule.internalName : "",
+        taskType: rule && rule.ruleType !== "课程任务" && rule.taskType && rule.taskType !== "全部" ? rule.taskType : undefined,
+        cyclePeriod: rule && rule.ruleType !== "课程任务" ? rule.cyclePeriod || "不限" : "不限",
+        cycleCount: rule && rule.ruleType !== "课程任务" ? rule.cycleCount || "循环" : "循环",
+        triggerDates: rule && rule.ruleType !== "课程任务" ? rule.triggerDates || [] : [],
+        cycleRange: rule && rule.ruleType !== "课程任务" && rule.timeRange && rule.timeRange.includes(" 至 ") ? [dayjs(rule.timeRange.split(" 至 ")[0]), dayjs(rule.timeRange.split(" 至 ")[1])] : undefined,
         rewardValue: Number(rule?.rewardXp || rule?.rewardDrop || 0),
         rewardType: Number(rule?.rewardDrop || 0) > 0 && Number(rule?.rewardXp || 0) <= 0 ? "Drop" : "XP",
-        triggerEvent: rule?.triggerEvent === "首次连续签到" ? "连续签到" : rule?.triggerEvent || "开仓",
+        triggerEvent: rule && rule.ruleType !== "课程任务" ? rule?.triggerEvent === "首次连续签到" ? "连续签到" : rule?.triggerEvent || "开仓" : "开仓",
         accountScope: "all",
-        accountTypes: [],
         conditions: [],
         relation: "all",
-        jumpType: "无跳转",
-        jumpTarget: "",
-        mediaMode: false,
-        externalName: rule?.externalName?.replace(/^英语:\s*/, "") || "",
-        ruleDesc: rule ? `${rule.internalName}任务规则说明` : "",
-        popupText: "",
-        cycleCount: "循环",
-        cyclePeriod: rule?.cyclePeriod || "不限",
-        timeRange: []
+        ruleDesc: rule && rule.ruleType !== "课程任务" ? `${rule.internalName}任务规则说明` : ""
       });
-    }, [open, mode, rule, form]);
+    }, [open, mode, rule, courses, lessons, form]);
+    React.useEffect(() => {
+      if (!open || activeTab !== "course") return;
+      const rows = form.getFieldValue("courseLessons");
+      if (!rows || !rows.length) {
+        form.setFieldValue("courseLessons", [{
+          title: "",
+          videoType: "视频链接",
+          videoUrl: ""
+        }]);
+      }
+    }, [open, activeTab, form]);
     React.useEffect(() => {
       if (!open || !triggerEvent) return;
       const params = conditionParamMap[triggerEvent] || [];
@@ -160,7 +269,7 @@
     }, [triggerEvent]);
     const paramOptions = conditionParamMap[triggerEvent] || [];
     const usedParams = conditions.map(item => item?.param).filter(Boolean);
-    const scopeText = accountScope === "custom" ? accountTypes.length ? accountTypes.join("、") : "未选择账号" : "全部账号";
+    const scopeText = !accountScope || accountScope === "all" ? "全部账号" : accountScope;
     const conditionText = conditions.filter(item => item?.param).map(item => `${item.param} ≥ ${item.value ?? "—"}`).join(relation === "any" ? " 或 " : " 且 ");
     const relationText = relation === "any" ? "任一达成即可" : "须全部达成";
     function addLanguage() {
@@ -168,6 +277,7 @@
       if (!languages.includes(next)) setLanguages([...languages, next]);
       setActiveLang(next);
       form.setFieldValue("externalName", "");
+      form.setFieldValue("courseTitle", "");
       message.success(`已添加${next}`);
     }
     function removeLanguage(lang) {
@@ -176,30 +286,82 @@
     }
     async function handleSave() {
       const values = await form.validateFields();
+      if (activeTab === "course") {
+        const courseName = values.courseTitle || "未命名课程";
+        const courseRewardType = values.rewardType || "XP";
+        const courseRewardValue = Number(values.rewardValue || 0);
+        if (courseRewardValue <= 0) {
+          message.warning("奖励值不能为空");
+          return;
+        }
+        const data = {
+          ruleType: "课程任务",
+          internalName: courseName,
+          externalName: `${activeLang}: ${courseName}`,
+          triggerEvent: values.courseTriggerEvent || "课程",
+          cyclePeriod: "不限",
+          rewardXp: courseRewardType === "XP" ? courseRewardValue : 0,
+          rewardDrop: courseRewardType === "Drop" ? courseRewardValue : 0,
+          timeRange: "-"
+        };
+        const coursePayload = {
+          course: {
+            title: courseName,
+            intro: values.courseIntro || "",
+            rewardXp: courseRewardType === "XP" ? courseRewardValue : 0
+          },
+          lessons: (values.courseLessons || []).map(row => ({
+            title: row.title,
+            videoType: row.videoType || "视频链接",
+            videoUrl: row.videoUrl
+          })),
+          updateCourseId: mode === "edit" ? rule?.courseId || null : null
+        };
+        const courseConfirmRef = Modal.confirm({
+          title: "确认保存",
+          content: `将保存课程任务“${courseName}”，奖励为 ${courseRewardType} ${courseRewardValue}。`,
+          onOk: () => {
+            courseConfirmRef.destroy();
+            onSave(data, coursePayload);
+          },
+          onCancel: () => courseConfirmRef.destroy()
+        });
+        return;
+      }
       const rewardType = values.rewardType || "XP";
       const rewardValue = Number(values.rewardValue || 0);
       if (rewardValue <= 0) {
         message.warning("奖励值不能为空");
         return;
       }
-      const range = values.timeRange || [];
       const rewardXp = rewardType === "XP" ? rewardValue : 0;
       const rewardDrop = rewardType === "Drop" ? rewardValue : 0;
       const conditionSummary = values.triggerEvent === "手动触发" ? "后台人工触发" : conditionText ? conditions.length > 1 ? `${conditionText}（${relationText}）` : conditionText : "未设置";
+      const cyclePeriod = values.cyclePeriod || "不限";
+      const cycleRange = cyclePeriod !== "不限" ? values.cycleRange : null;
       const data = {
+        ruleType: "普通任务",
         internalName: values.internalName || "未命名规则",
-        externalName: `${activeLang}: ${values.externalName || values.internalName || "未命名规则"}`,
+        externalName: `${activeLang}: ${values.externalName || "未命名规则"}`,
         triggerEvent: values.triggerEvent === "连续签到" ? "首次连续签到" : values.triggerEvent,
-        cyclePeriod: values.cyclePeriod,
+        cyclePeriod,
         rewardXp,
         rewardDrop,
         taskType: values.taskType || "全部",
-        timeRange: range.length ? `${range[0]?.format("YYYY-MM-DD HH:mm") || "-"} 至 ${range[1]?.format("YYYY-MM-DD HH:mm") || "-"}` : "-"
+        timeRange: cycleRange ? `${cycleRange[0].format("YYYY-MM-DD HH:mm:ss")} 至 ${cycleRange[1].format("YYYY-MM-DD HH:mm:ss")}` : "-",
+        cycleCount: values.cycleCount || "循环",
+        triggerDates: values.triggerDates || [],
+        conditions: values.conditions || [],
+        relation: values.relation || "all"
       };
-      Modal.confirm({
+      const dailyConfirmRef = Modal.confirm({
         title: "确认保存",
         content: `将保存规则“${data.internalName}”，奖励为 ${rewardType} ${rewardValue}。达成条件：${conditionSummary}。`,
-        onOk: () => onSave(data)
+        onOk: () => {
+          dailyConfirmRef.destroy();
+          onSave(data, null);
+        },
+        onCancel: () => dailyConfirmRef.destroy()
       });
     }
     const tabItems = languages.map(lang => ({
@@ -218,27 +380,43 @@
       key: "__add",
       label: "+ 添加语言"
     });
-    return /*#__PURE__*/React.createElement(Drawer, {
-      title: mode === "edit" ? "修改规则" : mode === "copy" ? "复制规则" : "新增规则",
-      open: open,
-      width: 720,
-      onClose: onCancel,
-      destroyOnClose: true,
-      footer: /*#__PURE__*/React.createElement("div", {
-        className: "drawer-footer-actions"
-      }, /*#__PURE__*/React.createElement(Button, {
-        onClick: onCancel
-      }, "取消"), /*#__PURE__*/React.createElement(Button, {
-        type: "primary",
-        onClick: handleSave
-      }, "保存"))
-    }, /*#__PURE__*/React.createElement(Form, {
-      form: form,
-      layout: "vertical",
-      className: "admin-form"
+    const langFieldsNode = /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+      className: "form-grid-antd"
+    }, /*#__PURE__*/React.createElement(Form.Item, {
+      name: "externalName",
+      label: "外部名称",
+      rules: [{
+        required: true,
+        message: "请输入外部名称"
+      }]
+    }, /*#__PURE__*/React.createElement(Input, {
+      placeholder: "前端展示名称"
+    })), /*#__PURE__*/React.createElement(Form.Item, {
+      name: "ruleDesc",
+      label: "规则说明"
+    }, /*#__PURE__*/React.createElement(Input, {
+      placeholder: "任务规则说明"
+    }))));
+    const drawerTitle = /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+      style: {
+        fontSize: 17,
+        fontWeight: 700
+      }
+    }, mode === "edit" ? "修改规则" : mode === "copy" ? "复制规则" : "新增规则"), /*#__PURE__*/React.createElement(Text, {
+      type: "secondary",
+      style: {
+        fontSize: 12,
+        fontWeight: 400
+      }
+    }, "请选择任务类型页签并完善对应配置"));
+    const dailyTab = /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+      key: "card-basic",
+      className: "drawer-form-card"
     }, /*#__PURE__*/React.createElement("div", {
       className: "form-section-title"
-    }, "基础信息"), /*#__PURE__*/React.createElement(Form.Item, {
+    }, "基础信息"),  /*#__PURE__*/React.createElement("div", {
+      className: "form-grid-antd"
+    }, /*#__PURE__*/React.createElement(Form.Item, {
       name: "internalName",
       label: "内部规则名称",
       rules: [{
@@ -246,42 +424,32 @@
         message: "请输入内部规则名称"
       }]
     }, /*#__PURE__*/React.createElement(Input, {
-      placeholder: "内部规则名称"
-    })), /*#__PURE__*/React.createElement("div", {
-      className: "form-section-title"
-    }, "任务与奖励"), /*#__PURE__*/React.createElement("div", {
-      className: "form-grid-antd"
-    }, /*#__PURE__*/React.createElement(Form.Item, {
+      placeholder: "请输入内部规则名称"
+    })), /*#__PURE__*/React.createElement(Form.Item, {
       name: "taskType",
       label: "任务类型"
     }, /*#__PURE__*/React.createElement(Select, {
+      placeholder: "请选择任务类型",
+      allowClear: true,
       options: ["全部", "新手任务"].map(value => ({
         value,
         label: value
       }))
-    })), /*#__PURE__*/React.createElement(Form.Item, {
-      name: "rewardType",
-      label: "奖励类型",
-      rules: [{
-        required: true,
-        message: "请选择奖励类型"
-      }]
-    }, /*#__PURE__*/React.createElement(Select, {
-      options: ["XP", "Drop"].map(value => ({
-        value,
-        label: value
-      }))
-    })), /*#__PURE__*/React.createElement(Form.Item, {
-      name: "rewardValue",
-      label: "奖励值"
-    }, /*#__PURE__*/React.createElement(InputNumber, {
-      min: 0,
-      precision: 0,
-      className: "full-control",
-      placeholder: "0"
-    }))), /*#__PURE__*/React.createElement("div", {
+    })))), /*#__PURE__*/React.createElement("div", {
+      key: "card-lang",
+      className: "drawer-form-card"
+    },  /*#__PURE__*/React.createElement("div", {
       className: "form-section-title"
-    }, "触发条件"), /*#__PURE__*/React.createElement("div", {
+    }, "展示与多语言"),  /*#__PURE__*/React.createElement(Tabs, {
+      activeKey: activeLang,
+      items: tabItems,
+      onChange: key => key === "__add" ? addLanguage() : setActiveLang(key)
+    }),  langFieldsNode), /*#__PURE__*/React.createElement("div", {
+      key: "card-cond",
+      className: "drawer-form-card"
+    },  /*#__PURE__*/React.createElement("div", {
+      className: "form-section-title"
+    }, "触发条件"),  /*#__PURE__*/React.createElement("div", {
       className: "form-grid-antd"
     }, /*#__PURE__*/React.createElement(Form.Item, {
       name: "triggerEvent",
@@ -302,25 +470,16 @@
         value: "all",
         label: "全部账号"
       }, {
-        value: "custom",
-        label: "指定账号类型"
+        value: "模拟账户",
+        label: "模拟账户"
+      }, {
+        value: "交易账户",
+        label: "交易账户"
+      }, {
+        value: "跟单账户",
+        label: "跟单账户"
       }]
-    })), accountScope === "custom" && /*#__PURE__*/React.createElement(Form.Item, {
-      name: "accountTypes",
-      label: "交易账号类型",
-      rules: [{
-        required: true,
-        message: "请选择交易账号类型"
-      }]
-    }, /*#__PURE__*/React.createElement(Select, {
-      mode: "multiple",
-      maxTagCount: "responsive",
-      placeholder: "请选择适用的交易账号类型",
-      options: ["模拟账户", "交易账户", "跟单账户"].map(value => ({
-        value,
-        label: value
-      }))
-    }))), triggerEvent !== "手动触发" && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+    }))),  triggerEvent !== "手动触发" && /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
       className: "form-sub-title"
     }, "达成条件", /*#__PURE__*/React.createElement("span", {
       className: "form-sub-hint"
@@ -396,120 +555,288 @@
         value: "all",
         label: "所有条件须全部达成"
       }]
-    }))), triggerEvent === "手动触发" && /*#__PURE__*/React.createElement(Text, {
+    }))),  triggerEvent === "手动触发" && /*#__PURE__*/React.createElement(Text, {
       type: "secondary"
-    }, "手动触发事件由运营在后台人工执行，无需配置达成条件。"), /*#__PURE__*/React.createElement("div", {
+    }, "手动触发事件由运营在后台人工执行，无需配置达成条件。"),  /*#__PURE__*/React.createElement("div", {
       className: "rule-preview"
     }, /*#__PURE__*/React.createElement(Text, {
       strong: true
     }, "规则逻辑："), triggerEvent === "手动触发" ? /*#__PURE__*/React.createElement("span", null, "该规则由运营在后台人工触发，触发即判定任务完成。") : /*#__PURE__*/React.createElement("span", null, "当「", scopeText, "」发生「", triggerEvent, "」，且", /*#__PURE__*/React.createElement(Text, {
       strong: true
-    }, conditionText || "未设置条件"), conditions.length > 1 ? `（${relationText}）` : "", "时，判定任务完成。")), /*#__PURE__*/React.createElement("div", {
+    }, conditionText || "未设置条件"), conditions.length > 1 ? `（${relationText}）` : "", "时，判定任务完成。"))), /*#__PURE__*/React.createElement("div", {
+      key: "card-reward",
+      className: "drawer-form-card"
+    },  /*#__PURE__*/React.createElement("div", {
       className: "form-section-title"
-    }, "展示与多语言"), /*#__PURE__*/React.createElement("div", {
+    }, "奖励"),  /*#__PURE__*/React.createElement("div", {
       className: "form-grid-antd"
     }, /*#__PURE__*/React.createElement(Form.Item, {
-      name: "jumpType",
-      label: "跳转类型"
+      name: "rewardType",
+      label: "奖励类型",
+      rules: [{
+        required: true,
+        message: "请选择奖励类型"
+      }]
     }, /*#__PURE__*/React.createElement(Select, {
-      options: ["无跳转", "内部页面", "外部链接"].map(value => ({
+      options: ["XP", "Drop"].map(value => ({
         value,
         label: value
       }))
-    })), jumpType !== "无跳转" && /*#__PURE__*/React.createElement(Form.Item, {
-      name: "jumpTarget",
-      label: "跳转目标"
-    }, /*#__PURE__*/React.createElement(Input, {
-      placeholder: jumpType === "外部链接" ? "https://example.com" : "/task/detail"
     })), /*#__PURE__*/React.createElement(Form.Item, {
-      name: "mediaMode",
-      label: "看图/视频做任务模式",
-      valuePropName: "checked"
-    }, /*#__PURE__*/React.createElement(Switch, {
-      checkedChildren: "开",
-      unCheckedChildren: "关"
-    }))), mediaMode && /*#__PURE__*/React.createElement(Form.Item, {
-      label: "上传附件"
-    }, /*#__PURE__*/React.createElement(Button, {
-      onClick: () => message.success("附件已模拟上传")
-    }, "点击模拟上传图片或视频")), /*#__PURE__*/React.createElement(Tabs, {
-      activeKey: activeLang,
-      items: tabItems,
-      onChange: key => key === "__add" ? addLanguage() : setActiveLang(key)
-    }), /*#__PURE__*/React.createElement("div", {
-      className: "form-grid-antd"
-    }, /*#__PURE__*/React.createElement(Form.Item, {
-      name: "externalName",
-      label: "外部名称",
-      rules: [{
-        required: true,
-        message: "请输入外部名称"
-      }]
-    }, /*#__PURE__*/React.createElement(Input, {
-      placeholder: "前端展示名称"
-    })), /*#__PURE__*/React.createElement(Form.Item, {
-      name: "ruleDesc",
-      label: "规则说明"
-    }, /*#__PURE__*/React.createElement(Input, {
-      placeholder: "任务规则说明"
-    }))), /*#__PURE__*/React.createElement(Form.Item, {
-      name: "popupText",
-      label: "弹窗正文文案"
-    }, /*#__PURE__*/React.createElement(TextArea, {
-      rows: 3,
-      placeholder: "请输入该语言环境下的弹窗引导文案..."
-    })), /*#__PURE__*/React.createElement("div", {
+      name: "rewardValue",
+      label: "奖励值"
+    }, /*#__PURE__*/React.createElement(InputNumber, {
+      min: 0,
+      precision: 0,
+      className: "full-control",
+      placeholder: "0"
+    })))), /*#__PURE__*/React.createElement("div", {
+      key: "card-cycle",
+      className: "drawer-form-card"
+    },  /*#__PURE__*/React.createElement("div", {
       className: "form-section-title"
-    }, "循环与时间"), /*#__PURE__*/React.createElement("div", {
+    }, "循环与时间"),  /*#__PURE__*/React.createElement("div", {
       className: "form-grid-antd"
     }, /*#__PURE__*/React.createElement(Form.Item, {
       name: "cycleCount",
-      label: "循环次数"
+      label: "循环次数",
+      initialValue: "循环",
+      rules: [{
+        required: true,
+        message: "请选择循环次数"
+      }]
     }, /*#__PURE__*/React.createElement(Select, {
-      options: ["循环", "仅一次"].map(value => ({
+      options: ["循环", "单次"].map(value => ({
         value,
         label: value
       }))
     })), /*#__PURE__*/React.createElement(Form.Item, {
       name: "cyclePeriod",
-      label: "循环周期"
+      label: "循环周期",
+      rules: [{
+        required: true,
+        message: "请选择循环周期"
+      }]
     }, /*#__PURE__*/React.createElement(Select, {
-      options: ["不限", "按天", "按周"].map(value => ({
+      options: ["不限", "按天"].map(value => ({
         value,
         label: value
       }))
-    })), cyclePeriod !== "不限" && /*#__PURE__*/React.createElement(Form.Item, {
+    })), /*#__PURE__*/React.createElement(Form.Item, {
       name: "triggerDates",
       label: "周期内可触发日期"
     }, /*#__PURE__*/React.createElement(Select, {
-      options: ["不限", "周一至周五", "周六至周日"].map(value => ({
+      mode: "multiple",
+      maxTagCount: "responsive",
+      allowClear: true,
+      placeholder: "周期内可触发日期",
+      options: ["周一", "周二", "周三", "周四", "周五", "周六", "周日"].map(value => ({
         value,
         label: value
       }))
-    }))), /*#__PURE__*/React.createElement(Form.Item, {
-      name: "timeRange",
+    }))),  /*#__PURE__*/React.createElement(Form.Item, {
+      name: "cycleRange",
       label: "总任务生效时间"
     }, /*#__PURE__*/React.createElement(RangePicker, {
       showTime: true,
-      format: "YYYY-MM-DD HH:mm",
-      className: "full-control"
+      format: "YYYY-MM-DD HH:mm:ss",
+      className: "full-control",
+      placeholder: ["开始时间", "结束时间"]
     }))));
+    const courseTab = /*#__PURE__*/React.createElement(React.Fragment, null, /*#__PURE__*/React.createElement("div", {
+      key: "card-basic",
+      className: "drawer-form-card"
+    }, /*#__PURE__*/React.createElement("div", {
+      className: "form-section-title"
+    }, "基础信息"),  /*#__PURE__*/React.createElement(Tabs, {
+      activeKey: activeLang,
+      items: tabItems,
+      onChange: key => key === "__add" ? addLanguage() : setActiveLang(key)
+    }),  /*#__PURE__*/React.createElement("div", {
+      className: "form-grid-antd"
+    }, /*#__PURE__*/React.createElement(Form.Item, {
+      name: "courseTitle",
+      label: `课程名称（${activeLang}）`,
+      rules: [{
+        required: true,
+        message: "请输入课程名称"
+      }]
+    }, /*#__PURE__*/React.createElement(Input, {
+      placeholder: "如：新手村",
+      maxLength: 30
+    })), /*#__PURE__*/React.createElement(Form.Item, {
+      name: "courseIntro",
+      label: `课程简介（${activeLang}）`,
+      rules: [{
+        required: true,
+        message: "请输入课程简介"
+      }]
+    }, /*#__PURE__*/React.createElement(TextArea, {
+      rows: 3,
+      maxLength: 120,
+      placeholder: "展示在学院课程卡与导航简介位"
+    })))), /*#__PURE__*/React.createElement("div", {
+      key: "card-cond",
+      className: "drawer-form-card"
+    },  /*#__PURE__*/React.createElement("div", {
+      className: "form-section-title"
+    }, "触发条件"),  /*#__PURE__*/React.createElement("div", {
+      className: "form-grid-antd"
+    }, /*#__PURE__*/React.createElement(Form.Item, {
+      name: "courseTriggerEvent",
+      label: "触发事件",
+      rules: [{
+        required: true,
+        message: "请选择触发事件"
+      }]
+    }, /*#__PURE__*/React.createElement(Select, {
+      options: ["课程", "开仓", "手续费", "跟单", "连续签到", "手动触发"].map(value => ({
+        value,
+        label: value
+      }))
+    })))), /*#__PURE__*/React.createElement("div", {
+      key: "card-lessons",
+      className: "drawer-form-card"
+    },  /*#__PURE__*/React.createElement("div", {
+      className: "form-section-title"
+    }, "章节视频", /*#__PURE__*/React.createElement("span", {
+      className: "form-sub-hint"
+    }, "客户完成任一讲次即判定任务完成，讲次顺序即播放顺序")),  /*#__PURE__*/React.createElement(Form.List, {
+      name: "courseLessons"
+    }, (fields, _ref2) => {
+      let {
+        add,
+        remove
+      } = _ref2;
+      return /*#__PURE__*/React.createElement(LessonTabs, {
+        form: form,
+        fields: fields,
+        add: add,
+        remove: remove
+      });
+    })), /*#__PURE__*/React.createElement("div", {
+      key: "card-reward",
+      className: "drawer-form-card"
+    },  /*#__PURE__*/React.createElement("div", {
+      className: "form-section-title"
+    }, "奖励"),  /*#__PURE__*/React.createElement("div", {
+      className: "form-grid-antd"
+    }, /*#__PURE__*/React.createElement(Form.Item, {
+      name: "rewardType",
+      label: "奖励类型",
+      rules: [{
+        required: true,
+        message: "请选择奖励类型"
+      }]
+    }, /*#__PURE__*/React.createElement(Select, {
+      options: ["XP", "Drop"].map(value => ({
+        value,
+        label: value
+      }))
+    })), /*#__PURE__*/React.createElement(Form.Item, {
+      name: "rewardValue",
+      label: "奖励值"
+    }, /*#__PURE__*/React.createElement(InputNumber, {
+      min: 0,
+      precision: 0,
+      className: "full-control",
+      placeholder: "0"
+    })))));
+    return /*#__PURE__*/React.createElement(Drawer, {
+      title: drawerTitle,
+      open: open,
+      width: 720,
+      onClose: onCancel,
+      destroyOnClose: true,
+      footer: /*#__PURE__*/React.createElement("div", {
+        className: "drawer-footer-actions"
+      }, /*#__PURE__*/React.createElement(Button, {
+        onClick: onCancel
+      }, "取消"), /*#__PURE__*/React.createElement(Button, {
+        type: "primary",
+        onClick: handleSave
+      }, "保存"))
+    }, /*#__PURE__*/React.createElement(Form, {
+      form: form,
+      layout: "vertical",
+      className: "admin-form"
+    }, /*#__PURE__*/React.createElement(Tabs, {
+      activeKey: activeTab,
+      onChange: setActiveTab,
+      destroyInactiveTabPane: true,
+      items: [{
+        key: "daily",
+        label: "日常任务",
+        children: dailyTab
+      }, {
+        key: "course",
+        label: "课程任务",
+        children: courseTab
+      }]
+    })));
+  }
+  function RuleDetailDrawer({
+    rule,
+    courses,
+    lessons,
+    onClose
+  }) {
+    const course = rule?.courseId ? courses.find(item => item.id === rule.courseId) : null;
+    const ruleLessons = rule?.courseId ? lessons.filter(item => item.courseId === rule.courseId) : [];
+    const conditionText = rule?.conditions?.length ? rule.conditions.map(item => `${item.param} ≥ ${item.value}`).join(rule.relation === "any" ? " 或 " : " 且 ") : "-";
+    const row = (label, value) => /*#__PURE__*/React.createElement("div", {
+      style: {
+        display: "flex",
+        gap: 12,
+        padding: "7px 0",
+        borderBottom: "1px solid #f0f0f0",
+        fontSize: 13,
+        lineHeight: 1.6
+      }
+    }, /*#__PURE__*/React.createElement("span", {
+      style: {
+        flex: "0 0 104px",
+        color: "#8a93a3"
+      }
+    }, label), /*#__PURE__*/React.createElement("span", {
+      style: {
+        flex: 1,
+        minWidth: 0
+      }
+    }, value));
+    const body = rule ? /*#__PURE__*/React.createElement("div", null, row("类型", rule.ruleType === "课程任务" ? "课程任务" : rule.taskType === "新手任务" ? "普通任务-新手" : "普通任务"), row("内部规则名称", rule.ruleType === "课程任务" ? "--" : rule.internalName), row("外部规则名称", rule.ruleType === "课程任务" ? "--" : rule.externalName), row("任务类型", rule.taskType || "-"), rule.ruleType === "课程任务" && /*#__PURE__*/React.createElement(React.Fragment, null, row("课程名称", rule.courseName || "-"), row("课程简介", course?.intro || "-"), row("每讲完课奖励", course ? `${course.rewardXp} XP` : "-"), row("章节视频", ruleLessons.length ? /*#__PURE__*/React.createElement("div", null, ruleLessons.map((lesson, index) => /*#__PURE__*/React.createElement("div", {
+      key: lesson.id
+    }, `${index + 1}. ${lesson.title}（${lesson.videoType === "上传" ? "上传视频" : "视频链接"}）`))) : "-")), row("触发事件", rule.ruleType === "课程任务" ? "--" : rule.triggerEvent || "-"), row("达成条件", conditionText), row("循环周期", rule.cyclePeriod || "-"), row("循环次数", rule.cycleCount || "-"), row("周期内可触发日期", rule.triggerDates?.length ? rule.triggerDates.join("、") : "-"), row("生效时间", rule.timeRange && rule.timeRange !== "-" ? rule.timeRange : "-"), row("奖励", rewardNode(rule)), row("规则状态", /*#__PURE__*/React.createElement(Tag, {
+      color: statusColor[rule.status]
+    }, rule.status)), row("操作人", rule.operator || "-")) : null;
+    return /*#__PURE__*/React.createElement(Drawer, {
+      open: !!rule,
+      title: "规则详情",
+      width: 560,
+      onClose: onClose,
+      destroyOnClose: true
+    }, body);
   }
   function RulesPage({
     rules,
-    setRules
+    setRules,
+    courses,
+    setCourses,
+    lessons,
+    setLessons
   }) {
     const [keyword, setKeyword] = React.useState("");
     const [status, setStatus] = React.useState();
     const [page, setPage] = React.useState(1);
-    const [pageSize, setPageSize] = React.useState(5);
     const [sorter, setSorter] = React.useState({});
-    const [visibleColumns, setVisibleColumns] = React.useState(["externalName", "triggerEvent", "cyclePeriod", "reward", "taskType", "timeRange", "status"]);
+    const [visibleColumns, setVisibleColumns] = React.useState(["type", "internalName", "externalName", "courseInfo", "triggerEvent", "reward", "status", "operator"]);
     const [modalState, setModalState] = React.useState({
       open: false,
       mode: "add",
       rule: null
     });
+    const [detailRule, setDetailRule] = React.useState(null);
+    const [pageSize, setPageSize] = React.useState(20);
     const filteredRules = React.useMemo(() => {
       const term = keyword.trim().toLowerCase();
       let list = rules.filter(rule => {
@@ -523,40 +850,49 @@
       }
       return list;
     }, [rules, keyword, status, sorter]);
+    const ruleTypeText = record => {
+      if (record.ruleType === "课程任务") return "课程任务";
+      if (record.taskType === "新手任务") return "普通任务-新手";
+      return "普通任务";
+    };
     const columnMap = {
+      type: {
+        title: "类型",
+        key: "type",
+        width: 130,
+        render: (_, record) => /*#__PURE__*/React.createElement(Tag, {
+          color: record.ruleType === "课程任务" ? "purple" : "default"
+        }, ruleTypeText(record))
+      },
+      internalName: {
+        title: "内部规则名称",
+        dataIndex: "internalName",
+        width: 170,
+        render: (_, record) => record.ruleType === "课程任务" ? "--" : record.internalName
+      },
       externalName: {
         title: "外部规则名称",
         dataIndex: "externalName",
-        width: 180
+        width: 180,
+        render: (_, record) => record.ruleType === "课程任务" ? "--" : record.externalName
+      },
+      courseInfo: {
+        title: "课程信息",
+        key: "courseInfo",
+        width: 200,
+        render: (_, record) => record.ruleType !== "课程任务" ? "--" : record.courseName || "-"
       },
       triggerEvent: {
         title: "触发事件",
         dataIndex: "triggerEvent",
-        width: 120
-      },
-      cyclePeriod: {
-        title: "循环周期",
-        dataIndex: "cyclePeriod",
-        width: 100
+        width: 120,
+        render: (_, record) => record.ruleType === "课程任务" ? "--" : record.triggerEvent
       },
       reward: {
         title: "奖励",
         key: "reward",
         width: 150,
         render: (_, record) => rewardNode(record)
-      },
-      taskType: {
-        title: "任务类型",
-        dataIndex: "taskType",
-        width: 110
-      },
-      timeRange: {
-        title: "总任务生效时间",
-        dataIndex: "timeRange",
-        width: 180,
-        render: value => /*#__PURE__*/React.createElement(Text, {
-          type: "secondary"
-        }, value)
       },
       status: {
         title: "规则状态",
@@ -566,9 +902,46 @@
         render: value => /*#__PURE__*/React.createElement(Tag, {
           color: statusColor[value]
         }, value)
+      },
+      operator: {
+        title: "操作人",
+        dataIndex: "operator",
+        width: 100,
+        render: value => value || "-"
       }
     };
-    function saveRule(data) {
+    function saveRule(data, coursePayload) {
+      if (coursePayload) {
+        const lessonBaseId = lessons.reduce((max, item) => Math.max(max, item.id), 0);
+        if (coursePayload.updateCourseId) {
+          const cid = coursePayload.updateCourseId;
+          setCourses(courses.map(item => item.id === cid ? {
+            ...item,
+            ...coursePayload.course
+          } : item));
+          setLessons(lessons.filter(item => item.courseId !== cid).concat(coursePayload.lessons.map((row, index) => ({
+            ...row,
+            id: lessonBaseId + 1 + index,
+            courseId: cid
+          }))));
+          data.courseId = cid;
+        } else {
+          const cid = courses.reduce((max, item) => Math.max(max, item.id), 0) + 1;
+          setCourses([{
+            id: cid,
+            status: "草稿",
+            operator: "Bella",
+            ...coursePayload.course
+          }, ...courses]);
+          setLessons(lessons.concat(coursePayload.lessons.map((row, index) => ({
+            ...row,
+            id: lessonBaseId + 1 + index,
+            courseId: cid
+          }))));
+          data.courseId = cid;
+        }
+        data.courseName = coursePayload.course.title;
+      }
       if (modalState.mode === "edit") {
         setRules(rules.map(item => item.id === modalState.rule.id ? {
           ...item,
@@ -579,6 +952,7 @@
         setRules([{
           id: Date.now(),
           ...data,
+          operator: data.operator || "Bella",
           status: "待启用",
           canEdit: true
         }, ...rules]);
@@ -604,12 +978,7 @@
         }
       });
     }
-    const columns = [{
-      title: "内部规则名称",
-      dataIndex: "internalName",
-      width: 170,
-      sorter: true
-    }, ...visibleColumns.map(key => columnMap[key]), {
+    const columns = [...visibleColumns.map(key => columnMap[key]), {
       title: "操作",
       key: "actions",
       fixed: "right",
@@ -709,6 +1078,12 @@
       rowKey: "id",
       columns: columns,
       dataSource: filteredRules,
+      onRow: record => ({
+        onClick: event => {
+          if (event.target.closest("button")) return;
+          setDetailRule(record);
+        }
+      }),
       pagination: {
         current: page,
         pageSize,
@@ -730,12 +1105,19 @@
       open: modalState.open,
       mode: modalState.mode,
       rule: modalState.rule,
+      courses: courses,
+      lessons: lessons,
       onCancel: () => setModalState({
         open: false,
         mode: "add",
         rule: null
       }),
       onSave: saveRule
+    }), /*#__PURE__*/React.createElement(RuleDetailDrawer, {
+      rule: detailRule,
+      courses: courses,
+      lessons: lessons,
+      onClose: () => setDetailRule(null)
     }));
   }
   function DeliveryModal({
@@ -743,6 +1125,7 @@
     mode,
     item,
     options,
+    coupons,
     onCancel,
     onSave
   }) {
@@ -751,7 +1134,6 @@
     const objectPath = Form.useWatch("objectPath", form);
     const event = Form.useWatch("event", form);
     const selectedKey = objectPath?.[0] || "points";
-    const probabilityFieldName = selectedKey === "coupon" ? "couponProbability" : selectedKey === "bonus" ? "bonusProbability" : "probability";
     React.useEffect(() => {
       if (!open) return;
       form.setFieldsValue({
@@ -760,15 +1142,11 @@
         method: item?.method || "自动",
         timeRange: [dayjs(item?.start || "2026-09-01 00:00"), dayjs(item?.end || "2026-09-30 00:00")],
         coupon: "抹亏券-测试待激活展示",
-        couponProbability: "15%",
         bonusAmount: 100,
         bonusCount: item?.key === "bonus" ? Number(item.count || 25) : 25,
-        bonusProbability: "15%",
         pointAmount: 100,
         pointCount: item?.key === "points" ? Number(item.count || 1) : 1,
-        probability: "30%",
-        wheelMarker: item?.wheelMarker || undefined,
-        event: item?.event === "大转盘" ? "抽奖" : item?.event || "抽奖",
+        event: item?.event || "开仓",
         manualUserIds: "870206426, 983850083"
       });
     }, [open, item, form]);
@@ -793,13 +1171,8 @@
       const isBonus = selected.key === "bonus";
       const isPoints = selected.key === "points";
       const count = isBonus ? values.bonusCount : isPoints ? values.pointCount : "0";
-      const probability = isBonus ? values.bonusProbability : values.probability;
       const amount = isBonus ? values.bonusAmount : values.pointAmount;
-      const couponProbability = values.couponProbability || "15%";
       const pointLabel = selected.object.split("-")[1] || "XP";
-      const isWheel = values.method === "自动" && values.event === "抽奖";
-      const wheelMarker = values.wheelMarker || "";
-      const wheelMarkerNode = isWheel ? `<span class="pill">抽奖标识.：${wheelMarker || "-"}</span>` : "";
       const itemData = {
         ...selected,
         name: values.name || "未命名投递",
@@ -809,13 +1182,7 @@
         start: normalizeDateTime(range[0]?.format("YYYY-MM-DD HH:mm:ss")),
         end: normalizeDateTime(range[1]?.format("YYYY-MM-DD HH:mm:ss")),
         event: values.method === "自动" ? values.event : "手动投递",
-        ...(selected.key === "coupon" ? {
-          couponProbability
-        } : {}),
-        ...(isWheel ? {
-          wheelMarker
-        } : {}),
-        param: isBonus ? `<span class="pill gold">金额：${amount || 100}</span><span class="pill gold">中奖概率：${probability || "15%"}</span>${wheelMarkerNode}` : isPoints ? `<span class="pill blue">${pointLabel}：${amount || 100}</span><span class="pill blue">中奖概率：${probability || "30%"}</span>${wheelMarkerNode}` : selected.key === "coupon" ? `<span class="pill">优惠券：${values.coupon || selected.object}</span><span class="pill">中奖概率：${couponProbability}</span>${wheelMarkerNode}` : `<span class="pill">指定用户：${values.manualUserIds || "870206426"}</span>${wheelMarkerNode}`,
+        param: isBonus ? `<span class="pill gold">金额：${amount || 100}</span><span class="pill gold">发放数量（份）：${count || 0}</span>` : isPoints ? `<span class="pill blue">${pointLabel}：${amount || 100}</span><span class="pill blue">发放数量（份）：${count || 0}</span><span class="pill blue">事件参数：${values.probability || "-"}</span>` : selected.key === "coupon" ? `<span class="pill">优惠券：${values.coupon || selected.object}</span>` : `<span class="pill">指定用户：${values.manualUserIds || "870206426"}</span>`,
         operator: "Bella"
       };
       Modal.confirm({
@@ -863,9 +1230,9 @@
       name: "coupon",
       label: "选择优惠券"
     }, /*#__PURE__*/React.createElement(Select, {
-      options: ["抹亏券-测试待激活展示", "交易返现券-测试交易返现券", "手续费减免券-测试手续费减免券"].map(value => ({
-        value,
-        label: value
+      options: coupons.filter(coupon => coupon.status === "启用").map(coupon => ({
+        value: coupon.name,
+        label: coupon.name
       }))
     })), selectedKey === "bonus" && /*#__PURE__*/React.createElement("div", {
       className: "form-grid-antd"
@@ -900,7 +1267,7 @@
       min: 0,
       precision: 0,
       className: "full-control"
-    })), event !== "抽奖" && /*#__PURE__*/React.createElement(Form.Item, {
+    })), /*#__PURE__*/React.createElement(Form.Item, {
       name: "probability",
       label: "事件参数"
     }, /*#__PURE__*/React.createElement(Input, {
@@ -926,7 +1293,7 @@
       name: "event",
       label: "触发事件"
     }, /*#__PURE__*/React.createElement(Select, {
-      options: ["开仓", "连续签到", "抽奖", "手动触发"].map(value => ({
+      options: ["开仓", "连续签到", "手动触发"].map(value => ({
         value,
         label: value
       }))
@@ -952,36 +1319,13 @@
         form.setFieldValue("manualUserIds", "");
         message.success("UserID 已清空");
       }
-      }, "清空"))), method === "自动" && event === "抽奖" && /*#__PURE__*/React.createElement("div", {
-      className: "form-grid-antd"
-    }, /*#__PURE__*/React.createElement(Form.Item, {
-      name: "wheelMarker",
-      label: "抽奖标识.",
-      rules: [{
-        required: true,
-        message: "请选择抽奖标识."
-      }]
-    }, /*#__PURE__*/React.createElement(Select, {
-      placeholder: "请选择抽奖标识.",
-      options: ["盲盒1", "盲盒2", "转盘1", "转盘2"].map(value => ({
-        value,
-        label: value
-      }))
-    })), /*#__PURE__*/React.createElement(Form.Item, {
-      name: probabilityFieldName,
-      label: "中奖概率",
-      rules: [{
-        required: true,
-        message: "请输入中奖概率"
-      }]
-    }, /*#__PURE__*/React.createElement(Input, {
-      placeholder: "请输入中奖概率"
-    })))));
+      }, "清空")))));
   }
   function DeliveryPage({
     deliveries,
     setDeliveries,
-    options
+    options,
+    coupons
   }) {
     const [keyword, setKeyword] = React.useState("");
     const [objectFilter, setObjectFilter] = React.useState();
@@ -1193,6 +1537,7 @@
       mode: modalState.mode,
       item: modalState.item,
       options: options,
+      coupons: coupons,
       onCancel: () => setModalState({
         open: false,
         mode: "add",
@@ -1243,9 +1588,16 @@
     const [agentLevels, setAgentLevels] = React.useState(() => cloneData(app.mockData.agentLevels));
     const [commissionRules, setCommissionRules] = React.useState(() => cloneData(app.mockData.commissionRules));
     const [communityActivities, setCommunityActivities] = React.useState(() => cloneData(app.mockData.communityActivities));
+    const [courses, setCourses] = React.useState(() => cloneData(app.mockData.courses));
+    const [courseLessons, setCourseLessons] = React.useState(() => cloneData(app.mockData.courseLessons));
+    const [coupons, setCoupons] = React.useState(() => cloneData(app.mockData.coupons));
+    const [wheelActivities, setWheelActivities] = React.useState(() => cloneData(app.mockData.wheelActivities));
     const [signupActivityId, setSignupActivityId] = React.useState(null);
     const [openTabs, setOpenTabs] = React.useState(["overview"]);
     const menuItems = [{
+      key: "overview",
+      label: "数据概览"
+    }, {
       key: "customerGroup",
       label: "客户管理",
       children: [{
@@ -1255,13 +1607,70 @@
         key: "loginLog",
         label: "用户登录日志"
       }, {
-        key: "overview",
-        label: "数据概览"
+        key: "blacklist",
+        label: "黑名单"
+      }, {
+        key: "whitelist",
+        label: "白名单"
+      }]
+    }, {
+      key: "orderGroup",
+      label: "订单管理",
+      children: [{
+        key: "orderList",
+        label: "订单列表",
+        disabled: true
+      }, {
+        key: "pendingOrders",
+        label: "挂单列表",
+        disabled: true
+      }]
+    }, {
+      key: "fundsGroup",
+      label: "资金管理",
+      children: [{
+        key: "depositWithdraw",
+        label: "出入金管理",
+        disabled: true
+      }, {
+        key: "fundsManage",
+        label: "资金账户",
+        disabled: true
+      }, {
+        key: "fundFlow",
+        label: "资金流水",
+        disabled: true
+      }]
+    }, {
+      key: "marketingGroup",
+      label: "市场活动",
+      children: [{
+        key: "activity",
+        label: "活动配置"
+      }]
+    }, {
+      key: "incentiveGroup",
+      label: "激励中心",
+      children: [{
+        key: "rules",
+        label: "积分配置"
+      }, {
+        key: "pointDetails",
+        label: "积分明细"
+      }, {
+        key: "wheel",
+        label: "抽奖配置"
+      }, {
+        key: "badge",
+        label: "徽章列表"
       }]
     }, {
       key: "agentGroup",
-      label: "代理关系管理",
+      label: "代理管理",
       children: [{
+        key: "agentApplications",
+        label: "代理申请列表"
+      }, {
         key: "agent",
         label: "代理商列表"
       }, {
@@ -1269,37 +1678,43 @@
         label: "代理等级配置"
       }, {
         key: "commission",
-        label: "佣金配置管理"
+        label: "佣金管理"
       }]
     }, {
-      key: "points",
-      label: "积分",
+      key: "masterGroup",
+      label: "高手管理",
       children: [{
-        key: "rules",
-        label: "积分获取设置"
-      }]
-    }, {
-      key: "activityGroup",
-      label: "活动管理",
-      children: [{
-        key: "activity",
-        label: "活动配置"
+        key: "masterApplications",
+        label: "高手申请列表",
+        disabled: true
       }, {
-        key: "activityApplications",
-        label: "报名列表"
+        key: "masterLevel",
+        label: "等级配置",
+        disabled: true
+      }, {
+        key: "potentialMaster",
+        label: "潜在高手",
+        disabled: true
+      }, {
+        key: "masterList",
+        label: "高手管理",
+        disabled: true
+      }, {
+        key: "followRelation",
+        label: "跟随关系管理",
+        disabled: true
+      }, {
+        key: "profitShare",
+        label: "分润结算",
+        disabled: true
       }]
     }, {
-      key: "badge",
-      label: "徽章列表",
-      disabled: true
-    }, {
-      key: "coupon",
-      label: "优惠券管理",
-      disabled: true
-    }, {
-      key: "deliveryGroup",
-      label: "投递管理",
+      key: "grantGroup",
+      label: "发放管理",
       children: [{
+        key: "coupon",
+        label: "优惠券管理"
+      }, {
         key: "delivery",
         label: "投递列表"
       }, {
@@ -1308,21 +1723,56 @@
         disabled: true
       }]
     }, {
-      key: "funds",
-      label: "出入金管理",
+      key: "contentGroup",
+      label: "内容管理",
+      children: [{
+        key: "adSlot",
+        label: "广告位管理",
+        disabled: true
+      }, {
+        key: "messageCenter",
+        label: "消息管理",
+        disabled: true
+      }, {
+        key: "mailPush",
+        label: "邮件PUSH",
+        disabled: true
+      }, {
+        key: "article",
+        label: "文章管理",
+        disabled: true
+      }]
+    }, {
+      key: "symbolList",
+      label: "品种列表",
       disabled: true
     }, {
       key: "systemGroup",
-      label: "系统管理",
+      label: "设置",
       children: [{
         key: "roles",
         label: "角色管理设置"
       }, {
         key: "users",
         label: "用户设置管理"
+      }, {
+        key: "versionSetting",
+        label: "版本设置",
+        disabled: true
+      }, {
+        key: "changePassword",
+        label: "修改密码",
+        disabled: true
       }]
     }];
     const navPages = app.buildNavIndex(menuItems);
+    // 报名列表不在侧边栏，从活动配置的行操作进入，这里补页签标题与搜索路径映射。
+    const hiddenNavPages = [{
+      key: "activityApplications",
+      label: "报名列表",
+      path: "市场活动 / 报名列表"
+    }];
+    const tabPages = navPages.concat(hiddenNavPages);
     const navKeys = navPages.map(page => page.key);
     React.useEffect(() => {
       setOpenTabs(tabs => tabs.includes(currentPage) ? tabs : [...tabs, currentPage]);
@@ -1363,7 +1813,7 @@
     }), /*#__PURE__*/React.createElement("span", null, "Gin")), /*#__PURE__*/React.createElement(Menu, {
       mode: "inline",
       selectedKeys: [currentPage],
-      defaultOpenKeys: ["customerGroup", "agentGroup", "points", "activityGroup", "deliveryGroup", "systemGroup"],
+      defaultOpenKeys: ["customerGroup", "orderGroup", "contentGroup", "marketingGroup", "incentiveGroup", "grantGroup", "fundsGroup", "agentGroup", "masterGroup", "systemGroup"],
       items: menuItems,
       onClick: ({
         key
@@ -1375,7 +1825,7 @@
     }, /*#__PURE__*/React.createElement("div", {
       className: "page-tabbar-wrap"
     }, /*#__PURE__*/React.createElement(app.PageTabs, {
-      pages: navPages,
+      pages: tabPages,
       openTabs: openTabs,
       activeKey: currentPage,
       onChange: setCurrentPage,
@@ -1384,6 +1834,7 @@
       onCloseAll: closeAllTabs
     })), /*#__PURE__*/React.createElement(Space, null, /*#__PURE__*/React.createElement(app.GlobalSearch, {
       menuItems: menuItems,
+      extraPages: hiddenNavPages,
       onNavigate: setCurrentPage
     }), /*#__PURE__*/React.createElement(Button, {
       shape: "circle"
@@ -1399,18 +1850,39 @@
       services: app.mockData.customerServices
     }) : currentPage === "loginLog" ? /*#__PURE__*/React.createElement(app.LoginLogPage, {
       logs: app.mockData.loginLogs
+    }) : currentPage === "blacklist" ? /*#__PURE__*/React.createElement(app.BlacklistPage, {
+      list: app.mockData.blacklist
+    }) : currentPage === "whitelist" ? /*#__PURE__*/React.createElement(app.WhitelistPage, {
+      list: app.mockData.whitelist
     }) : currentPage === "agent" ? /*#__PURE__*/React.createElement(app.AgentPage, {
       agents: app.mockData.agents
+    }) : currentPage === "agentApplications" ? /*#__PURE__*/React.createElement(app.AgentApplicationPage, {
+      applications: app.mockData.agentApplications
     }) : currentPage === "agentLevel" ? /*#__PURE__*/React.createElement(app.AgentLevelPage, {
       levels: agentLevels,
       setLevels: setAgentLevels,
       rules: commissionRules,
       agents: app.mockData.agents
-    }) : currentPage === "commission" ? /*#__PURE__*/React.createElement(app.CommissionPage, {
-      rules: commissionRules,
-      setRules: setCommissionRules,
-      levels: agentLevels,
-      agents: app.mockData.agents
+    }) : currentPage === "commission" ? /*#__PURE__*/React.createElement(Tabs, {
+      defaultActiveKey: "config",
+      items: [{
+        key: "config",
+        label: "佣金配置",
+        children: /*#__PURE__*/React.createElement(app.CommissionPage, {
+          rules: commissionRules,
+          setRules: setCommissionRules,
+          levels: agentLevels,
+          agents: app.mockData.agents
+        })
+      }, {
+        key: "records",
+        label: "佣金记录",
+        children: /*#__PURE__*/React.createElement(app.CommissionRecordPage, {
+          records: app.mockData.commissionRecords,
+          distributions: app.mockData.commissionDistributions,
+          levels: agentLevels
+        })
+      }]
     }) : currentPage === "roles" ? React.createElement(app.RoleSettingsPage, {
       roles: roleSettings,
       onSaveRole: role => setRoleSettings(list => list.some(item => item.id === role.id) ? list.map(item => item.id === role.id ? role : item) : [...list, role]),
@@ -1434,13 +1906,30 @@
       applications: app.mockData.activityApplications,
       presetActivityId: signupActivityId,
       onClearPreset: () => setSignupActivityId(null)
+    }) : currentPage === "pointDetails" ? React.createElement(app.PointDetailsPage, {
+      details: app.mockData.pointDetails
+    }) : currentPage === "badge" ? React.createElement(app.BadgePage, {
+      list: app.mockData.badges
+    }) : currentPage === "wheel" ? React.createElement(app.WheelPage, {
+      activities: wheelActivities,
+      setActivities: setWheelActivities,
+      coupons: coupons
+    }) : currentPage === "coupon" ? React.createElement(app.CouponPage, {
+      coupons: coupons,
+      setCoupons: setCoupons,
+      wheelActivities: wheelActivities
     }) : currentPage === "rules" ? /*#__PURE__*/React.createElement(RulesPage, {
       rules: rules,
-      setRules: setRules
+      setRules: setRules,
+      courses: courses,
+      setCourses: setCourses,
+      lessons: courseLessons,
+      setLessons: setCourseLessons
     }) : /*#__PURE__*/React.createElement(DeliveryPage, {
       deliveries: deliveries,
       setDeliveries: setDeliveries,
-      options: app.mockData.cascaderOptions
+      options: app.mockData.cascaderOptions,
+      coupons: coupons
     }))))));
   }
   ReactDOM.createRoot(document.getElementById("root")).render(/*#__PURE__*/React.createElement(AdminApp, null));

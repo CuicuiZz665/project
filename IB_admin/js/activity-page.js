@@ -3,6 +3,7 @@
     Button,
     Checkbox,
     DatePicker,
+    Drawer,
     Dropdown,
     Form,
     Input,
@@ -114,7 +115,7 @@
       }, "+"));
   }
 
-  function ActivityModal({ open, mode, record, onCancel, onSave }) {
+  function ActivityDrawer({ open, mode, record, onCancel, onSave }) {
     const [form] = Form.useForm();
     const [languages, setLanguages] = React.useState(["English"]);
     const [activeLang, setActiveLang] = React.useState("English");
@@ -194,15 +195,15 @@
       e(Text, { type: "secondary", style: { fontSize: 12, fontWeight: 400 } }, "先完善基础信息，再补充详情内容与多语言素材")
     );
 
-    return e(Modal, {
+    return e(Drawer, {
       open,
       title: modalTitle,
       width: 880,
-      okText: "保存",
-      cancelText: "取消",
-      onCancel,
-      onOk: handleSave,
-      destroyOnClose: true
+      onClose: onCancel,
+      destroyOnClose: true,
+      footer: e("div", { className: "drawer-footer-actions" },
+        e(Button, { onClick: onCancel }, "取消"),
+        e(Button, { type: "primary", onClick: handleSave }, "保存"))
     },
       e(Form, { form, layout: "vertical", className: "admin-form" },
         e(Tabs, {
@@ -211,12 +212,12 @@
               key: "basic",
               label: "基础信息",
               children: e("div", null,
-                e("div", { className: "form-section-title" }, "活动基础信息"),
+                e("div", { className: "drawer-form-card", key: "card-basic" }, e("div", { className: "form-section-title" }, "活动基础信息"), 
                 e("div", { className: "form-grid-antd" },
                   e(Form.Item, { name: "type", label: "活动类型", rules: [{ required: true, message: "请选择活动类型" }] },
                     e(Select, { options: activityTypeOptions.map(value => ({ value, label: value })) })),
                   e(Form.Item, { name: "city", label: "线下城市", rules: [{ required: true, message: "请选择线下城市" }] },
-                    e(Select, { placeholder: "请选择线下城市", options: cityOptions.map(value => ({ value, label: value })) }))),
+                    e(Select, { placeholder: "请选择线下城市", options: cityOptions.map(value => ({ value, label: value })) }))), 
                 e("div", { className: "form-grid-antd" },
                   e(Form.Item, { name: "signupRange", label: "报名时间", rules: [{ required: true, message: "请选择报名时间" }] },
                     e(RangePicker, {
@@ -231,7 +232,7 @@
                       format: "YYYY-MM-DD HH:mm:ss",
                       placeholder: ["开始时间", "结束时间"],
                       className: "full-control"
-                    }))),
+                    }))), 
                 e("div", { className: "form-grid-antd" },
                   e(Form.Item, { name: "crowds", label: "适合人群" },
                     e(Select, {
@@ -239,16 +240,16 @@
                       placeholder: "请选择适合人群",
                       maxTagCount: "responsive",
                       options: crowdOptions.map(value => ({ value, label: value }))
-                    }))),
-                e("div", { className: "form-section-title" }, "活动名称与摘要多语言"),
-                e(Text, { type: "warning", style: { fontSize: 12, display: "block", marginBottom: 12 } }, langDeleteNote),
+                    })))), e("div", { className: "drawer-form-card", key: "card-lang" }, 
+                e("div", { className: "form-section-title" }, "活动名称与摘要多语言"), 
+                e(Text, { type: "warning", style: { fontSize: 12, display: "block", marginBottom: 12 } }, langDeleteNote), 
                 e(LangTabs, {
                   languages,
                   activeLang: basicLang,
                   onActive: setActiveLang,
                   onAdd: addLanguage,
                   onRemove: removeLanguage
-                }),
+                }), 
                 e("div", { style: { background: "#f5f5f5", borderRadius: 8, padding: 20 } },
                   e("div", { style: { display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 2fr)", gap: "0 16px" } },
                     e(Form.Item, { label: "语言" },
@@ -275,21 +276,21 @@
                       title: "上传背景图 · 活动背景Banner",
                       hint: "用于前台背景展示。建议上传横版背景图，支持 PNG/JPG。"
                     })))
-              )
+              ))
             },
             {
               key: "detail",
               label: "详情内容",
               children: e("div", null,
-                e("div", { className: "form-section-title" }, "详情内容多语言"),
-                e(Text, { type: "warning", style: { fontSize: 12, display: "block", marginBottom: 12 } }, langDeleteNote),
+                e("div", { className: "drawer-form-card", key: "card-detail" }, e("div", { className: "form-section-title" }, "详情内容多语言"), 
+                e(Text, { type: "warning", style: { fontSize: 12, display: "block", marginBottom: 12 } }, langDeleteNote), 
                 e(LangTabs, {
                   languages,
                   activeLang: detailActive,
                   onActive: setDetailLang,
                   onAdd: addLanguage,
                   onRemove: removeLanguage
-                }),
+                }), 
                 e("div", { style: { background: "#f5f5f5", borderRadius: 8, padding: 20 } },
                   e(Form.Item, { label: "语言" },
                     e(Select, { disabled: true, value: detailActive, options: [{ value: detailActive, label: detailActive }] })),
@@ -309,7 +310,7 @@
                     e(TextArea, { rows: 6, placeholder: "请输入活动详细内容、流程、议程或规则说明" })),
                   e("div", { style: { textAlign: "right", marginTop: -16 } },
                     e(Text, { type: "secondary", style: { fontSize: 12 } }, `${(contentWatch || "").length} 字`)))
-              )
+              ))
             }
           ]
         })
@@ -515,7 +516,7 @@
         onCancel: () => setPublishTarget(null),
         onConfirm: confirmPublish
       }),
-      e(ActivityModal, {
+      e(ActivityDrawer, {
         open: modalState.open,
         mode: modalState.mode,
         record: modalState.record,

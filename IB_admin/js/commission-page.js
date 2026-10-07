@@ -3,7 +3,6 @@
     Button,
     Col,
     DatePicker,
-    Drawer,
     Form,
     Input,
     InputNumber,
@@ -51,24 +50,28 @@
     return ref;
   }
 
-  const percentInput = value => (value === null || value === undefined ? "" : `${value}%`);
+  const percentInput = value => (value === null || value === undefined || value === "" ? "" : `${value}%`);
   const percentParse = value => value.replace("%", "");
 
+  const emptySymbolFilter = () => ({ code: null, listed: null });
+  const rateText = value => `${value}%`;
+  const feeText = (margin, rate) => `${parseFloat((margin * rate / 100).toFixed(6))}USDT`;
+
   function CommissionPage({ rules, setRules, levels, agents }) {
-    const [keyword, setKeyword] = React.useState("");
+    const [keyword, setKeyword] = React.useState();
     const [levelFilter, setLevelFilter] = React.useState();
     const [statusFilter, setStatusFilter] = React.useState();
     const [editing, setEditing] = React.useState(null);
     const [effectiveType, setEffectiveType] = React.useState("立即生效");
-    const [relatedRule, setRelatedRule] = React.useState(null);
+    const [creating, setCreating] = React.useState(false);
+    const [symbolDraft, setSymbolDraft] = React.useState(emptySymbolFilter);
+    const [symbolFilter, setSymbolFilter] = React.useState(emptySymbolFilter);
+    const [symbolRateDraft, setSymbolRateDraft] = React.useState({});
+    const [fillRate, setFillRate] = React.useState();
     const [form] = Form.useForm();
 
     function agentCountOf(ruleId) {
       return agents.filter(agent => String(agent.commissionRuleId) === String(ruleId)).length;
-    }
-
-    function relatedAgentsOf(ruleId) {
-      return agents.filter(agent => String(agent.commissionRuleId) === String(ruleId));
     }
 
     function levelNamesUsing(ruleId) {
@@ -78,35 +81,77 @@
     }
 
     const visibleRules = rules.filter(rule => {
-      const term = keyword.trim().toLowerCase();
-      return (!term
-          || rule.name.toLowerCase().includes(term)
-          || String(rule.id).toLowerCase().includes(term))
+      return (!keyword || rule.name === keyword)
         && (!levelFilter || rule.levelId === levelFilter)
         && (!statusFilter || rule.status === statusFilter);
     });
 
     function resetFilters() {
-      setKeyword("");
+      setKeyword(undefined);
       setLevelFilter(undefined);
       setStatusFilter(undefined);
     }
 
     function openCreate() {
-      setEditing({ id: null });
-      setEffectiveType("立即生效");
+      setSymbolDraft(emptySymbolFilter());
+      setSymbolFilter(emptySymbolFilter());
+      setSymbolRateDraft({});
+      setFillRate(undefined);
       form.setFieldsValue({
         name: "",
+        floorRate: undefined,
+        marketingRate: undefined
+      });
+      setCreating(true);
+    }
+
+    function backToList() {
+      setCreating(false);
+      form.resetFields();
+    }
+
+    async function submitCreate() {
+      let values;
+      try {
+        values = await form.validateFields();
+      } catch {
+        return;
+      }
+      const name = String(values.name || "").trim();
+      if (rules.some(rule => rule.name === name)) {
+        message.error(`佣金规则名称「${name}」已存在`);
+        return;
+      }
+      const symbols = app.mockData.commissionSymbols || [];
+      setRules(list => [...list, {
+        id: `rule-${Date.now()}`,
+        name,
         levelId: undefined,
+        levelName: "-",
+        status: "停用",
         rates: zeroRates(),
-        marketingRate: 0,
+        floorRate: values.floorRate ?? 0,
+        marketingRate: values.marketingRate || 0,
+        symbolRates: symbols.map(item => ({
+          code: item.code,
+          openRate: item.openRate,
+          closeRate: item.closeRate,
+          rate: symbolRateDraft[item.code] ?? null
+        })),
         selfCommission: false,
         settleCycle: "日结",
         settleCoin: "USDT",
         effectiveType: "立即生效",
-        effectiveAt: undefined,
-        remark: ""
-      });
+        effectiveAt: "-",
+        remark: "",
+        auditStatus: "待审核",
+        approvedAt: "-",
+        createdAt: dayjs().format("YYYY-MM-DD HH:mm"),
+        updatedAt: dayjs().format("YYYY-MM-DD HH:mm"),
+        operator: "Andy"
+      }]);
+      message.success(`佣金规则「${name}」已创建，默认停用，启用后生效`);
+      backToList();
     }
 
     function openEdit(rule) {
@@ -166,6 +211,9 @@
           : [...list, {
             id: `rule-${Date.now()}`,
             status: "停用",
+            auditStatus: "待审核",
+            approvedAt: "-",
+            createdAt: now,
             ...payload
           }]
         );
@@ -195,6 +243,9 @@
         id: `rule-${Date.now()}`,
         name: `${rule.name}-副本`,
         status: "停用",
+        auditStatus: "待审核",
+        approvedAt: "-",
+        createdAt: now,
         effectiveType: "立即生效",
         effectiveAt: "-",
         updatedAt: now,
@@ -205,9 +256,20 @@
 
     function toggleRuleStatus(rule, next) {
       const apply = () => {
-        setRules(list => list.map(item => (
-          item.id === rule.id ? { ...item, status: next ? "启用" : "停用", updatedAt: dayjs().format("YYYY-MM-DD HH:mm"), operator: "Andy" } : item
-        )));
+        setRules(list => list.map(item => {
+          if (item.id !== rule.id) return item;
+          const updated = {
+            ...item,
+            status: next ? "启用" : "停用",
+            updatedAt: dayjs().format("YYYY-MM-DD HH:mm"),
+            operator: "Andy"
+          };
+          if (next && item.auditStatus !== "已通过") {
+            updated.auditStatus = "已通过";
+            updated.approvedAt = updated.updatedAt;
+          }
+          return updated;
+        }));
         message.success(`规则「${rule.name}」已${next ? "启用" : "停用"}`);
       };
       if (next) {
@@ -252,19 +314,207 @@
       });
     }
 
-    function renderRateCell(record, kind) {
-      const rates = record.rates || zeroRates();
-      const prefix = kind === "contract" ? "contract" : "spot";
-      return e("div", { className: "level-upgrade-cell" }, [
-        e("span", { key: "main" }, `${rates[prefix]}%`),
-        e("span", { key: "sub", className: "config-sub-line" },
-          `Trader ${rates[`${prefix}Trader`]}% · API ${rates[`${prefix}Api`]}% · T&A ${rates[`${prefix}TraderApi`]}%`)
+    function renderCreatePage() {
+      const symbols = app.mockData.commissionSymbols || [];
+      const listedFilter = symbolFilter.listed === null || symbolFilter.listed === undefined
+        ? null
+        : Boolean(symbolFilter.listed);
+      const visibleSymbols = symbols.filter(item => (
+        (!symbolFilter.code || item.code === symbolFilter.code)
+        && (listedFilter === null || item.listed === listedFilter)
+      ));
+      const symbolRows = visibleSymbols.flatMap(item => ["买", "卖"].map((direction, index) => ({
+        key: `${item.code}-${direction}`,
+        code: item.code,
+        name: item.name,
+        margin: item.margin,
+        listed: item.listed,
+        direction,
+        openRate: item.openRate,
+        closeRate: item.closeRate,
+        lead: index === 0
+      })));
+      const leadCell = record => ({ rowSpan: record.lead ? 2 : 0 });
+      const estimateText = record => {
+        const rate = symbolRateDraft[record.code];
+        if (rate === undefined || rate === null || rate === "") {
+          return e("span", { className: "symbol-off-text" }, "-");
+        }
+        const fee = record.direction === "买"
+          ? record.margin * record.openRate / 100
+          : record.margin * record.closeRate / 100;
+        return feeText(fee, rate);
+      };
+      const symbolColumns = [
+        { title: "品种代码", dataIndex: "code", width: 130, onCell: leadCell },
+        { title: "品种名称", dataIndex: "name", width: 130, onCell: leadCell },
+        { title: "持仓量(Margin * 杠杆)", dataIndex: "margin", width: 180, onCell: leadCell, render: value => `${value}USDT` },
+        {
+          title: "上/下架状态",
+          key: "listed",
+          width: 120,
+          onCell: leadCell,
+          render: (_, record) => (record.listed
+            ? e(Tag, { color: "green" }, "上架")
+            : e("span", { className: "symbol-off-text" }, "下架"))
+        },
+        { title: "方向", dataIndex: "direction", width: 70 },
+        { title: "开仓费率", dataIndex: "openRate", width: 100, render: rateText },
+        { title: "平仓费率", dataIndex: "closeRate", width: 100, render: rateText },
+        { title: "开仓费用", key: "openFee", width: 110, render: (_, record) => feeText(record.margin, record.openRate) },
+        { title: "平仓费用", key: "closeFee", width: 110, render: (_, record) => feeText(record.margin, record.closeRate) },
+        { title: "预计分佣金额", key: "estimate", width: 120, render: (_, record) => estimateText(record) },
+        {
+          title: "分佣比例",
+          key: "rate",
+          width: 170,
+          onCell: leadCell,
+          render: (_, record) => (record.lead ? e(InputNumber, {
+            min: 0,
+            max: 100,
+            size: "small",
+            style: { width: 150 },
+            placeholder: "请输入分佣比例",
+            formatter: percentInput,
+            parser: percentParse,
+            value: symbolRateDraft[record.code],
+            onChange: value => setSymbolRateDraft(prev => ({ ...prev, [record.code]: value }))
+          }) : null)
+        },
+        {
+          title: "开平仓费状态",
+          key: "feeStatus",
+          width: 110,
+          render: () => e(Tag, { color: "green" }, "启用")
+        }
+      ];
+      const baseItem = (label, name, key) => e(Form.Item, {
+        key,
+        label,
+        name,
+        colon: false,
+        style: { marginBottom: 0 },
+        rules: [{ required: true, message: `请输入${label}` }]
+      }, e(InputNumber, {
+        min: 0,
+        max: 100,
+        style: { width: 220 },
+        placeholder: `请输入${label}`,
+        formatter: percentInput,
+        parser: percentParse
+      }));
+
+      return e("section", { className: "page-surface commission-create-page" }, [
+        e("div", { className: "commission-create-head", key: "head" }, [
+          e("span", { className: "commission-create-title", key: "title" }, "新增佣金规则"),
+          e(Space, { key: "actions" }, [
+            e(Button, { key: "back", onClick: backToList }, "返 回"),
+            e(Button, { key: "submit", type: "primary", onClick: submitCreate }, "创 建")
+          ])
+        ]),
+        e(Form, {
+          form,
+          key: "body",
+          className: "commission-create-body",
+          layout: "horizontal",
+          colon: false,
+          labelCol: { flex: "0 0 auto" },
+          wrapperCol: { flex: "1" }
+        }, [
+          e("div", { className: "commission-create-base", key: "base" }, [
+            e(Form.Item, {
+              key: "name",
+              label: "佣金规则名称",
+              name: "name",
+              colon: false,
+              style: { marginBottom: 0 },
+              rules: [{ required: true, message: "请输入佣金规则名称" }]
+            }, e(Input, { style: { width: 220 }, placeholder: "请输入佣金规则名称" })),
+            baseItem("保底分佣比例", "floorRate", "floor"),
+            baseItem("营销激励比例", "marketingRate", "marketing")
+          ]),
+          e("div", { className: "commission-create-section", key: "symbols" }, [
+            e("span", { className: "commission-create-section-title", key: "symbol-title" }, "品种佣金明细"),
+            e("div", { className: "config-filter-row", key: "symbol-filters" }, [
+              e("label", { className: "config-filter-item", key: "code" }, [
+                e("span", null, "品种代码"),
+                e(Select, {
+                  value: symbolDraft.code,
+                  onChange: value => setSymbolDraft(prev => ({ ...prev, code: value })),
+                  placeholder: "请选择品种代码",
+                  allowClear: true,
+                  showSearch: true,
+                  optionFilterProp: "label",
+                  className: "keyword-select",
+                  options: symbols.map(item => ({ value: item.code, label: item.code }))
+                })
+              ]),
+              e("label", { className: "config-filter-item", key: "listed" }, [
+                e("span", null, "上/下架状态"),
+                e(Select, {
+                  value: symbolDraft.listed,
+                  onChange: value => setSymbolDraft(prev => ({ ...prev, listed: value === undefined ? null : value })),
+                  placeholder: "请选择上/下架状态",
+                  allowClear: true,
+                  className: "select-input",
+                  options: [{ value: true, label: "上架" }, { value: false, label: "下架" }]
+                })
+              ]),
+              e(Space, { key: "buttons", size: 8 }, [
+                e(Button, { type: "primary", onClick: () => setSymbolFilter({ ...symbolDraft }) }, "查 询"),
+                e(Button, {
+                  onClick: () => {
+                    setSymbolDraft(emptySymbolFilter());
+                    setSymbolFilter(emptySymbolFilter());
+                  }
+                }, "重 置")
+              ]),
+              e(Space, { key: "fill", size: 8, style: { marginLeft: "auto" } }, [
+                e(InputNumber, {
+                  key: "input",
+                  min: 0,
+                  max: 100,
+                  style: { width: 130 },
+                  placeholder: "如 80",
+                  formatter: percentInput,
+                  parser: percentParse,
+                  value: fillRate,
+                  onChange: setFillRate
+                }),
+                e(Button, {
+                  key: "apply",
+                  onClick: () => {
+                    if (fillRate === undefined || fillRate === null || fillRate === "") {
+                      message.warning("请先输入要填充的分佣比例");
+                      return;
+                    }
+                    const codes = symbols.map(item => item.code);
+                    setSymbolRateDraft(prev => {
+                      const next = { ...prev };
+                      codes.forEach(code => { next[code] = fillRate; });
+                      return next;
+                    });
+                    message.success(`已为全部 ${codes.length} 个品种统一填充分佣比例 ${fillRate}%`);
+                  }
+                }, "一键填充")
+              ])
+            ]),
+            e(Table, {
+              key: "symbol-table",
+              rowKey: "key",
+              columns: symbolColumns,
+              dataSource: symbolRows,
+              pagination: false,
+              scroll: { x: 1450 },
+              locale: { emptyText: "暂无数据" }
+            })
+          ])
+        ])
       ]);
     }
 
     const columns = [
-      { title: "规则ID", dataIndex: "id", width: 80 },
-      { title: "规则名称", dataIndex: "name", width: 120, render: value => e("strong", null, value) },
+      { title: "佣金规则名称", dataIndex: "name", width: 140, render: value => e("strong", null, value) },
       {
         title: "关联等级",
         dataIndex: "levelName",
@@ -274,8 +524,7 @@
           return e(Tag, { color: level ? level.color : undefined }, value);
         }
       },
-      { title: "合约返佣", key: "contract", width: 190, render: (_, record) => renderRateCell(record, "contract") },
-      { title: "现货返佣", key: "spot", width: 180, render: (_, record) => renderRateCell(record, "spot") },
+      { title: "保底佣金比例", dataIndex: "floorRate", width: 110, render: value => `${value ?? 0}%` },
       { title: "营销激励", dataIndex: "marketingRate", width: 90, render: value => `${value}%` },
       {
         title: "自返佣",
@@ -284,34 +533,21 @@
         render: value => (value ? e(Tag, { color: "green" }, "允许") : e(Tag, null, "禁止"))
       },
       {
-        title: "结算",
-        key: "settle",
-        width: 120,
-        render: (_, record) => `${record.settleCycle} · ${record.settleCoin}`
-      },
-      {
-        title: "生效时间",
-        key: "effective",
-        width: 150,
-        render: (_, record) => (record.effectiveType === "定时生效" ? record.effectiveAt : "立即生效")
-      },
-      {
-        title: "关联代理数",
-        key: "agentCount",
+        title: "审核状态",
+        dataIndex: "auditStatus",
         width: 100,
-        render: (_, record) => e(Button, {
-          type: "link",
-          size: "small",
-          onClick: () => setRelatedRule(record)
-        }, String(agentCountOf(record.id)))
+        render: value => e(Tag, {
+          color: value === "已通过" ? "green" : value === "待审核" ? "gold" : "red"
+        }, value || "-")
       },
       {
-        title: "状态",
+        title: "生效状态",
         dataIndex: "status",
-        width: 80,
+        width: 90,
         render: value => e(Tag, { color: value === "启用" ? "green" : "default" }, value)
       },
-      { title: "更新时间", dataIndex: "updatedAt", width: 150 },
+      { title: "创建时间(GMT+0)", dataIndex: "createdAt", width: 170 },
+      { title: "审核通过时间", dataIndex: "approvedAt", width: 160, render: value => value || "-" },
       { title: "操作人", dataIndex: "operator", width: 90 },
       {
         title: "操作",
@@ -338,32 +574,22 @@
       }
     ];
 
-    const relatedColumns = [
-      { title: "用户ID", dataIndex: "userId", width: 120 },
-      { title: "代理ID", dataIndex: "agentId", width: 80 },
-      { title: "代理等级", dataIndex: "level", width: 100, render: value => e(Tag, { color: "blue" }, value) },
-      { title: "分佣状态", dataIndex: "commissionStatus", width: 100, render: value => e(Tag, { color: "green" }, value) },
-      {
-        title: "自返佣",
-        dataIndex: "selfCommissionEnabled",
-        width: 90,
-        render: value => (value ? e(Tag, { color: "green" }, "已开启") : e(Text, { type: "secondary" }, "未开启"))
-      },
-      { title: "成为代理时间", dataIndex: "createdAt", width: 170 }
-    ];
-
-    const relatedAgents = relatedRule ? relatedAgentsOf(relatedRule.id) : [];
+    if (creating) return renderCreatePage();
 
     return e("section", { className: "page-surface commission-page" }, [
       e("div", { className: "toolbar config-toolbar", key: "toolbar" }, [
         e("div", { className: "config-filter-row", key: "filters" }, [
           e("label", { className: "config-filter-item", key: "keyword" }, [
-            e("span", null, "规则名称/ID："),
-            e(Input, {
+            e("span", null, "佣金规则名称："),
+            e(Select, {
               value: keyword,
-              onChange: event => setKeyword(event.target.value),
-              placeholder: "请输入规则名称或ID",
-              allowClear: true
+              onChange: setKeyword,
+              placeholder: "请输入佣金规则名称",
+              allowClear: true,
+              showSearch: true,
+              optionFilterProp: "label",
+              className: "keyword-select",
+              options: rules.map(rule => ({ value: rule.name, label: rule.name }))
             })
           ]),
           e("label", { className: "config-filter-item", key: "level" }, [
@@ -401,7 +627,7 @@
         columns,
         dataSource: visibleRules,
         pagination: { pageSize: 6, showSizeChanger: true },
-        scroll: { x: 2000 }
+        scroll: { x: 1420 }
       }),
       e(Modal, {
         key: "editor",
@@ -423,10 +649,10 @@
       }, [
         e(Row, { key: "base", gutter: 16 }, [
           e(Col, { span: 12, key: "name" }, e(Form.Item, {
-            label: "规则名称",
+            label: "佣金规则名称",
             name: "name",
             rules: [
-              { required: true, message: "请输入规则名称" },
+              { required: true, message: "请输入佣金规则名称" },
               {
                 validator: (_, value) => {
                   if (!value) return Promise.resolve();
@@ -434,7 +660,7 @@
                     rule.name === value.trim() && rule.id !== editing.id
                   ));
                   return duplicated
-                    ? Promise.reject(new Error("规则名称已存在"))
+                    ? Promise.reject(new Error("佣金规则名称已存在"))
                     : Promise.resolve();
                 }
               }
@@ -531,24 +757,7 @@
           maxLength: 100,
           placeholder: "选填"
         }))
-      ])),
-      e(Drawer, {
-        key: "related",
-        title: relatedRule ? `佣金规则「${relatedRule.name}」关联代理` : "",
-        open: Boolean(relatedRule),
-        onClose: () => setRelatedRule(null),
-        width: 760
-      }, relatedRule && [
-        e(Text, { type: "secondary", key: "hint" }, `共 ${relatedAgents.length} 个代理正在使用该规则。`),
-        e(Table, {
-          key: "table",
-          rowKey: "id",
-          size: "small",
-          columns: relatedColumns,
-          dataSource: relatedAgents,
-          pagination: false
-        })
-      ])
+      ]))
     ]);
   }
 

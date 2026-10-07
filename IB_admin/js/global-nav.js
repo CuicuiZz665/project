@@ -10,41 +10,46 @@
     overview: ["dashboard", "kanban", "home", "shuju", "数据", "看板", "概览"],
     customer: ["customer", "kh", "客户", "列表"],
     loginLog: ["login", "log", "rizhi", "denglu", "登录", "日志"],
+    blacklist: ["blacklist", "hei", "黑名单", "拉黑"],
+    wheel: ["wheel", "lottery", "zuanpan", "choujiang", "互动", "抽奖配置", "转盘", "大转盘", "抽奖", "奖池"],
+    badge: ["badge", "huizhang", "徽章", "徽章列表"],
+    coupon: ["coupon", "youhuiquan", "quan", "优惠券", "券"],
+    whitelist: ["whitelist", "bai", "白名单"],
     agent: ["agent", "dl", "代理", "代理商"],
+    agentApplications: ["application", "apply", "shenqing", "代理", "申请", "审核"],
     agentLevel: ["level", "dengji", "等级", "配置"],
-    commission: ["commission", "yongjin", "佣金", "返佣", "rebate"],
-    rules: ["point", "points", "jifen", "积分", "规则", "获取"],
+    commission: ["commission", "yongjin", "佣金", "返佣", "rebate", "record", "jilu", "记录", "结算", "分佣"],
+    rules: ["point", "points", "jifen", "积分", "配置", "规则"],
     activity: ["activity", "huodong", "活动", "配置"],
     activityApplications: ["signup", "baoming", "报名", "申请", "列表"],
     delivery: ["delivery", "toudi", "投递", "任务"],
+    pointDetails: ["detail", "mingxi", "明细", "积分", "记录"],
+    courses: ["course", "kecheng", "课程", "学院", "新手村", "视频", "academy"],
+    courseLessons: ["lesson", "chapter", "zhangjie", "章节", "讲次", "视频"],
     roles: ["role", "juese", "角色", "权限"],
     users: ["user", "yonghu", "用户", "账号", "设置"]
   };
 
   // 把侧边栏 menuItems 拍平成可搜索/可显示的页面索引 { key, label, path, keywords }。
+  // 侧边栏最深有三层（如 代理管理 / 代理关系管理 / 代理商列表），这里递归展开，disabled 项跳过。
   function buildNavIndex(menuItems) {
     const pages = [];
-    (menuItems || []).forEach(item => {
-      if (item.disabled) return;
-      if (Array.isArray(item.children) && item.children.length) {
-        item.children.forEach(child => {
-          if (child.disabled) return;
-          pages.push({
-            key: child.key,
-            label: child.label,
-            path: `${item.label} / ${child.label}`,
-            keywords: PAGE_KEYWORDS[child.key] || []
-          });
-        });
-      } else {
+    function walk(items, parents) {
+      (items || []).forEach(item => {
+        if (item.disabled) return;
+        if (Array.isArray(item.children) && item.children.length) {
+          walk(item.children, parents.concat(item.label));
+          return;
+        }
         pages.push({
           key: item.key,
           label: item.label,
-          path: item.label,
+          path: parents.length ? `${parents.join(" / ")} / ${item.label}` : item.label,
           keywords: PAGE_KEYWORDS[item.key] || []
         });
-      }
-    });
+      });
+    }
+    walk(menuItems, []);
     return pages;
   }
 
@@ -118,11 +123,12 @@
   app.buildNavIndex = buildNavIndex;
 
   // 顶栏全局搜索：antd Select + 自定义模糊过滤 + 收藏（localStorage 持久化）。
-  app.GlobalSearch = function GlobalSearch({ menuItems, onNavigate }) {
+  app.GlobalSearch = function GlobalSearch({ menuItems, extraPages, onNavigate }) {
     const [keyword, setKeyword] = React.useState("");
     const [favorites, setFavorites] = React.useState(loadFavorites);
     const selectRef = React.useRef(null);
-    const pages = buildNavIndex(menuItems);
+    // extraPages：不在侧边栏的隐藏页（报名列表），由调用方传入，参与搜索与收藏。
+    const pages = buildNavIndex(menuItems).concat(extraPages || []);
     const pageByKey = {};
     const favoriteSet = {};
     pages.forEach(page => { pageByKey[page.key] = page; });

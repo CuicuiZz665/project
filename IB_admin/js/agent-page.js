@@ -1,6 +1,7 @@
 (function registerAgentPage(app) {
   const {
     Button,
+    Drawer,
     Input,
     Modal,
     Select,
@@ -15,15 +16,16 @@
   const e = React.createElement;
 
   function AgentPage({ agents = [] }) {
-    const [userIdFilter, setUserIdFilter] = React.useState("");
-    const [agentIdFilter, setAgentIdFilter] = React.useState("");
-    const [parentAgentIdFilter, setParentAgentIdFilter] = React.useState("");
+    const [userIdFilter, setUserIdFilter] = React.useState();
+    const [agentIdFilter, setAgentIdFilter] = React.useState();
+    const [parentAgentIdFilter, setParentAgentIdFilter] = React.useState();
     const [level, setLevel] = React.useState();
     const [userTypeFilter, setUserTypeFilter] = React.useState();
     const [commissionStatusFilter, setCommissionStatusFilter] = React.useState();
     const [protectionFilter, setProtectionFilter] = React.useState();
     const [moreFiltersOpen, setMoreFiltersOpen] = React.useState(false);
     const [structureAgent, setStructureAgent] = React.useState(null);
+    const [detailAgent, setDetailAgent] = React.useState(null);
     const [selectedAgentIds, setSelectedAgentIds] = React.useState([]);
     const [parentByAgent, setParentByAgent] = React.useState({});
     const [transferOpen, setTransferOpen] = React.useState(false);
@@ -35,15 +37,27 @@
 
     const parentOf = agent => parentByAgent[agent.id] ?? agent.parentAgentId;
 
+    const userIdOptions = React.useMemo(
+      () => [...new Set(agents.map(agent => agent.userId))].sort(),
+      [agents]
+    );
+    const agentIdOptions = React.useMemo(
+      () => [...new Set(agents.map(agent => String(agent.agentId)))].sort(),
+      [agents]
+    );
+    const parentAgentIdOptions = React.useMemo(
+      () => [...new Set(agents.map(agent => String(parentOf(agent))))]
+        .filter(value => value && value !== "-")
+        .sort(),
+      [agents, parentByAgent]
+    );
+
     const filteredAgents = React.useMemo(() => {
-      const userIdTerm = userIdFilter.trim().toLowerCase();
-      const agentIdTerm = agentIdFilter.trim().toLowerCase();
-      const parentAgentIdTerm = parentAgentIdFilter.trim().toLowerCase();
       return agents.filter(agent => {
-        const userIdMatched = !userIdTerm || agent.userId.toLowerCase().includes(userIdTerm);
-        const agentIdMatched = !agentIdTerm || agent.agentId.toLowerCase().includes(agentIdTerm);
-        const parentAgentIdMatched = !parentAgentIdTerm
-          || String(parentOf(agent)).toLowerCase().includes(parentAgentIdTerm);
+        const userIdMatched = !userIdFilter || agent.userId === userIdFilter;
+        const agentIdMatched = !agentIdFilter || String(agent.agentId) === agentIdFilter;
+        const parentAgentIdMatched = !parentAgentIdFilter
+          || String(parentOf(agent)) === parentAgentIdFilter;
         const userTypeMatched = !userTypeFilter || agent.userType === userTypeFilter;
         const commissionStatusMatched = !commissionStatusFilter
           || agent.commissionStatus === commissionStatusFilter;
@@ -102,9 +116,13 @@
         title: "用户ID",
         dataIndex: "userId",
         width: 150,
-        render: value => e(Button, { type: "link", size: "small" }, value)
+        render: (value, record) => e(Button, {
+          type: "link",
+          size: "small",
+          onClick: () => setDetailAgent(record)
+        }, value)
       },
-      { title: "代理ID", dataIndex: "agentId", width: 90 },
+      { title: "佣金规则名称", dataIndex: "commissionRuleName", width: 140 },
       {
         title: "代理等级",
         dataIndex: "level",
@@ -121,7 +139,6 @@
       },
       { title: "用户类型", dataIndex: "userType", width: 130 },
       { title: "佣金规则ID", dataIndex: "commissionRuleId", width: 110 },
-      { title: "佣金规则名称", dataIndex: "commissionRuleName", width: 140 },
       {
         title: "分佣状态",
         dataIndex: "commissionStatus",
@@ -129,8 +146,6 @@
         render: value => e(Tag, { color: "green" }, value)
       },
       { title: "等级保护", dataIndex: "protection", width: 120 },
-      { title: "团队人数", dataIndex: "teamCount", width: 100 },
-      { title: "团队持仓量", dataIndex: "teamHoldings", width: 150 },
       { title: "成为代理时间", dataIndex: "createdAt", width: 170 },
       {
         title: "操作",
@@ -162,29 +177,41 @@
         e("div", { className: "agent-filter-row", key: "filter-row" }, [
           e("label", { className: "agent-filter-item", key: "user" }, [
             e("span", null, "用户ID："),
-            e(Input, {
+            e(Select, {
               value: userIdFilter,
-              onChange: event => setUserIdFilter(event.target.value),
+              onChange: setUserIdFilter,
               placeholder: "请输入用户ID",
-              allowClear: true
+              allowClear: true,
+              showSearch: true,
+              optionFilterProp: "label",
+              className: "keyword-select",
+              options: userIdOptions.map(value => ({ value, label: value }))
             })
           ]),
           e("label", { className: "agent-filter-item", key: "agent" }, [
             e("span", null, "代理ID："),
-            e(Input, {
+            e(Select, {
               value: agentIdFilter,
-              onChange: event => setAgentIdFilter(event.target.value),
+              onChange: setAgentIdFilter,
               placeholder: "请输入代理ID",
-              allowClear: true
+              allowClear: true,
+              showSearch: true,
+              optionFilterProp: "label",
+              className: "keyword-select",
+              options: agentIdOptions.map(value => ({ value, label: value }))
             })
           ]),
           e("label", { className: "agent-filter-item", key: "parent" }, [
             e("span", null, "上级代理ID："),
-            e(Input, {
+            e(Select, {
               value: parentAgentIdFilter,
-              onChange: event => setParentAgentIdFilter(event.target.value),
+              onChange: setParentAgentIdFilter,
               placeholder: "请输入上级代理ID",
-              allowClear: true
+              allowClear: true,
+              showSearch: true,
+              optionFilterProp: "label",
+              className: "keyword-select",
+              options: parentAgentIdOptions.map(value => ({ value, label: value }))
             })
           ]),
           e(Button, {
@@ -198,9 +225,9 @@
             e(Button, {
               key: "reset",
               onClick: () => {
-                setUserIdFilter("");
-                setAgentIdFilter("");
-                setParentAgentIdFilter("");
+                setUserIdFilter(undefined);
+                setAgentIdFilter(undefined);
+                setParentAgentIdFilter(undefined);
                 setLevel(undefined);
                 setUserTypeFilter(undefined);
                 setCommissionStatusFilter(undefined);
@@ -282,7 +309,7 @@
           onChange: keys => setSelectedAgentIds(keys)
         },
         pagination: { pageSize: 6, showSizeChanger: true },
-        scroll: { x: 1900 }
+        scroll: { x: 1560 }
       }),
       e(Modal, {
         key: "transfer-modal",
@@ -320,6 +347,67 @@
             placeholder: "目标代理通行证",
             allowClear: true
           })
+        ])
+      ])),
+      e(Drawer, {
+        key: "detail-drawer",
+        title: "代理商详情",
+        open: Boolean(detailAgent),
+        onClose: () => setDetailAgent(null),
+        destroyOnClose: true,
+        width: 520
+      }, detailAgent && e("dl", { className: "customer-detail-list", key: "detail-list" }, [
+        e("div", { className: "customer-detail-row", key: "userId" }, [
+          e("dt", null, "用户ID"),
+          e("dd", null, detailAgent.userId)
+        ]),
+        e("div", { className: "customer-detail-row", key: "agentId" }, [
+          e("dt", null, "代理ID"),
+          e("dd", null, detailAgent.agentId)
+        ]),
+        e("div", { className: "customer-detail-row", key: "level" }, [
+          e("dt", null, "代理等级"),
+          e("dd", null, e(Tag, { color: "blue" }, detailAgent.level))
+        ]),
+        e("div", { className: "customer-detail-row", key: "parent" }, [
+          e("dt", null, "上级代理ID"),
+          e("dd", null, parentOf(detailAgent) || "-")
+        ]),
+        e("div", { className: "customer-detail-row", key: "userType" }, [
+          e("dt", null, "用户类型"),
+          e("dd", null, detailAgent.userType)
+        ]),
+        e("div", { className: "customer-detail-row", key: "ruleId" }, [
+          e("dt", null, "佣金规则ID"),
+          e("dd", null, detailAgent.commissionRuleId)
+        ]),
+        e("div", { className: "customer-detail-row", key: "ruleName" }, [
+          e("dt", null, "佣金规则名称"),
+          e("dd", null, detailAgent.commissionRuleName)
+        ]),
+        e("div", { className: "customer-detail-row", key: "commissionStatus" }, [
+          e("dt", null, "分佣状态"),
+          e("dd", null, e(Tag, { color: "green" }, detailAgent.commissionStatus))
+        ]),
+        e("div", { className: "customer-detail-row", key: "protection" }, [
+          e("dt", null, "等级保护"),
+          e("dd", null, detailAgent.protection)
+        ]),
+        e("div", { className: "customer-detail-row", key: "teamCount" }, [
+          e("dt", null, "团队人数"),
+          e("dd", null, detailAgent.teamCount)
+        ]),
+        e("div", { className: "customer-detail-row", key: "teamHoldings" }, [
+          e("dt", null, "团队持仓量"),
+          e("dd", null, detailAgent.teamHoldings)
+        ]),
+        e("div", { className: "customer-detail-row", key: "createdAt" }, [
+          e("dt", null, "成为代理时间"),
+          e("dd", null, detailAgent.createdAt)
+        ]),
+        e("div", { className: "customer-detail-row", key: "selfCommission" }, [
+          e("dt", null, "自返佣"),
+          e("dd", null, selfCommissionByAgent[detailAgent.id] ? "开启" : "关闭")
         ])
       ])),
       e(Modal, {
