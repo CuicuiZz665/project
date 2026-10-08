@@ -8,7 +8,6 @@
     Modal,
     Select,
     Space,
-    Switch,
     Table,
     Tag,
     Typography,
@@ -21,6 +20,12 @@
 
   function formatAmount(value) {
     return Number(value).toLocaleString("en-US");
+  }
+
+  function nowText() {
+    const now = new Date();
+    const pad = num => String(num).padStart(2, "0");
+    return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())} ${pad(now.getHours())}:${pad(now.getMinutes())}`;
   }
 
   // 本地 antd 静态 Modal.confirm 在该 vendor 组合下确定/取消后不会自动销毁，这里显式 destroy
@@ -40,7 +45,6 @@
 
   function AgentLevelPage({ levels, setLevels, rules, agents }) {
     const [keyword, setKeyword] = React.useState();
-    const [statusFilter, setStatusFilter] = React.useState();
     const [editing, setEditing] = React.useState(null);
     const [langTabs, setLangTabs] = React.useState(["英语"]);
     const [activeLang, setActiveLang] = React.useState("英语");
@@ -60,14 +64,10 @@
       return agents.filter(agent => agent.level === levelName).length;
     }
 
-    const visibleLevels = sortedLevels.filter(level => {
-      return (!keyword || level.name === keyword)
-        && (!statusFilter || level.status === statusFilter);
-    });
+    const visibleLevels = sortedLevels.filter(level => !keyword || level.name === keyword);
 
     function resetFilters() {
       setKeyword(undefined);
-      setStatusFilter(undefined);
     }
 
     function openCreate() {
@@ -177,7 +177,7 @@
       };
       const commit = () => {
         setLevels(list => isEditing
-          ? list.map(item => (item.id === editing.id ? { ...item, ...payload, operator: "Amy" } : item))
+          ? list.map(item => (item.id === editing.id ? { ...item, ...payload, operator: "Amy", updatedAt: nowText() } : item))
           : [...list, {
             id: `level-${Date.now()}`,
             sort: editing.sort,
@@ -189,6 +189,7 @@
             protectionDays: editing.protectionDays ?? 0,
             remark: editing.remark || "",
             operator: "Amy",
+            updatedAt: nowText(),
             ...payload
           }]
         );
@@ -248,35 +249,6 @@
       });
     }
 
-    function toggleLevelStatus(level, next) {
-      const apply = () => {
-        setLevels(list => list.map(item => (
-          item.id === level.id ? { ...item, status: next ? "启用" : "停用" } : item
-        )));
-        message.success(`等级「${level.name}」已${next ? "启用" : "停用"}`);
-      };
-      if (next) {
-        apply();
-        return;
-      }
-      if (level.isDefault) {
-        message.warning("默认等级不可停用");
-        return;
-      }
-      const count = agentCountOf(level.name);
-      if (count > 0) {
-        confirmAction({
-          title: "确认停用该等级？",
-          content: `当前有 ${count} 个代理处于「${level.name}」等级，停用后该等级不再参与升级计算与权益发放。`,
-          okText: "确认停用",
-          cancelText: "取消",
-          onOk: apply
-        });
-        return;
-      }
-      apply();
-    }
-
     function renderUpgrade(level) {
       const { upgrade } = level;
       const conditions = [
@@ -306,7 +278,6 @@
     }
 
     const columns = [
-      { title: "排序", dataIndex: "sort", width: 70 },
       {
         title: "等级名称",
         dataIndex: "name",
@@ -316,26 +287,11 @@
           record.isDefault ? e(Tag, { key: "default", color: "blue" }, "默认") : null
         ])
       },
-      { title: "等级考核规则", key: "upgrade", width: 280, render: (_, record) => renderUpgrade(record) },
+      { title: "关联佣金规则", key: "rule", width: 150, render: (_, record) => renderLinkedRule(record) },
       { title: "分佣比例", dataIndex: "rebateRate", width: 100, render: value => `${value}%` },
       { title: "营销激励", dataIndex: "marketingRate", width: 100, render: value => `${value}%` },
-      {
-        title: "保护期",
-        dataIndex: "protectionDays",
-        width: 90,
-        render: value => (value ? `${value} 天` : "-")
-      },
-      { title: "关联佣金规则", key: "rule", width: 150, render: (_, record) => renderLinkedRule(record) },
-      {
-        title: "状态",
-        dataIndex: "status",
-        width: 90,
-        render: (_, record) => e(Switch, {
-          size: "small",
-          checked: record.status === "启用",
-          onChange: value => toggleLevelStatus(record, value)
-        })
-      },
+      { title: "等级考核规则", key: "upgrade", width: 280, render: (_, record) => renderUpgrade(record) },
+      { title: "更新时间(GMT+0)", dataIndex: "updatedAt", width: 170, render: value => value || "-" },
       { title: "操作人", dataIndex: "operator", width: 90, render: value => value || "-" },
       {
         title: "操作",
@@ -343,7 +299,7 @@
         fixed: "right",
         width: 230,
         render: (_, record) => e(Space, { size: 0, wrap: true }, [
-          e(Button, { key: "edit", type: "link", size: "small", onClick: () => openEdit(record) }, "编辑"),
+          e(Button, { key: "edit", type: "link", size: "small", onClick: () => openEdit(record) }, "修改"),
           e(Button, { key: "copy", type: "link", size: "small", onClick: () => openCopy(record) }, "复制"),
           e(Button, {
             key: "default",
@@ -379,17 +335,6 @@
               options: sortedLevels.map(level => ({ value: level.name, label: level.name }))
             })
           ]),
-          e("label", { className: "config-filter-item", key: "status" }, [
-            e("span", null, "状态："),
-            e(Select, {
-              value: statusFilter,
-              onChange: setStatusFilter,
-              placeholder: "全部状态",
-              allowClear: true,
-              className: "select-input",
-              options: ["启用", "停用"].map(value => ({ value, label: value }))
-            })
-          ]),
           e(Space, { key: "buttons", size: 8 }, [
             e(Button, { type: "primary", key: "search", onClick: () => setKeyword(keyword) }, "查询"),
             e(Button, { key: "reset", onClick: resetFilters }, "重置")
@@ -403,7 +348,7 @@
         columns,
         dataSource: visibleLevels,
         pagination: false,
-        scroll: { x: 1390 }
+        scroll: { x: 1250 }
       }),
       e(Drawer, {
         key: "editor",
@@ -448,6 +393,7 @@
           value: langNames[activeLang] || "",
           onChange: event => setLangNames(prev => ({ ...prev, [activeLang]: event.target.value }))
         })),
+        e("div", { className: "form-section-title", key: "rule-title" }, "规则配置"),
         e(Form.Item, {
           key: "rule",
           label: "佣金配置",
