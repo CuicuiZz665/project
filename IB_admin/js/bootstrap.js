@@ -29,7 +29,7 @@
     "js/global-nav.js",
     "js/antd-app.js"
   ];
-  const appVersion = "20261006-all-drawers-cards";
+  const appVersion = "20261008-commission-view-actions";
   const scriptTimeout = 12000;
 
   function showDependencyError(detail) {

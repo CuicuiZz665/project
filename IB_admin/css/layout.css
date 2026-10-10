@@ -1761,6 +1761,11 @@
   color: #30343b;
 }
 
+.commission-rate-item > .commission-rate-view-value {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
 /* 佣金配置 - 新增佣金规则页 */
 .commission-create-page {
   gap: 0;

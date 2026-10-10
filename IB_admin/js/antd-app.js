@@ -1631,10 +1631,30 @@
       children: [{
         key: "depositWithdraw",
         label: "出入金管理",
-        disabled: true
+        children: [{
+          key: "depositManage",
+          label: "入金管理",
+          disabled: true
+        }, {
+          key: "withdrawRisk",
+          label: "出金审核 - 风控",
+          disabled: true
+        }, {
+          key: "withdrawFinance",
+          label: "出金审核 - 财务",
+          disabled: true
+        }, {
+          key: "exchangeRate",
+          label: "汇率管理",
+          disabled: true
+        }, {
+          key: "depositWithdrawNetwork",
+          label: "出入金网络配置",
+          disabled: true
+        }]
       }, {
         key: "fundsManage",
-        label: "资金账户",
+        label: "资金管理",
         disabled: true
       }, {
         key: "fundFlow",

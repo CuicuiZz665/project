@@ -3,6 +3,7 @@
     Button,
     Col,
     DatePicker,
+    Drawer,
     Form,
     Input,
     InputNumber,
@@ -60,8 +61,10 @@
   function CommissionPage({ rules, setRules, levels, agents }) {
     const [keyword, setKeyword] = React.useState();
     const [levelFilter, setLevelFilter] = React.useState();
-    const [statusFilter, setStatusFilter] = React.useState();
+    const [effectiveFilter, setEffectiveFilter] = React.useState();
+    const [auditFilter, setAuditFilter] = React.useState();
     const [editing, setEditing] = React.useState(null);
+    const [viewing, setViewing] = React.useState(null);
     const [effectiveType, setEffectiveType] = React.useState("立即生效");
     const [creating, setCreating] = React.useState(false);
     const [symbolDraft, setSymbolDraft] = React.useState(emptySymbolFilter);
@@ -74,22 +77,18 @@
       return agents.filter(agent => String(agent.commissionRuleId) === String(ruleId)).length;
     }
 
-    function levelNamesUsing(ruleId) {
-      return levels
-        .filter(level => String(level.commissionRuleId) === String(ruleId))
-        .map(level => level.name);
-    }
-
     const visibleRules = rules.filter(rule => {
       return (!keyword || rule.name === keyword)
         && (!levelFilter || rule.levelId === levelFilter)
-        && (!statusFilter || rule.status === statusFilter);
+        && (!effectiveFilter || rule.status === effectiveFilter)
+        && (!auditFilter || rule.auditStatus === auditFilter);
     });
 
     function resetFilters() {
       setKeyword(undefined);
       setLevelFilter(undefined);
-      setStatusFilter(undefined);
+      setEffectiveFilter(undefined);
+      setAuditFilter(undefined);
     }
 
     function openCreate() {
@@ -138,7 +137,6 @@
           closeRate: item.closeRate,
           rate: symbolRateDraft[item.code] ?? null
         })),
-        selfCommission: false,
         settleCycle: "日结",
         settleCoin: "USDT",
         effectiveType: "立即生效",
@@ -162,7 +160,6 @@
         levelId: rule.levelId,
         rates: { ...zeroRates(), ...rule.rates },
         marketingRate: rule.marketingRate,
-        selfCommission: rule.selfCommission,
         settleCycle: rule.settleCycle,
         settleCoin: rule.settleCoin,
         effectiveType: rule.effectiveType,
@@ -194,7 +191,6 @@
         levelName: level ? level.name : "-",
         rates: { ...zeroRates(), ...values.rates },
         marketingRate: values.marketingRate || 0,
-        selfCommission: Boolean(values.selfCommission),
         settleCycle: values.settleCycle,
         settleCoin: values.settleCoin,
         effectiveType: values.effectiveType,
@@ -254,64 +250,12 @@
       message.success(`已复制为「${rule.name}-副本」，新规则默认停用`);
     }
 
-    function toggleRuleStatus(rule, next) {
-      const apply = () => {
-        setRules(list => list.map(item => {
-          if (item.id !== rule.id) return item;
-          const updated = {
-            ...item,
-            status: next ? "启用" : "停用",
-            updatedAt: dayjs().format("YYYY-MM-DD HH:mm"),
-            operator: "Andy"
-          };
-          if (next && item.auditStatus !== "已通过") {
-            updated.auditStatus = "已通过";
-            updated.approvedAt = updated.updatedAt;
-          }
-          return updated;
-        }));
-        message.success(`规则「${rule.name}」已${next ? "启用" : "停用"}`);
-      };
-      if (next) {
-        apply();
-        return;
-      }
-      const count = agentCountOf(rule.id);
-      if (count > 0) {
-        confirmAction({
-          title: "确认停用该佣金规则？",
-          content: `该规则当前关联 ${count} 个代理，停用后这些代理将暂停分佣结算。`,
-          okText: "确认停用",
-          cancelText: "取消",
-          onOk: apply
-        });
-        return;
-      }
-      apply();
+    function viewRule(rule) {
+      setViewing(rule);
     }
 
-    function deleteRule(rule) {
-      const count = agentCountOf(rule.id);
-      if (count > 0) {
-        message.warning(`该规则关联 ${count} 个代理，无法删除`);
-        return;
-      }
-      const levelNames = levelNamesUsing(rule.id);
-      if (levelNames.length) {
-        message.warning(`等级「${levelNames.join("、")}」正在引用该规则，无法删除`);
-        return;
-      }
-      confirmAction({
-        title: `确认删除佣金规则「${rule.name}」？`,
-        content: "删除后不可恢复。",
-        okText: "删除",
-        okButtonProps: { danger: true },
-        cancelText: "取消",
-        onOk: () => {
-          setRules(list => list.filter(item => item.id !== rule.id));
-          message.success(`佣金规则「${rule.name}」已删除`);
-        }
-      });
+    function closeView() {
+      setViewing(null);
     }
 
     function renderCreatePage() {
@@ -527,12 +471,6 @@
       { title: "保底佣金比例", dataIndex: "floorRate", width: 110, render: value => `${value ?? 0}%` },
       { title: "营销激励", dataIndex: "marketingRate", width: 90, render: value => `${value}%` },
       {
-        title: "自返佣",
-        dataIndex: "selfCommission",
-        width: 90,
-        render: value => (value ? e(Tag, { color: "green" }, "允许") : e(Tag, null, "禁止"))
-      },
-      {
         title: "审核状态",
         dataIndex: "auditStatus",
         width: 100,
@@ -553,23 +491,11 @@
         title: "操作",
         key: "actions",
         fixed: "right",
-        width: 250,
+        width: 160,
         render: (_, record) => e(Space, { size: 0, wrap: true }, [
-          e(Button, { key: "edit", type: "link", size: "small", onClick: () => openEdit(record) }, "编辑"),
+          e(Button, { key: "view", type: "link", size: "small", onClick: () => viewRule(record) }, "查看"),
           e(Button, { key: "copy", type: "link", size: "small", onClick: () => copyRule(record) }, "复制"),
-          e(Button, {
-            key: "toggle",
-            type: "link",
-            size: "small",
-            onClick: () => toggleRuleStatus(record, record.status !== "启用")
-          }, record.status === "启用" ? "停用" : "启用"),
-          e(Button, {
-            key: "delete",
-            type: "link",
-            size: "small",
-            danger: true,
-            onClick: () => deleteRule(record)
-          }, "删除")
+          e(Button, { key: "edit", type: "link", size: "small", onClick: () => openEdit(record) }, "修改")
         ])
       }
     ];
@@ -603,15 +529,26 @@
               options: levels.map(level => ({ value: level.id, label: level.name }))
             })
           ]),
-          e("label", { className: "config-filter-item", key: "status" }, [
-            e("span", null, "状态："),
+          e("label", { className: "config-filter-item", key: "effective" }, [
+            e("span", null, "生效状态："),
             e(Select, {
-              value: statusFilter,
-              onChange: setStatusFilter,
-              placeholder: "全部状态",
+              value: effectiveFilter,
+              onChange: setEffectiveFilter,
+              placeholder: "全部生效状态",
               allowClear: true,
               className: "select-input",
               options: ["启用", "停用"].map(value => ({ value, label: value }))
+            })
+          ]),
+          e("label", { className: "config-filter-item", key: "audit" }, [
+            e("span", null, "审核状态："),
+            e(Select, {
+              value: auditFilter,
+              onChange: setAuditFilter,
+              placeholder: "全部审核状态",
+              allowClear: true,
+              className: "select-input",
+              options: ["已通过", "待审核", "已拒绝"].map(value => ({ value, label: value }))
             })
           ]),
           e(Space, { key: "buttons", size: 8 }, [
@@ -627,11 +564,11 @@
         columns,
         dataSource: visibleRules,
         pagination: { pageSize: 6, showSizeChanger: true },
-        scroll: { x: 1420 }
+        scroll: { x: 1240 }
       }),
       e(Modal, {
         key: "editor",
-        title: editing?.id ? `编辑佣金规则「${editing.name}」` : "新增佣金规则",
+        title: editing?.id ? `修改佣金规则「${editing.name}」` : "新增佣金规则",
         open: Boolean(editing),
         onCancel: closeEditor,
         onOk: saveRule,
@@ -724,18 +661,6 @@
             options: ["USDT", "USD"].map(value => ({ value, label: value }))
           })))
         ]),
-        e(Form.Item, {
-          key: "self",
-          label: "允许自返佣",
-          name: "selfCommission",
-          valuePropName: "checked",
-          extra: "开启后，使用该规则的代理自有交易同样按规则计算返佣"
-        }, e(Radio.Group, {
-          options: [
-            { value: true, label: "允许" },
-            { value: false, label: "禁止" }
-          ]
-        })),
         e(Form.Item, { key: "effective", label: "生效方式", name: "effectiveType" }, e(Radio.Group, {
           options: [
             { value: "立即生效", label: "立即生效" },
@@ -757,7 +682,94 @@
           maxLength: 100,
           placeholder: "选填"
         }))
-      ]))
+      ])),
+      e(Drawer, {
+        key: "viewer",
+        title: viewing ? `佣金规则详情「${viewing.name}」` : "佣金规则详情",
+        open: Boolean(viewing),
+        onClose: closeView,
+        width: 560,
+        destroyOnClose: true
+      }, viewing && [
+        e("dl", { className: "customer-detail-list", key: "base" }, [
+          e("div", { className: "customer-detail-row", key: "name" }, [
+            e("dt", null, "佣金规则名称"),
+            e("dd", null, e("strong", null, viewing.name))
+          ]),
+          e("div", { className: "customer-detail-row", key: "level" }, [
+            e("dt", null, "关联等级"),
+            e("dd", null, e(Tag, {
+              color: (levels.find(item => item.id === viewing.levelId) || {}).color
+            }, viewing.levelName || "-"))
+          ]),
+          e("div", { className: "customer-detail-row", key: "floor" }, [
+            e("dt", null, "保底佣金比例"),
+            e("dd", null, `${viewing.floorRate ?? 0}%`)
+          ]),
+          e("div", { className: "customer-detail-row", key: "marketing" }, [
+            e("dt", null, "营销激励"),
+            e("dd", null, `${viewing.marketingRate ?? 0}%`)
+          ]),
+          e("div", { className: "customer-detail-row", key: "status" }, [
+            e("dt", null, "生效状态"),
+            e("dd", null, e(Tag, { color: viewing.status === "启用" ? "green" : "default" }, viewing.status))
+          ]),
+          e("div", { className: "customer-detail-row", key: "audit" }, [
+            e("dt", null, "审核状态"),
+            e("dd", null, e(Tag, {
+              color: viewing.auditStatus === "已通过" ? "green" : viewing.auditStatus === "待审核" ? "gold" : "red"
+            }, viewing.auditStatus || "-"))
+          ]),
+          e("div", { className: "customer-detail-row", key: "cycle" }, [
+            e("dt", null, "结算周期"),
+            e("dd", null, viewing.settleCycle || "-")
+          ]),
+          e("div", { className: "customer-detail-row", key: "coin" }, [
+            e("dt", null, "结算币种"),
+            e("dd", null, viewing.settleCoin || "-")
+          ]),
+          e("div", { className: "customer-detail-row", key: "effectiveType" }, [
+            e("dt", null, "生效方式"),
+            e("dd", null, viewing.effectiveType || "-")
+          ]),
+          e("div", { className: "customer-detail-row", key: "effectiveAt" }, [
+            e("dt", null, "生效时间"),
+            e("dd", null, viewing.effectiveAt || "-")
+          ]),
+          e("div", { className: "customer-detail-row", key: "createdAt" }, [
+            e("dt", null, "创建时间"),
+            e("dd", null, viewing.createdAt || "-")
+          ]),
+          e("div", { className: "customer-detail-row", key: "approvedAt" }, [
+            e("dt", null, "审核通过时间"),
+            e("dd", null, viewing.approvedAt || "-")
+          ]),
+          e("div", { className: "customer-detail-row", key: "updatedAt" }, [
+            e("dt", null, "更新时间"),
+            e("dd", null, viewing.updatedAt || "-")
+          ]),
+          e("div", { className: "customer-detail-row", key: "operator" }, [
+            e("dt", null, "操作人"),
+            e("dd", null, viewing.operator || "-")
+          ]),
+          e("div", { className: "customer-detail-row", key: "remark" }, [
+            e("dt", null, "备注"),
+            e("dd", null, viewing.remark || "-")
+          ])
+        ]),
+        e("div", { className: "form-section-title", key: "rate-title" }, "品种返佣比例"),
+        e("div", { className: "commission-rate-wrap", key: "rate-matrix" },
+          ...["合约", "现货"].map(group => e("div", { className: "commission-rate-group", key: group }, [
+            e("div", { className: "commission-rate-group-title", key: "title" },
+              group === "合约" ? "合约（U 本位 / 币本位）" : "现货"),
+            e("div", { className: "commission-rate-grid", key: "grid" },
+              rateRows.filter(row => row.group === group).map(row => e("div", { className: "commission-rate-item", key: row.key }, [
+                e("span", { key: "label" }, row.label),
+                e("span", { key: "value", className: "commission-rate-view-value" },
+                  `${(viewing.rates && viewing.rates[row.key]) ?? 0}%`)
+              ])))
+          ])))
+      ])
     ]);
   }
 

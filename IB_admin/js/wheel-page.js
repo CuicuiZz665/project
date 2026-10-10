@@ -27,6 +27,7 @@
   const PRIZE_TYPE_OPTIONS = ["优惠券", "积分", "奖励", "谢谢参与"];
   const ACCOUNT_TYPE_OPTIONS = ["资金账户", "模拟账户", "赠金账户"];
   const DELIVERY_METHOD_OPTIONS = ["自动", "人工"].map(value => ({ value, label: value }));
+  const STATUS_FILTER_OPTIONS = ["进行中", "未开始", "已结束", "停用"].map(value => ({ value, label: value }));
   const IMPORTED_USER_IDS = "870206426, 983850083, 762300118";
 
   // vendor 未包含 @ant-design/icons，这里内联同款 SVG（上传/下载托盘图标）
@@ -313,14 +314,25 @@
   }
 
   function WheelPage({ activities, setActivities, coupons }) {
-    const [keyword, setKeyword] = React.useState("");
+    const [draft, setDraft] = React.useState({ keyword: "", status: null });
+    const [applied, setApplied] = React.useState({ keyword: "", status: null });
     const [drawerState, setDrawerState] = React.useState({ open: false, mode: "add", activity: null });
     const [detailActivity, setDetailActivity] = React.useState(null);
 
     const filtered = React.useMemo(() => {
-      const term = keyword.trim().toLowerCase();
-      return activities.filter(item => !term || `${item.name}${item.marker}`.toLowerCase().includes(term));
-    }, [activities, keyword]);
+      const term = applied.keyword.trim().toLowerCase();
+      return activities.filter(item => {
+        const matchedKeyword = !term || item.name.toLowerCase().includes(term);
+        const matchedStatus = !applied.status || statusOf(item).label === applied.status;
+        return matchedKeyword && matchedStatus;
+      });
+    }, [activities, applied]);
+
+    const search = () => setApplied({ ...draft });
+    const reset = () => {
+      setDraft({ keyword: "", status: null });
+      setApplied({ keyword: "", status: null });
+    };
 
     function saveActivity(data, mode, source) {
       if (mode === "edit") {
@@ -418,19 +430,33 @@
 
     return e("section", { className: "page-surface wheel-page" }, [
       e("div", { className: "toolbar", key: "toolbar" }, [
-        e(Input, {
-          key: "keyword",
-          value: keyword,
-          onChange: event => setKeyword(event.target.value),
-          placeholder: "抽奖名称/标识",
-          allowClear: true,
-          className: "keyword-input"
-        }),
-        e(Button, {
-          key: "add",
-          type: "primary",
-          onClick: () => setDrawerState({ open: true, mode: "add", activity: null })
-        }, "新增")
+        e(Space, { key: "filters", wrap: true, size: 8 }, [
+          e(Input, {
+            value: draft.keyword,
+            onChange: event => setDraft({ ...draft, keyword: event.target.value }),
+            onPressEnter: search,
+            placeholder: "抽奖名称",
+            allowClear: true,
+            className: "keyword-input"
+          }),
+          e(Select, {
+            value: draft.status,
+            onChange: value => setDraft({ ...draft, status: value }),
+            placeholder: "状态",
+            allowClear: true,
+            className: "select-input",
+            options: STATUS_FILTER_OPTIONS
+          }),
+          e(Button, { key: "search", type: "primary", onClick: search }, "查 询"),
+          e(Button, { key: "reset", onClick: reset }, "重 置")
+        ]),
+        e(Space, { key: "actions" }, [
+          e(Button, {
+            key: "add",
+            type: "primary",
+            onClick: () => setDrawerState({ open: true, mode: "add", activity: null })
+          }, "新增")
+        ])
       ]),
       e(Table, {
         key: "table",
