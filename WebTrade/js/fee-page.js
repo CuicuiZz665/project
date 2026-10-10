@@ -1,4 +1,4 @@
-/* 费率总览页：主 tab 切换 + hash 直达（#fee-trading / #fee-swap） */
+/* 费率总览页：主 tab 切换 + hash 直达（#fee-trading / #fee-swap）+ 外汇长表展开/收起 */
 (() => {
   const tabButtons = document.querySelectorAll('[data-fee-tab]');
   const panels = document.querySelectorAll('[data-fee-panel]');
@@ -27,4 +27,15 @@
   };
   fromHash();
   window.addEventListener('hashchange', fromHash);
+
+  /* 外汇长表（点差与手续费 / 隔夜利息）：默认收起（CSS 隐藏 .fee-extra 行），按钮切换 */
+  document.querySelectorAll('[data-fee-toggle]').forEach((feeToggle) => {
+    const feeTable = feeToggle.closest('table');
+    const feeLabel = feeToggle.querySelector('.fee-toggle-label');
+    feeToggle.addEventListener('click', () => {
+      const on = feeTable.classList.toggle('is-expanded');
+      feeToggle.setAttribute('aria-expanded', on ? 'true' : 'false');
+      if (feeLabel) feeLabel.textContent = on ? '收起' : '展开全部 30 个货币对';
+    });
+  });
 })();
