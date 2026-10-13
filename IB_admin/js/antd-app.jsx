@@ -912,7 +912,7 @@
         <AntApp>
           <Layout className="admin-shell">
             <Sider width={232} className="admin-sider">
-              <div className="brand"><span className="brand-mark"></span><span>Gin</span></div>
+              <div className="brand"><span className="brand-mark"></span><span>Cui</span></div>
               <Menu
                 mode="inline"
                 selectedKeys={[currentPage]}

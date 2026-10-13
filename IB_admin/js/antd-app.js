@@ -1830,7 +1830,7 @@
       className: "brand"
     }, /*#__PURE__*/React.createElement("span", {
       className: "brand-mark"
-    }), /*#__PURE__*/React.createElement("span", null, "Gin")), /*#__PURE__*/React.createElement(Menu, {
+    }), /*#__PURE__*/React.createElement("span", null, "Cui")), /*#__PURE__*/React.createElement(Menu, {
       mode: "inline",
       selectedKeys: [currentPage],
       defaultOpenKeys: ["customerGroup", "orderGroup", "contentGroup", "marketingGroup", "incentiveGroup", "grantGroup", "fundsGroup", "agentGroup", "masterGroup", "systemGroup"],
