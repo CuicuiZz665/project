@@ -253,7 +253,7 @@
       const { upgrade } = level;
       const conditions = [
         upgrade.activeCustomers > 0 ? `活跃客户 ≥ ${formatAmount(upgrade.activeCustomers)} 人` : null,
-        upgrade.teamHoldings > 0 ? `团队持仓 ≥ ${formatAmount(upgrade.teamHoldings)} USDT` : null
+        upgrade.teamHoldings > 0 ? `团队持仓 ≥ ${formatAmount(upgrade.teamHoldings)} 元` : null
       ].filter(Boolean);
       if (!conditions.length) {
         return e(Text, { type: "secondary" }, "新代理默认等级，无需等级考核");

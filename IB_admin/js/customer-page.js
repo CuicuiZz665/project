@@ -34,7 +34,7 @@
     return Number.isFinite(n) ? n : null;
   }
 
-  function fmtAmount(value, unit = "USDT") {
+  function fmtAmount(value, unit = "元") {
     if (isBlank(value)) return "—";
     const n = parseNum(value);
     if (n == null) return value;
@@ -42,7 +42,7 @@
     return `${n < 0 ? "-" : ""}${abs}${unit ? ` ${unit}` : ""}`;
   }
 
-  function fmtSigned(value, unit = "USDT") {
+  function fmtSigned(value, unit = "元") {
     if (isBlank(value)) return "—";
     const n = parseNum(value);
     if (n == null) return value;
@@ -64,7 +64,7 @@
     return `${n.toFixed(2)}%`;
   }
 
-  function fmtSum(value, unit = "USDT") {
+  function fmtSum(value, unit = "元") {
     return `${value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}${unit ? ` ${unit}` : ""}`;
   }
 
@@ -275,7 +275,7 @@
           e("div", { className: "customer-asset-main", key: "main" }, [
             e("span", { key: "l", className: "customer-asset-label" }, [
               "总余额",
-              e("i", { key: "u", className: "metric-unit" }, "USDT")
+              e("i", { key: "u", className: "metric-unit" }, "元")
             ]),
             e("strong", { key: "v", className: "customer-asset-balance" },
               fmtSum(sumAccounts(accounts, "balance"), null)),
@@ -289,7 +289,7 @@
           ].map(([label, value, cls]) => e("div", { className: "customer-asset-field", key: label }, [
             e("span", { key: "l", className: "customer-asset-label" }, [
               label,
-              e("i", { key: "u", className: "metric-unit" }, "USDT")
+              e("i", { key: "u", className: "metric-unit" }, "元")
             ]),
             e("strong", { key: "v", className: cls.trim() || undefined }, value)
           ])))
@@ -345,7 +345,7 @@
           !expanded ? e("span", { className: "customer-subaccount-inline", key: "inline" }, [
             e("span", { key: "eq" }, [
               "净值",
-              e("i", { key: "u", className: "metric-unit" }, "USDT"),
+              e("i", { key: "u", className: "metric-unit" }, "元"),
               ` ${fmtAmount(account.equity, null)}`
             ]),
             e("span", { key: "rate" }, `盈利率 ${fmtPercent(account.pnlRate)}`)
@@ -368,7 +368,7 @@
         ].map(([label, value, cls, money]) => e("div", { className: "customer-subaccount-metric", key: label }, [
           e("span", { key: "l" }, [
             label,
-            money ? e("i", { key: "u", className: "metric-unit" }, "USDT") : null
+            money ? e("i", { key: "u", className: "metric-unit" }, "元") : null
           ]),
           e("strong", { key: "v", className: cls }, value)
         ]))),
@@ -387,7 +387,7 @@
         ].map(([label, value, cls, money]) => e("div", { className: "customer-subaccount-field", key: label }, [
           e("span", { key: "l" }, [
             label,
-            money ? e("i", { key: "u", className: "metric-unit" }, "USDT") : null
+            money ? e("i", { key: "u", className: "metric-unit" }, "元") : null
           ]),
           e("strong", { key: "v", className: cls }, value)
         ])))
@@ -413,13 +413,13 @@
     const walletValue = customer.walletAddress;
     return [
       ["邮箱", customer.email],
-      ["钱包地址", isBlank(walletValue) ? "—" : e("span", { key: "wv", className: "customer-wallet-value" }, [
+      ["收款账号", isBlank(walletValue) ? "—" : e("span", { key: "wv", className: "customer-wallet-value" }, [
         e("span", {
           key: "t",
           className: "customer-wallet-text",
           title: walletValue
         }, walletValue.length > 18 ? `${walletValue.slice(0, 9)}…${walletValue.slice(-9)}` : walletValue),
-        e(CopyButton, { key: "c", value: walletValue, title: "复制钱包地址" })
+        e(CopyButton, { key: "c", value: walletValue, title: "复制收款账号" })
       ])],
       ["注册 IP", extra.registerIp],
       ["登录 IP", extra.lastLoginIp],
@@ -561,12 +561,12 @@
         summary: [
           e("span", { key: "s" }, [
             "累计已结算",
-            e("i", { key: "u", className: "metric-unit" }, "USDT"),
+            e("i", { key: "u", className: "metric-unit" }, "元"),
             ` ${fmtAmount(commission.settled, null)}`
           ]),
           e("span", { key: "p" }, [
             "待结算",
-            e("i", { key: "u2", className: "metric-unit" }, "USDT"),
+            e("i", { key: "u2", className: "metric-unit" }, "元"),
             ` ${fmtAmount(commission.pending, null)}`
           ])
         ]
@@ -576,7 +576,7 @@
       ].map(([label, value, money]) => e("div", { className: "customer-subaccount-field", key: label }, [
         e("span", { key: "l" }, [
           label,
-          money ? e("i", { key: "u", className: "metric-unit" }, "USDT") : null
+          money ? e("i", { key: "u", className: "metric-unit" }, "元") : null
         ]),
         e("strong", { key: "v" }, value)
       ])))),
@@ -1006,7 +1006,7 @@
         render: renderPlainOrDash
       },
       {
-        title: "钱包地址",
+        title: "收款账号",
         width: 90,
         align: "center",
         render: () => e(Text, { type: "secondary" }, "-")

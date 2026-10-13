@@ -72,7 +72,7 @@
       e(Form.Item, {
         key: "rule", name: "rule", label: "面额 / 使用规则",
         rules: [{ required: true, message: "请输入面额或使用规则" }]
-      }, e(Input, { placeholder: "如：亏损 10 USDT 以内全额抵扣" })),
+      }, e(Input, { placeholder: "如：亏损 10 元以内全额抵扣" })),
       e(Form.Item, {
         key: "range", name: "range", label: "有效期",
         rules: [{ required: true, message: "请选择有效期" }]

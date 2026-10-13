@@ -167,10 +167,10 @@
       const data = this.collectForm();
       if (data.rewardXp <= 0 && data.rewardDrop <= 0) {
         this.els.rewardXp.closest(".field").classList.add("error");
-        this.toast.show("XP 和 Drop 至少填写一个奖励值");
+        this.toast.show("XP 和金币至少填写一个奖励值");
         return;
       }
-      this.confirm.ask("确认保存", `将保存规则“${data.internalName}”，奖励为 ${data.rewardXp || 0} XP / ${data.rewardDrop || 0} Drop。`, () => {
+      this.confirm.ask("确认保存", `将保存规则“${data.internalName}”，奖励为 ${data.rewardXp || 0} XP / ${data.rewardDrop || 0} 金币。`, () => {
         this.onSave(data, this.state.editingId, this.els.title.textContent);
         this.close();
       });

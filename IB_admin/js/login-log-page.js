@@ -16,7 +16,7 @@
   const e = React.createElement;
 
   const COUNTRY_OPTIONS = ["CHN", "SGP", "GBR", "USA", "JPN"];
-  const METHOD_OPTIONS = ["邮箱登录", "钱包登录"];
+  const METHOD_OPTIONS = ["邮箱登录", "手机登录", "微信登录", "支付宝登录", "Apple 登录"];
   const KEYWORD_GROUPS = [
     { label: "ID", field: "id" },
     { label: "请求 ID", field: "requestId" },
@@ -63,8 +63,8 @@
   }
 
   function methodTagColor(method) {
-    if (method.includes("OAuth")) return "blue";
-    if (method.includes("钱包")) return "orange";
+    if (method.includes("Apple")) return "blue";
+    if (method.includes("微信") || method.includes("支付宝")) return "green";
     return "default";
   }
 

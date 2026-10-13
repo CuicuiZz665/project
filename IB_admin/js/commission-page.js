@@ -56,7 +56,7 @@
 
   const emptySymbolFilter = () => ({ code: null, listed: null });
   const rateText = value => `${value}%`;
-  const feeText = (margin, rate) => `${parseFloat((margin * rate / 100).toFixed(6))}USDT`;
+  const feeText = (margin, rate) => `${parseFloat((margin * rate / 100).toFixed(6))}元`;
 
   function CommissionPage({ rules, setRules, levels, agents }) {
     const [keyword, setKeyword] = React.useState();
@@ -138,7 +138,7 @@
           rate: symbolRateDraft[item.code] ?? null
         })),
         settleCycle: "日结",
-        settleCoin: "USDT",
+        settleCoin: "CNY",
         effectiveType: "立即生效",
         effectiveAt: "-",
         remark: "",
@@ -292,7 +292,7 @@
       const symbolColumns = [
         { title: "品种代码", dataIndex: "code", width: 130, onCell: leadCell },
         { title: "品种名称", dataIndex: "name", width: 130, onCell: leadCell },
-        { title: "持仓量(Margin * 杠杆)", dataIndex: "margin", width: 180, onCell: leadCell, render: value => `${value}USDT` },
+        { title: "持仓量(Margin * 杠杆)", dataIndex: "margin", width: 180, onCell: leadCell, render: value => `${value}元` },
         {
           title: "上/下架状态",
           key: "listed",
@@ -658,7 +658,7 @@
             name: "settleCoin",
             rules: [{ required: true, message: "请选择结算币种" }]
           }, e(Select, {
-            options: ["USDT", "USD"].map(value => ({ value, label: value }))
+            options: ["CNY"].map(value => ({ value, label: value }))
           })))
         ]),
         e(Form.Item, { key: "effective", label: "生效方式", name: "effectiveType" }, e(Radio.Group, {

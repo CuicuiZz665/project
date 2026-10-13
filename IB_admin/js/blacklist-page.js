@@ -21,14 +21,14 @@
 
   const SORT_OPTIONS = ["添加时间", "注册时间"];
   const RESTRICTION_OPTIONS = ["限制登录", "限制入金", "限制出金", "限制开仓"];
-  const EXPORT_HEADERS = ["用户ID", "注册方式", "注册时间(GMT+0)", "邮箱", "钱包地址", "最后操作人", "添加时间(GMT+0)", "拉黑原因", "是否充值", "权限限制"];
+  const EXPORT_HEADERS = ["用户ID", "注册方式", "注册时间(GMT+0)", "邮箱", "收款账号", "最后操作人", "添加时间(GMT+0)", "拉黑原因", "是否充值", "权限限制"];
   const RESTRICTION_TAG_COLOR = { "限制登录": "orange", "限制入金": "gold", "限制出金": "error", "限制开仓": "purple" };
 
   // 列设置分组：操作列固定不可取消，与源系统一致。
   const columnGroups = [
     { key: "customer", label: "客户信息", columns: [{ key: "userId", label: "用户ID" }] },
     { key: "register", label: "注册信息", columns: [{ key: "registerType", label: "注册方式" }, { key: "registeredAt", label: "注册时间(GMT+0)" }] },
-    { key: "contact", label: "联系与地址", columns: [{ key: "email", label: "邮箱" }, { key: "walletAddress", label: "钱包地址" }] },
+    { key: "contact", label: "联系与地址", columns: [{ key: "email", label: "邮箱" }, { key: "walletAddress", label: "收款账号" }] },
     { key: "record", label: "名单信息", columns: [{ key: "reason", label: "拉黑原因" }, { key: "operator", label: "最后操作人" }, { key: "operatedAt", label: "添加时间" }] },
     { key: "status", label: "状态与权限", columns: [{ key: "deposited", label: "是否充值" }, { key: "restriction", label: "权限限制" }] }
   ];
@@ -258,7 +258,7 @@
       registerType: { title: "注册方式", dataIndex: "registerType", width: 100 },
       registeredAt: { title: "注册时间(GMT+0)", dataIndex: "registeredAt", width: 160 },
       email: { title: "邮箱", dataIndex: "email", width: 190, ellipsis: true },
-      walletAddress: { title: "钱包地址", dataIndex: "walletAddress", width: 120, ellipsis: true },
+      walletAddress: { title: "收款账号", dataIndex: "walletAddress", width: 120, ellipsis: true },
       reason: { title: "拉黑原因", dataIndex: "reason", width: 230, ellipsis: true },
       operator: { title: "最后操作人", dataIndex: "operator", width: 100 },
       operatedAt: { title: "添加时间", dataIndex: "operatedAt", width: 160 },

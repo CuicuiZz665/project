@@ -42,15 +42,15 @@
     ],
     // 学院课程（C 端 academy 页）：新手村等多门课，每课多讲，每讲一个视频（上传或外链）+ 完课奖励 XP。
     courses: [
-      { id: 1, title: "新手村", kicker: "Newbie Village", intro: "外汇、CFD、Web3 基础与首次模拟交易，从市场基础开始", rewardXp: 200, status: "上线", operator: "Bella" },
+      { id: 1, title: "新手村", kicker: "Newbie Village", intro: "贵金属、积存金、财商基础与首次模拟交易，从市场基础开始", rewardXp: 200, status: "上线", operator: "Bella" },
       { id: 2, title: "模拟交易战场", kicker: "Demo Battlefield", intro: "实盘前先练习，用模拟盘熟悉下单与风控", rewardXp: 150, status: "上线", operator: "Amy" },
       { id: 3, title: "跟单交易学院", kicker: "Copy Trading", intro: "查看交易员数据与风险标签，学会理性跟单", rewardXp: 150, status: "草稿", operator: "Bella" },
-      { id: 4, title: "钱包安全", kicker: "Wallet Safety", intro: "Web3 转账与钓鱼风险基础", rewardXp: 100, status: "上线", operator: "David" }
+      { id: 4, title: "账户安全", kicker: "Account Safety", intro: "支付账户防护与反诈避坑基础", rewardXp: 100, status: "上线", operator: "David" }
     ],
     courseLessons: [
-      { id: 1, courseId: 1, title: "什么是外汇与 CFD 市场", duration: "6m", videoType: "链接", videoUrl: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4", rewardXp: 200 },
+      { id: 1, courseId: 1, title: "什么是贵金属现货与延期市场", duration: "6m", videoType: "链接", videoUrl: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4", rewardXp: 200 },
       { id: 2, courseId: 1, title: "杠杆与保证金入门", duration: "8m", videoType: "链接", videoUrl: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4", rewardXp: 200 },
-      { id: 3, courseId: 1, title: "Web3 钱包与链上基础", duration: "7m", videoType: "链接", videoUrl: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4", rewardXp: 200 },
+      { id: 3, courseId: 1, title: "账户安全与反诈基础", duration: "7m", videoType: "链接", videoUrl: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4", rewardXp: 200 },
       { id: 4, courseId: 1, title: "读懂报价与点差", duration: "9m", videoType: "链接", videoUrl: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4", rewardXp: 200 },
       { id: 5, courseId: 1, title: "开启你的首次模拟交易", duration: "5m", videoType: "链接", videoUrl: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4", rewardXp: 200 },
       { id: 6, courseId: 2, title: "模拟盘和实盘的差别", duration: "4m", videoType: "链接", videoUrl: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4", rewardXp: 150 },
@@ -74,32 +74,31 @@
       { id: "level-v6", name: "V6 VIP", color: "#faad14", sort: 6, status: "停用", isDefault: false, languages: [{ lang: "简体中文", name: "V6 VIP" }, { lang: "English", name: "V6 VIP" }, { lang: "日本語", name: "V6 VIP" }], upgrade: { match: "全部", activeCustomers: 100, teamHoldings: 500000 }, rebateRate: 95, marketingRate: 30, protectionDays: 90, commissionRuleId: "6", remark: "定向邀请制等级，当前暂停升级通道。", updatedAt: "2026-09-06 14:47", operator: "Amy" }
     ],
     commissionRules: [
-      { id: "1", name: "V4", levelId: "level-v4", levelName: "V4", status: "启用", floorRate: 50, auditStatus: "已通过", approvedAt: "2026-08-20 16:40", createdAt: "2026-08-20 10:18", rates: { contract: 85, contractTrader: 75, contractApi: 5, contractTraderApi: 5, spot: 10, spotTrader: 0, spotApi: 0, spotTraderApi: 0 }, marketingRate: 20, selfCommission: true, settleCycle: "日结", settleCoin: "USDT", effectiveType: "立即生效", effectiveAt: "-", updatedAt: "2026-09-10 15:22", operator: "Bella", remark: "子渠道比例为 0 时按对应品种「全部」比例执行。" },
-      { id: "2", name: "V1", levelId: "level-v1", levelName: "V1", status: "启用", floorRate: 20, auditStatus: "已通过", approvedAt: "2026-07-05 14:30", createdAt: "2026-07-05 09:12", rates: { contract: 40, contractTrader: 0, contractApi: 0, contractTraderApi: 0, spot: 0, spotTrader: 0, spotApi: 0, spotTraderApi: 0 }, marketingRate: 0, selfCommission: false, settleCycle: "日结", settleCoin: "USDT", effectiveType: "立即生效", effectiveAt: "-", updatedAt: "2026-09-08 11:40", operator: "Amy", remark: "默认等级规则，不允许自返佣。" },
-      { id: "3", name: "V2", levelId: "level-v2", levelName: "V2", status: "停用", floorRate: 30, auditStatus: "已通过", approvedAt: "2026-06-02 09:20", createdAt: "2026-06-01 11:00", rates: { contract: 55, contractTrader: 0, contractApi: 0, contractTraderApi: 0, spot: 5, spotTrader: 0, spotApi: 0, spotTraderApi: 0 }, marketingRate: 5, selfCommission: false, settleCycle: "周结", settleCoin: "USDT", effectiveType: "立即生效", effectiveAt: "-", updatedAt: "2026-09-05 09:18", operator: "Bella", remark: "历史规则，等级 V2 当前未开放。" },
-      { id: "4", name: "V3", levelId: "level-v3", levelName: "V3", status: "启用", floorRate: 40, auditStatus: "已通过", approvedAt: "2026-08-29 10:00", createdAt: "2026-08-28 15:05", rates: { contract: 70, contractTrader: 60, contractApi: 10, contractTraderApi: 0, spot: 8, spotTrader: 0, spotApi: 0, spotTraderApi: 0 }, marketingRate: 10, selfCommission: true, settleCycle: "日结", settleCoin: "USDT", effectiveType: "立即生效", effectiveAt: "-", updatedAt: "2026-09-09 17:05", operator: "David", remark: "" },
-      { id: "5", name: "V5", levelId: "level-v5", levelName: "V5", status: "启用", floorRate: 60, auditStatus: "已通过", approvedAt: "2026-09-01 17:10", createdAt: "2026-09-01 08:45", rates: { contract: 80, contractTrader: 0, contractApi: 0, contractTraderApi: 0, spot: 12, spotTrader: 0, spotApi: 0, spotTraderApi: 0 }, marketingRate: 25, selfCommission: true, settleCycle: "月结", settleCoin: "USDT", effectiveType: "定时生效", effectiveAt: "2026-10-01 00:00", updatedAt: "2026-09-11 10:32", operator: "Bella", remark: "V5 专属规则，10 月起生效。" },
-      { id: "6", name: "V6", levelId: "level-v6", levelName: "V6 VIP", status: "启用", floorRate: 70, auditStatus: "已通过", approvedAt: "2026-08-11 09:05", createdAt: "2026-08-10 13:25", rates: { contract: 95, contractTrader: 85, contractApi: 10, contractTraderApi: 10, spot: 15, spotTrader: 0, spotApi: 0, spotTraderApi: 0 }, marketingRate: 30, selfCommission: true, settleCycle: "月结", settleCoin: "USDT", effectiveType: "立即生效", effectiveAt: "-", updatedAt: "2026-09-06 14:47", operator: "Amy", remark: "VIP 专属规则。" }
+      { id: "1", name: "V4", levelId: "level-v4", levelName: "V4", status: "启用", floorRate: 50, auditStatus: "已通过", approvedAt: "2026-08-20 16:40", createdAt: "2026-08-20 10:18", rates: { contract: 85, contractTrader: 75, contractApi: 5, contractTraderApi: 5, spot: 10, spotTrader: 0, spotApi: 0, spotTraderApi: 0 }, marketingRate: 20, selfCommission: true, settleCycle: "日结", settleCoin: "CNY", effectiveType: "立即生效", effectiveAt: "-", updatedAt: "2026-09-10 15:22", operator: "Bella", remark: "子渠道比例为 0 时按对应品种「全部」比例执行。" },
+      { id: "2", name: "V1", levelId: "level-v1", levelName: "V1", status: "启用", floorRate: 20, auditStatus: "已通过", approvedAt: "2026-07-05 14:30", createdAt: "2026-07-05 09:12", rates: { contract: 40, contractTrader: 0, contractApi: 0, contractTraderApi: 0, spot: 0, spotTrader: 0, spotApi: 0, spotTraderApi: 0 }, marketingRate: 0, selfCommission: false, settleCycle: "日结", settleCoin: "CNY", effectiveType: "立即生效", effectiveAt: "-", updatedAt: "2026-09-08 11:40", operator: "Amy", remark: "默认等级规则，不允许自返佣。" },
+      { id: "3", name: "V2", levelId: "level-v2", levelName: "V2", status: "停用", floorRate: 30, auditStatus: "已通过", approvedAt: "2026-06-02 09:20", createdAt: "2026-06-01 11:00", rates: { contract: 55, contractTrader: 0, contractApi: 0, contractTraderApi: 0, spot: 5, spotTrader: 0, spotApi: 0, spotTraderApi: 0 }, marketingRate: 5, selfCommission: false, settleCycle: "周结", settleCoin: "CNY", effectiveType: "立即生效", effectiveAt: "-", updatedAt: "2026-09-05 09:18", operator: "Bella", remark: "历史规则，等级 V2 当前未开放。" },
+      { id: "4", name: "V3", levelId: "level-v3", levelName: "V3", status: "启用", floorRate: 40, auditStatus: "已通过", approvedAt: "2026-08-29 10:00", createdAt: "2026-08-28 15:05", rates: { contract: 70, contractTrader: 60, contractApi: 10, contractTraderApi: 0, spot: 8, spotTrader: 0, spotApi: 0, spotTraderApi: 0 }, marketingRate: 10, selfCommission: true, settleCycle: "日结", settleCoin: "CNY", effectiveType: "立即生效", effectiveAt: "-", updatedAt: "2026-09-09 17:05", operator: "David", remark: "" },
+      { id: "5", name: "V5", levelId: "level-v5", levelName: "V5", status: "启用", floorRate: 60, auditStatus: "已通过", approvedAt: "2026-09-01 17:10", createdAt: "2026-09-01 08:45", rates: { contract: 80, contractTrader: 0, contractApi: 0, contractTraderApi: 0, spot: 12, spotTrader: 0, spotApi: 0, spotTraderApi: 0 }, marketingRate: 25, selfCommission: true, settleCycle: "月结", settleCoin: "CNY", effectiveType: "定时生效", effectiveAt: "2026-10-01 00:00", updatedAt: "2026-09-11 10:32", operator: "Bella", remark: "V5 专属规则，10 月起生效。" },
+      { id: "6", name: "V6", levelId: "level-v6", levelName: "V6 VIP", status: "启用", floorRate: 70, auditStatus: "已通过", approvedAt: "2026-08-11 09:05", createdAt: "2026-08-10 13:25", rates: { contract: 95, contractTrader: 85, contractApi: 10, contractTraderApi: 10, spot: 15, spotTrader: 0, spotApi: 0, spotTraderApi: 0 }, marketingRate: 30, selfCommission: true, settleCycle: "月结", settleCoin: "CNY", effectiveType: "立即生效", effectiveAt: "-", updatedAt: "2026-09-06 14:47", operator: "Amy", remark: "VIP 专属规则。" }
     ],
     commissionSymbols: [
-      { code: "AAPL.NAS", name: "AAPL.NAS", margin: 1000, listed: false, openRate: 0, closeRate: 0 },
-      { code: "ACN.NYS", name: "ACN.NYS", margin: 1000, listed: false, openRate: 0, closeRate: 0 },
-      { code: "ADAUSD", name: "ADAUSD", margin: 1000, listed: false, openRate: 0.02, closeRate: 0.02 },
-      { code: "AMZN.NAS", name: "AMZN.NAS", margin: 1000, listed: false, openRate: 0, closeRate: 0 },
-      { code: "APEUSD", name: "APEUSD", margin: 1000, listed: false, openRate: 0.02, closeRate: 0.02 },
-      { code: "ARM.NAS", name: "ARM.NAS", margin: 1000, listed: false, openRate: 0, closeRate: 0 },
-      { code: "ASML.NAS", name: "ASML.NAS", margin: 1000, listed: false, openRate: 0, closeRate: 0 },
-      { code: "ATOMUSD", name: "ATOMUSD", margin: 1000, listed: false, openRate: 0.02, closeRate: 0.02 },
-      { code: "AUDCAD", name: "AUDCAD", margin: 1000, listed: true, openRate: 0.007, closeRate: 0.007 },
-      { code: "AUDCHF", name: "AUDCHF", margin: 1000, listed: true, openRate: 0.0125, closeRate: 0.0125 },
-      { code: "AUDJPY", name: "AUDJPY", margin: 1000, listed: true, openRate: 0.0061, closeRate: 0.0061 },
-      { code: "AUDNZD", name: "AUDNZD", margin: 1000, listed: true, openRate: 0.0083, closeRate: 0.0083 },
-      { code: "BTCUSD", name: "BTCUSD", margin: 1000, listed: true, openRate: 0.01, closeRate: 0.01 },
-      { code: "ETHUSD", name: "ETHUSD", margin: 1000, listed: true, openRate: 0.01, closeRate: 0.01 },
-      { code: "EURUSD", name: "EURUSD", margin: 1000, listed: true, openRate: 0.0035, closeRate: 0.0035 },
-      { code: "GBPUSD", name: "GBPUSD", margin: 1000, listed: true, openRate: 0.0042, closeRate: 0.0042 },
-      { code: "SOLUSD", name: "SOLUSD", margin: 1000, listed: false, openRate: 0.015, closeRate: 0.015 },
-      { code: "XAUUSD", name: "XAUUSD", margin: 1000, listed: true, openRate: 0.005, closeRate: 0.005 }
+      { code: "Ag(T+D)", name: "白银延期", margin: 1000, listed: true, openRate: 0.0061, closeRate: 0.0061 },
+      { code: "Ag99.99", name: "白银99.99", margin: 1000, listed: true, openRate: 0.007, closeRate: 0.007 },
+      { code: "Au(T+D)", name: "黄金延期", margin: 1000, listed: true, openRate: 0.0035, closeRate: 0.0035 },
+      { code: "Au10g", name: "10克金条", margin: 1000, listed: false, openRate: 0.008, closeRate: 0.008 },
+      { code: "Au100g", name: "100克金条", margin: 1000, listed: true, openRate: 0.0042, closeRate: 0.0042 },
+      { code: "Au50g", name: "50克金条", margin: 1000, listed: false, openRate: 0.006, closeRate: 0.006 },
+      { code: "Au99.95", name: "黄金99.95", margin: 1000, listed: false, openRate: 0.005, closeRate: 0.005 },
+      { code: "Au99.99", name: "上海金主力", margin: 1000, listed: true, openRate: 0.005, closeRate: 0.005 },
+      { code: "iAu100g", name: "国际板100克金", margin: 1000, listed: false, openRate: 0.007, closeRate: 0.007 },
+      { code: "iAu99.99", name: "国际板黄金", margin: 1000, listed: false, openRate: 0.0075, closeRate: 0.0075 },
+      { code: "mAu(T+D)", name: "迷你黄金延期", margin: 1000, listed: true, openRate: 0.0045, closeRate: 0.0045 },
+      { code: "Pt99.95", name: "铂金99.95", margin: 1000, listed: false, openRate: 0.012, closeRate: 0.012 },
+      { code: "积存金", name: "银行积存金", margin: 1000, listed: true, openRate: 0, closeRate: 0 },
+      { code: "沪金2506", name: "沪金2506", margin: 1000, listed: true, openRate: 0.005, closeRate: 0.005 },
+      { code: "沪金2512", name: "沪金2512", margin: 1000, listed: false, openRate: 0.0055, closeRate: 0.0055 },
+      { code: "沪银2506", name: "沪银2506", margin: 1000, listed: true, openRate: 0.0061, closeRate: 0.0061 },
+      { code: "沪银2512", name: "沪银2512", margin: 1000, listed: false, openRate: 0.0065, closeRate: 0.0065 }
     ],
     customerServices: [
       { id: "svc-qq", uid: "700001", name: "QQ", nickname: "QQ" },
@@ -111,7 +110,7 @@
         id: "root",
         name: "Root",
         parentId: null,
-        permissions: ["佣金记录管理", "佣金配置列表", "代理等级配置", "代理商修改等级", "代理商列表", "代理申请列表", "高手申请列表", "潜在高手", "等级配置", "高手管理", "跟随关系管理", "分润结算", "数据概览", "黑名单", "白名单", "用户登录日志", "客户列表", "订单列表", "挂单列表", "文章管理", "广告列表", "广告位条目配置", "查询验证码", "消息管理", "邮件管理", "站内信管理", "Layout管理", "报名列表", "活动配置", "投递记录", "投递列表", "投递操作设置", "优惠券核销", "优惠券操作管理", "优惠券列表", "积分明细", "积分配置", "徽章列表", "返现结算", "费用流水", "财务明细", "比赛用户统计", "资格赛设置", "比赛列表", "资金管理", "出入金网络配置", "汇率管理", "入金管理", "出金管理-风控审核", "出金管理-财务操作", "资金流水", "品种类标", "版本控制", "编辑角色", "创建角色", "角色管理设置", "用户设置管理", "修改密码"]
+        permissions: ["佣金记录管理", "佣金配置列表", "代理等级配置", "代理商修改等级", "代理商列表", "代理申请列表", "数据概览", "黑名单", "白名单", "用户登录日志", "客户列表", "订单列表", "挂单列表", "文章管理", "广告列表", "广告位条目配置", "查询验证码", "消息管理", "邮件管理", "站内信管理", "Layout管理", "报名列表", "活动配置", "投递记录", "投递列表", "投递操作设置", "优惠券核销", "优惠券操作管理", "优惠券列表", "积分明细", "积分配置", "徽章列表", "返现结算", "费用流水", "财务明细", "比赛用户统计", "资格赛设置", "比赛列表", "资金管理", "出入金网络配置", "汇率管理", "入金管理", "出金管理-风控审核", "出金管理-财务操作", "资金流水", "品种类标", "版本控制", "编辑角色", "创建角色", "角色管理设置", "用户设置管理", "修改密码"]
       },
       { id: "customer-service", name: "客户服务", parentId: null, permissions: ["数据概览", "黑名单", "白名单", "用户登录日志", "客户列表", "订单列表", "挂单列表", "查询验证码", "消息管理", "积分明细"] },
       { id: "test", name: "测试", parentId: null, permissions: ["数据概览", "客户列表", "活动配置", "报名列表", "优惠券列表", "比赛列表"] }
@@ -132,7 +131,7 @@
       { id: 1, userId: "315899879", name: "Nifty NEAR", parentAgentId: "-", registerType: "邮箱注册", registeredAt: "2026-09-11 07:17:03", email: "jiumamuyindian@163.com", walletAddress: "-", country: "JPN", deposited: true, service: null },
       { id: 2, userId: "643448777", name: "Perky Pool", parentAgentId: "-", registerType: "邮箱注册", registeredAt: "2026-09-11 07:05:06", email: "didi20260910@163.com", walletAddress: "-", country: "CHN", deposited: false, service: "cs2" },
       { id: 3, userId: "548302071", name: "Icy Incentive", parentAgentId: "-", registerType: "邮箱注册", registeredAt: "2026-09-11 07:04:55", email: "lolo511527@sina.com", walletAddress: "-", country: "CHN", deposited: false, service: "cs1" },
-      { id: 4, userId: "499516984", name: "玲玲羊2026", parentAgentId: "-", registerType: "钱包注册", registeredAt: "2026-09-09 02:45:05", email: "-", walletAddress: "0x635B2E584a82877624f468118dcCB6182ceb3c3c", country: "JPN", deposited: true, service: "QQ" },
+      { id: 4, userId: "499516984", name: "玲玲羊2026", parentAgentId: "-", registerType: "手机注册", registeredAt: "2026-09-09 02:45:05", email: "-", walletAddress: "-", country: "JPN", deposited: true, service: "QQ" },
       { id: 5, userId: "686566723", name: "Bonny Block", parentAgentId: "-", registerType: "邮箱注册", registeredAt: "2026-09-08 09:45:16", email: "000@999.com", walletAddress: "-", country: "AUS", deposited: false, service: null },
       { id: 6, userId: "766328994", name: "Breezy BNB", parentAgentId: "735657734", registerType: "邮箱注册", registeredAt: "2026-09-08 03:44:53", email: "123@123.com", walletAddress: "-", country: "AUS", deposited: false, service: "QQ" }
     ],
@@ -155,7 +154,7 @@
         bonusStatus: "正常",
         totalLots: "8.42",
         tradeCount: "36",
-        favoriteSymbols: "XAUUSD, BTCUSD",
+        favoriteSymbols: "Au99.99, Au(T+D)",
         lastTradeAt: "2026-09-11 10:24:09",
         pnl: "+¥1,286.40",
         lastDepositAt: "2026-09-11 08:16:30",
@@ -210,7 +209,7 @@
           { id: "follower-1", followerId: "686566723", followerName: "Bonny Block", amount: "100", shareRate: "10%", createdAt: "2026-09-11 09:35:42" }
         ],
         activityRecords: [
-          { id: "activity-1", source: "大转盘活动", obtainedAt: "2026-09-11 08:49:40", rewardDetail: "20 Drop" },
+          { id: "activity-1", source: "大转盘活动", obtainedAt: "2026-09-11 08:49:40", rewardDetail: "20 金币" },
           { id: "activity-2", source: "邀请好友", obtainedAt: "2026-09-11 09:12:05", rewardDetail: "200 XP" },
           { id: "activity-3", source: "大转盘活动", obtainedAt: "2026-09-11 10:02:31", rewardDetail: "赠金券" }
         ]
@@ -307,7 +306,7 @@
         bonusStatus: "正常",
         totalLots: "24.18",
         tradeCount: "92",
-        favoriteSymbols: "XAUUSD, AUDJPY",
+        favoriteSymbols: "Au99.99, Ag(T+D)",
         lastTradeAt: "2026-09-10 22:31:12",
         pnl: "+¥6,508.20",
         lastDepositAt: "2026-09-10 09:12:33",
@@ -317,7 +316,7 @@
         loginDevice: "macOS · Chrome",
         registerIp: "133.32.16.9",
         deviceFingerprint: "fp_27B90F",
-        note: "钱包注册客户，交易活跃，归属 Bella。",
+        note: "手机注册客户，交易活跃，归属 Bella。",
         firstName: "-",
         lastName: "-",
         countryName: "日本",
@@ -384,7 +383,7 @@
         bonusStatus: "正常",
         totalLots: "5.64",
         tradeCount: "18",
-        favoriteSymbols: "AUDCAD, XAUUSD",
+        favoriteSymbols: "沪金2506, Au99.99",
         lastTradeAt: "2026-09-10 16:12:28",
         pnl: "+¥108.60",
         lastDepositAt: "2026-09-08 06:20:31",
@@ -418,13 +417,13 @@
         tradingLots: { value: "716", change: "+9.8%", note: "较上周期" },
         tradingAmount: { value: "9,670", change: "+11.6%", note: "较上周期" },
         firstDepositCustomers: { value: "18", change: "+12.5%", note: "较上周期" },
-        deposits: { value: "1,280,000", change: "+8.4%", note: "入金金额" },
-        withdrawals: { value: "438,000", change: "-4.2%", note: "出金金额" },
-        netDeposits: { value: "842,000", change: "+11.0%", note: "净入金" },
+        deposits: { value: "128.0万", change: "+8.4%", note: "入金金额" },
+        withdrawals: { value: "43.8万", change: "-4.2%", note: "出金金额" },
+        netDeposits: { value: "84.2万", change: "+11.0%", note: "净入金" },
         ibRebateCustomers: { value: "14", change: "+9.3%", note: "较上周期" },
-        ibRebateAmount: { value: "26,480", change: "+15.2%", note: "较上周期" },
+        ibRebateAmount: { value: "2.65万", change: "+15.2%", note: "较上周期" },
         expertRebateCustomers: { value: "6", change: "+7.7%", note: "较上周期" },
-        expertRebatePaid: { value: "9,860", change: "+11.4%", note: "较上周期" }
+        expertRebatePaid: { value: "0.99万", change: "+11.4%", note: "较上周期" }
       },
       trend: [
         { label: "08/12", lots: 42, amount: 520, customers: 8 },
@@ -489,19 +488,17 @@
         volume: Math.round(item.lots * 2.4 + (index % 4) * 8)
       })),
       symbols: [
-        { name: "XAUUSD", type: "黄金&金属", lots: "292.78", amount: "4,216,900", volume: "3,512", orders: "1,846" },
-        { name: "XAGUSD", type: "黄金&金属", lots: "30.00", amount: "388,490", volume: "1,028", orders: "238" },
-        { name: "AUDCAD", type: "外汇", lots: "31.53", amount: "506,300", volume: "742", orders: "204" },
-        { name: "AUDCHF", type: "外汇", lots: "16.42", amount: "242,600", volume: "386", orders: "118" },
-        { name: "AUDJPY", type: "外汇", lots: "26.18", amount: "398,200", volume: "612", orders: "176" },
-        { name: "XBRUSD", type: "能源", lots: "18.75", amount: "215,400", volume: "298", orders: "156" },
-        { name: "XTIUSD", type: "能源", lots: "21.36", amount: "262,800", volume: "354", orders: "189" },
-        { name: "HK50", type: "指数", lots: "42.60", amount: "604,500", volume: "866", orders: "268" },
-        { name: "JPN225", type: "指数", lots: "19.84", amount: "286,300", volume: "428", orders: "142" },
-        { name: "NAS100", type: "指数", lots: "38.92", amount: "572,100", volume: "795", orders: "324" },
-        { name: "BTCUSD", type: "虚拟货币", lots: "46.20", amount: "728,500", volume: "1,204", orders: "486" },
-        { name: "BCHUSD", type: "虚拟货币", lots: "11.08", amount: "152,700", volume: "286", orders: "96" },
-        { name: "DOTUSD", type: "虚拟货币", lots: "8.35", amount: "112,400", volume: "204", orders: "74" }
+        { name: "Au99.99", type: "黄金", lots: "292.78", amount: "4,216,900", volume: "3,512", orders: "1,846" },
+        { name: "Au(T+D)", type: "黄金", lots: "46.20", amount: "728,500", volume: "1,204", orders: "486" },
+        { name: "沪金2506", type: "黄金期货", lots: "42.60", amount: "604,500", volume: "866", orders: "268" },
+        { name: "Ag(T+D)", type: "白银", lots: "30.00", amount: "388,490", volume: "1,028", orders: "238" },
+        { name: "Ag99.99", type: "白银", lots: "31.53", amount: "506,300", volume: "742", orders: "204" },
+        { name: "沪银2506", type: "白银期货", lots: "26.18", amount: "398,200", volume: "612", orders: "176" },
+        { name: "Au100g", type: "实物金条", lots: "21.36", amount: "262,800", volume: "354", orders: "189" },
+        { name: "积存金", type: "积存金", lots: "19.84", amount: "286,300", volume: "428", orders: "142" },
+        { name: "mAu(T+D)", type: "黄金", lots: "16.42", amount: "242,600", volume: "386", orders: "118" },
+        { name: "Pt99.95", type: "铂金", lots: "11.08", amount: "152,700", volume: "286", orders: "96" },
+        { name: "Au50g", type: "实物金条", lots: "8.35", amount: "112,400", volume: "204", orders: "74" }
       ],
       customersSummary: [
         { id: 1, name: "林知夏", account: "C-100286", agent: "Bella", customers: "3", lots: "82.40", amount: "¥1,286,400", deposit: "¥220,000", pnl: "+¥28,640", lastTrade: "2026-09-10 21:05" },
@@ -513,36 +510,36 @@
     },
     loginLogs: [
       { id: "90058241", requestId: "req_26JUL_f81c7d10", userId: "513058481", email: "zhixia.lin@gmail.com", ip: "103.86.99.21", country: "CHN", ua: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 Chrome/126.0.0.0 Safari/537.36", deviceUuid: "5f8ac2e4-91b7-4c3d-a6e2-8d41f0b9c7a3", timezone: "Asia/Shanghai", canvasFp: "cb4a06a520", audioFp: "dd902bdd86", screen: "1440x900", deviceFp: "3c72ba39e6f1", method: "邮箱登录", loginAt: "2026-07-27 09:00:27" },
-      { id: "90058212", requestId: "req_26JUL_a92bf018", userId: "282466743", email: "meiling.tan@outlook.com", ip: "18.141.72.34", country: "SGP", ua: "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 Version/18.5 Mobile/15E148 Safari/604.1", deviceUuid: "8c13f5a6-2b9e-4d70-8f4c-3a95e1b6d204", timezone: "Asia/Singapore", canvasFp: "71e3b8d094", audioFp: "a4f2c9e815", screen: "1170x2532", deviceFp: "9b40d2e8a713", method: "Google OAuth", loginAt: "2026-07-24 07:58:09" },
+      { id: "90058212", requestId: "req_26JUL_a92bf018", userId: "282466743", email: "meiling.tan@outlook.com", ip: "18.141.72.34", country: "SGP", ua: "Mozilla/5.0 (iPhone; CPU iPhone OS 18_5 like Mac OS X) AppleWebKit/605.1.15 Version/18.5 Mobile/15E148 Safari/604.1", deviceUuid: "8c13f5a6-2b9e-4d70-8f4c-3a95e1b6d204", timezone: "Asia/Singapore", canvasFp: "71e3b8d094", audioFp: "a4f2c9e815", screen: "1170x2532", deviceFp: "9b40d2e8a713", method: "微信登录", loginAt: "2026-07-24 07:58:09" },
       { id: "90058188", requestId: "req_26JUL_111a39fc", userId: "603330712", email: "yuchen.ma@163.com", ip: "203.119.86.15", country: "CHN", ua: "CuiApp/3.8.2 (Android 15; Pixel 8 Pro) okhttp/4.12.0", deviceUuid: "e47b90d3-5c18-4a2f-b6e8-70d9a3f1c542", timezone: "Asia/Shanghai", canvasFp: "3c5f3e176d", audioFp: "198ee48166", screen: "412x915", deviceFp: "19f84f33ff0a", method: "手机登录", loginAt: "2026-07-24 03:07:07" },
       { id: "90058047", requestId: "req_26JUL_81d7ff02", userId: "292442351", email: "j.hartley@proton.me", ip: "51.89.22.104", country: "GBR", ua: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Edge/126.0.0.0", deviceUuid: "95fb43fb-a1c4-4e8d-b2f6-5c7e9d0a3b18", timezone: "Europe/London", canvasFp: "b28d41f7ca", audioFp: "6e09c3d517", screen: "1920x1080", deviceFp: "ae15e635bf02", method: "邮箱登录", loginAt: "2026-07-23 15:23:06" },
-      { id: "90058028", requestId: "req_26JUL_b92d7001", userId: "587239582", email: "qiuyan.zhang@126.com", ip: "112.64.129.80", country: "CHN", ua: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/125.0.0.0 Safari/537.36", deviceUuid: "d20a7c48-6f31-4b59-9e0d-8a2c4f7e1b63", timezone: "Asia/Shanghai", canvasFp: "f19a2c608e", audioFp: "47bde0a923", screen: "1680x1050", deviceFp: "6d80a1c4e9b7", method: "Apple OAuth", loginAt: "2026-07-23 08:56:04" },
-      { id: "90057983", requestId: "req_26JUL_7c442c11", userId: "583032387", email: "liling88@gmail.com", ip: "101.32.11.19", country: "CHN", ua: "CuiApp/3.8.1 (iOS 18.4; iPhone16,2) Alamofire/5.9.1", deviceUuid: "39e6b1d7-08a4-4c25-b8f3-6e19d0a4c857", timezone: "Asia/Shanghai", canvasFp: "8d46e0b1f3", audioFp: "c27f59ad04", screen: "1170x2532", deviceFp: "f3b90672cd58", method: "钱包登录", loginAt: "2026-07-23 03:49:24" },
+      { id: "90058028", requestId: "req_26JUL_b92d7001", userId: "587239582", email: "qiuyan.zhang@126.com", ip: "112.64.129.80", country: "CHN", ua: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/125.0.0.0 Safari/537.36", deviceUuid: "d20a7c48-6f31-4b59-9e0d-8a2c4f7e1b63", timezone: "Asia/Shanghai", canvasFp: "f19a2c608e", audioFp: "47bde0a923", screen: "1680x1050", deviceFp: "6d80a1c4e9b7", method: "Apple 登录", loginAt: "2026-07-23 08:56:04" },
+      { id: "90057983", requestId: "req_26JUL_7c442c11", userId: "583032387", email: "liling88@gmail.com", ip: "101.32.11.19", country: "CHN", ua: "CuiApp/3.8.1 (iOS 18.4; iPhone16,2) Alamofire/5.9.1", deviceUuid: "39e6b1d7-08a4-4c25-b8f3-6e19d0a4c857", timezone: "Asia/Shanghai", canvasFp: "8d46e0b1f3", audioFp: "c27f59ad04", screen: "1170x2532", deviceFp: "f3b90672cd58", method: "支付宝登录", loginAt: "2026-07-23 03:49:24" },
       { id: "90057912", requestId: "req_26JUL_c381ab74", userId: "343362110", email: "t.whitmore@gmail.com", ip: "82.132.221.67", country: "GBR", ua: "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_6) AppleWebKit/605.1.15 Version/17.6 Safari/605.1.15", deviceUuid: "74f2d908-3e5b-4a61-8c07-1b96e3d2f4a0", timezone: "Europe/London", canvasFp: "50bc7e32a9", audioFp: "e81d6f4b70", screen: "1512x982", deviceFp: "27ce48b1a069", method: "邮箱登录", loginAt: "2026-07-22 18:14:32" },
       { id: "90057667", requestId: "req_26JUL_15cf2c09", userId: "598898047", email: "zhangpeng66@163.com", ip: "124.74.182.22", country: "CHN", ua: "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/124.0.0.0 Safari/537.36", deviceUuid: "b6e81c35-9d04-4f72-a2b8-4c60e9f1d735", timezone: "Asia/Shanghai", canvasFp: "a93d05f8c6", audioFp: "1b48e2d67f", screen: "2560x1440", deviceFp: "8f21d64be0a3", method: "邮箱登录", loginAt: "2026-07-20 08:19:44" },
       { id: "90057192", requestId: "req_26JUL_eea81b25", userId: "586364090", email: "sunjiamin@qq.com", ip: "221.6.44.18", country: "CHN", ua: "CuiApp/3.7.9 (Android 14; SM-S9280) okhttp/4.11.0", deviceUuid: "f0a42d69-71c8-4e3b-95c6-8d27b0e4a918", timezone: "Asia/Shanghai", canvasFp: "62f8d1b409", audioFp: "d73a0c8e52", screen: "412x915", deviceFp: "41b7e209dcf6", method: "手机登录", loginAt: "2026-07-13 09:58:27" },
       { id: "90057163", requestId: "req_26JUL_19abce80", userId: "821440071", email: "xuzhihao88@126.com", ip: "61.151.207.98", country: "CHN", ua: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/123.0.0.0 Safari/537.36", deviceUuid: "c8516b0e-4a7d-49f3-b1e8-2f60d9c3a574", timezone: "Asia/Shanghai", canvasFp: "9e2b74c1da", audioFp: "05fd93b628", screen: "1920x1080", deviceFp: "e6a05837c194", method: "邮箱登录", loginAt: "2026-07-13 08:19:01" },
-      { id: "90057041", requestId: "req_26JUL_f2ab09dd", userId: "629835170", email: "k.morris@yahoo.com", ip: "13.52.184.99", country: "USA", ua: "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/537.36 Chrome/126.0.0.0 Safari/537.36", deviceUuid: "27d0e94b-8c56-4a1f-b039-6e84a1d7c2b6", timezone: "America/Los_Angeles", canvasFp: "41c9e8b075", audioFp: "b86210fe4d", screen: "1440x900", deviceFp: "70d3c8a25e19", method: "Google OAuth", loginAt: "2026-07-12 22:41:36" },
-      { id: "90056918", requestId: "req_26JUL_304cf1de", userId: "760184335", email: "s.tanaka@docomo.jp", ip: "160.16.88.42", country: "JPN", ua: "Mozilla/5.0 (iPad; CPU OS 18_4 like Mac OS X) AppleWebKit/605.1.15 Version/18.4 Mobile/15E148 Safari/604.1", deviceUuid: "93b7f4a2-05e8-4d16-8b7c-a209d5e3f186", timezone: "Asia/Tokyo", canvasFp: "d75a20cf9b", audioFp: "30e8b641a7", screen: "1640x2360", deviceFp: "b5492f70ea8c", method: "Apple OAuth", loginAt: "2026-07-11 11:10:55" }
+      { id: "90057041", requestId: "req_26JUL_f2ab09dd", userId: "629835170", email: "k.morris@yahoo.com", ip: "13.52.184.99", country: "USA", ua: "Mozilla/5.0 (Macintosh; Intel Mac OS X 14_5) AppleWebKit/537.36 Chrome/126.0.0.0 Safari/537.36", deviceUuid: "27d0e94b-8c56-4a1f-b039-6e84a1d7c2b6", timezone: "America/Los_Angeles", canvasFp: "41c9e8b075", audioFp: "b86210fe4d", screen: "1440x900", deviceFp: "70d3c8a25e19", method: "微信登录", loginAt: "2026-07-12 22:41:36" },
+      { id: "90056918", requestId: "req_26JUL_304cf1de", userId: "760184335", email: "s.tanaka@docomo.jp", ip: "160.16.88.42", country: "JPN", ua: "Mozilla/5.0 (iPad; CPU OS 18_4 like Mac OS X) AppleWebKit/605.1.15 Version/18.4 Mobile/15E148 Safari/604.1", deviceUuid: "93b7f4a2-05e8-4d16-8b7c-a209d5e3f186", timezone: "Asia/Tokyo", canvasFp: "d75a20cf9b", audioFp: "30e8b641a7", screen: "1640x2360", deviceFp: "b5492f70ea8c", method: "Apple 登录", loginAt: "2026-07-11 11:10:55" }
     ],
     agentApplications: [
-      { id: 1, userId: "795054517", contact: "gaojiajing82@gmail.com", proofs: [{ label: "图片1", url: "https://www.coinex.com/en/announcements/detail/53539656293908" }], platform: "Binance", holdings: "3000.000000", promoMode: "发帖", appliedAt: "2026-09-16 11:43:04", status: "已通过", operator: "Bella", rejectReason: "-" },
-      { id: 2, userId: "901838977", contact: "abbahassan355@gmail.com", proofs: [{ label: "图片1", url: "https://t.me/Tech_tube0X" }, { label: "图片2", url: "https://x.com/Tech_tube0X" }, { label: "图片3", url: "https://www.facebook.com/profile.php?id=61579382644682" }], platform: "Bybit", holdings: "100.000000", promoMode: "So always I'm active about trade and I'm doing a Critical analysis and I have full hope and confidence to hit my TP. I'm used good risk management to help me about my trade", appliedAt: "2026-09-12 11:28:31", status: "已通过", operator: "Amy", rejectReason: "-" },
-      { id: 3, userId: "189181902", contact: "010011", proofs: [{ label: "图片1", url: "https://测试" }], platform: "Bybit", holdings: "1000.000000", promoMode: "测试", appliedAt: "2026-09-08 10:09:27", status: "已通过", operator: "Bella", rejectReason: "-" },
-      { id: 4, userId: "210640732", contact: "@xcut5", proofs: [{ label: "图片1", url: "https://t.me/degenden01" }], platform: "Other", holdings: "1500000.000000", promoMode: "Channel dedicated to Crypto and Web3", appliedAt: "2026-09-04 05:49:56", status: "已通过", operator: "Amy", rejectReason: "-" },
-      { id: 5, userId: "396388540", contact: "@TND2710", proofs: [{ label: "图片1", url: "https://t.me/bitgpvn" }], platform: "Bitget", holdings: "500000.000000", promoMode: "K có gì", appliedAt: "2026-09-04 03:03:11", status: "已通过", operator: "Bella", rejectReason: "-" },
-      { id: 6, userId: "968525667", contact: "t.me/ginxen", proofs: [{ label: "图片1", url: "https://t.me/ginxen" }], platform: "Bybit", holdings: "500.000000", promoMode: "测试账号5", appliedAt: "2026-08-10 09:22:45", status: "已驳回", operator: "Bella", rejectReason: "影响力证明链接无效" },
-      { id: 7, userId: "431236773", contact: "19289301", proofs: [{ label: "图片1", url: "https://trade.ginx.io/partner-program" }], platform: "Bybit", holdings: "1000.000000", promoMode: "测试", appliedAt: "2026-08-10 06:24:13", status: "已驳回", operator: "Amy", rejectReason: "平台下近三月持仓量不达标" },
-      { id: 8, userId: "222076544", contact: "qwe@01.com", proofs: [{ label: "图片1", url: "https://qwe@01.com" }], platform: "Bitget", holdings: "1111111.000000", promoMode: "11111", appliedAt: "2026-06-06 08:03:29", status: "已驳回", operator: "Bella", rejectReason: "资料填写不完整" }
+      { id: 1, userId: "795054517", contact: "gaojiajing82@gmail.com", proofs: [{ label: "图片1", url: "https://xueqiu.com/u/53539656293908" }], platform: "上金所会员单位", holdings: "3000.000000", promoMode: "发帖", appliedAt: "2026-09-16 11:43:04", status: "已通过", operator: "Bella", rejectReason: "-" },
+      { id: 2, userId: "901838977", contact: "abbahassan355@gmail.com", proofs: [{ label: "图片1", url: "https://t.me/Tech_tube0X" }, { label: "图片2", url: "https://x.com/Tech_tube0X" }, { label: "图片3", url: "https://www.facebook.com/profile.php?id=61579382644682" }], platform: "银行积存金渠道", holdings: "100.000000", promoMode: "So always I'm active about trade and I'm doing a Critical analysis and I have full hope and confidence to hit my TP. I'm used good risk management to help me about my trade", appliedAt: "2026-09-12 11:28:31", status: "已通过", operator: "Amy", rejectReason: "-" },
+      { id: 3, userId: "189181902", contact: "010011", proofs: [{ label: "图片1", url: "https://测试" }], platform: "银行积存金渠道", holdings: "1000.000000", promoMode: "测试", appliedAt: "2026-09-08 10:09:27", status: "已通过", operator: "Bella", rejectReason: "-" },
+      { id: 4, userId: "210640732", contact: "@xcut5", proofs: [{ label: "图片1", url: "https://t.me/degenden01" }], platform: "其他", holdings: "1500000.000000", promoMode: "专注贵金属内容分享的频道", appliedAt: "2026-09-04 05:49:56", status: "已通过", operator: "Amy", rejectReason: "-" },
+      { id: 5, userId: "396388540", contact: "@TND2710", proofs: [{ label: "图片1", url: "https://t.me/bitgpvn" }], platform: "期货公司", holdings: "500000.000000", promoMode: "K có gì", appliedAt: "2026-09-04 03:03:11", status: "已通过", operator: "Bella", rejectReason: "-" },
+      { id: 6, userId: "968525667", contact: "t.me/ginxen", proofs: [{ label: "图片1", url: "https://t.me/ginxen" }], platform: "银行积存金渠道", holdings: "500.000000", promoMode: "测试账号5", appliedAt: "2026-08-10 09:22:45", status: "已驳回", operator: "Bella", rejectReason: "影响力证明链接无效" },
+      { id: 7, userId: "431236773", contact: "19289301", proofs: [{ label: "图片1", url: "https://partner.cui-admin.demo/partner-program" }], platform: "银行积存金渠道", holdings: "1000.000000", promoMode: "测试", appliedAt: "2026-08-10 06:24:13", status: "已驳回", operator: "Amy", rejectReason: "平台下近三月持仓量不达标" },
+      { id: 8, userId: "222076544", contact: "qwe@01.com", proofs: [{ label: "图片1", url: "https://qwe@01.com" }], platform: "期货公司", holdings: "1111111.000000", promoMode: "11111", appliedAt: "2026-06-06 08:03:29", status: "已驳回", operator: "Bella", rejectReason: "资料填写不完整" }
     ],
     commissionRecords: [
-      { id: 1, orderId: "PT117907848769930400001", symbol: "BTCUSD", holdings: "843.229", commission: "0.9189", closedAt: "2026-09-30 16:14:56", settledAt: "2026-10-01 10:00:01", settleStatus: "部分结算" },
-      { id: 2, orderId: "PT117907839106770500001", symbol: "BTCUSD", holdings: "843.247", commission: "0.9177", closedAt: "2026-09-30 16:09:15", settledAt: "2026-10-01 10:00:01", settleStatus: "部分结算" },
-      { id: 3, orderId: "PT117903368658700500001", symbol: "GBPUSD", holdings: "1318.02", commission: "0.0831", closedAt: "2026-09-27 21:00:12", settledAt: "2026-09-28 10:00:01", settleStatus: "部分结算" },
-      { id: 4, orderId: "PT217903260769560500001", symbol: "XAUUSD", holdings: "4308.64", commission: "0.1537", closedAt: "2026-09-25 10:22:48", settledAt: "2026-09-26 10:00:02", settleStatus: "已结算" },
-      { id: 5, orderId: "PT117903259890020500001", symbol: "XAUUSD", holdings: "4295.04", commission: "0.1533", closedAt: "2026-09-25 08:47:06", settledAt: "2026-09-26 10:00:02", settleStatus: "已结算" },
-      { id: 6, orderId: "PT117901151517750500001", symbol: "EURUSD", holdings: "1137.48", commission: "0.066", closedAt: "2026-09-24 09:35:04", settledAt: "2026-09-25 10:00:01", settleStatus: "部分结算" },
-      { id: 7, orderId: "PT117900155987330500001", symbol: "EURUSD", holdings: "1144.11", commission: "0.0662", closedAt: "2026-09-22 08:05:31", settledAt: "2026-09-23 10:00:01", settleStatus: "部分结算" }
+      { id: 1, orderId: "PT117907848769930400001", symbol: "Au(T+D)", holdings: "843.229", commission: "0.9189", closedAt: "2026-09-30 16:14:56", settledAt: "2026-10-01 10:00:01", settleStatus: "部分结算" },
+      { id: 2, orderId: "PT117907839106770500001", symbol: "Au(T+D)", holdings: "843.247", commission: "0.9177", closedAt: "2026-09-30 16:09:15", settledAt: "2026-10-01 10:00:01", settleStatus: "部分结算" },
+      { id: 3, orderId: "PT117903368658700500001", symbol: "沪金2506", holdings: "1318.02", commission: "0.0831", closedAt: "2026-09-27 21:00:12", settledAt: "2026-09-28 10:00:01", settleStatus: "部分结算" },
+      { id: 4, orderId: "PT217903260769560500001", symbol: "Au99.99", holdings: "4308.64", commission: "0.1537", closedAt: "2026-09-25 10:22:48", settledAt: "2026-09-26 10:00:02", settleStatus: "已结算" },
+      { id: 5, orderId: "PT117903259890020500001", symbol: "Au99.99", holdings: "4295.04", commission: "0.1533", closedAt: "2026-09-25 08:47:06", settledAt: "2026-09-26 10:00:02", settleStatus: "已结算" },
+      { id: 6, orderId: "PT117901151517750500001", symbol: "Ag(T+D)", holdings: "1137.48", commission: "0.066", closedAt: "2026-09-24 09:35:04", settledAt: "2026-09-25 10:00:01", settleStatus: "部分结算" },
+      { id: 7, orderId: "PT117900155987330500001", symbol: "Ag(T+D)", holdings: "1144.11", commission: "0.0662", closedAt: "2026-09-22 08:05:31", settledAt: "2026-09-23 10:00:01", settleStatus: "部分结算" }
     ],
     commissionDistributions: [
       { orderId: "PT117907848769930400001", pid: "661210254", level: "V1", amount: "0" },
@@ -572,8 +569,8 @@
       { id: 7, userId: "517796016", nickName: "CryptoKing", registerType: "邮箱注册", registeredAt: "2026-08-10 13:43:55", email: "wenbabe@126.com", walletAddress: "-", operator: "QQ", operatedAt: "2026-09-03 05:31:28", country: "-", deposited: "是" }
     ],
     coupons: [
-      { id: "c1", name: "抹亏券-测试待激活展示", type: "抹亏券", rule: "亏损 10 USDT 以内全额抵扣", validStart: "2026-09-01", validEnd: "2026-10-31", stock: 500, status: "启用", operator: "Bella", updatedAt: "2026-09-01 10:00" },
-      { id: "c2", name: "交易返现券-测试交易返现券", type: "交易返现券", rule: "成交后返 5 USDT", validStart: "2026-09-01", validEnd: "2026-12-31", stock: 300, status: "启用", operator: "Amy", updatedAt: "2026-09-02 11:20" },
+      { id: "c1", name: "抹亏券-测试待激活展示", type: "抹亏券", rule: "亏损 10 元以内全额抵扣", validStart: "2026-09-01", validEnd: "2026-10-31", stock: 500, status: "启用", operator: "Bella", updatedAt: "2026-09-01 10:00" },
+      { id: "c2", name: "交易返现券-测试交易返现券", type: "交易返现券", rule: "成交后返 5 元", validStart: "2026-09-01", validEnd: "2026-12-31", stock: 300, status: "启用", operator: "Amy", updatedAt: "2026-09-02 11:20" },
       { id: "c3", name: "手续费减免券-测试手续费减免券", type: "手续费减免券", rule: "减免 100% 手续费一次", validStart: "2026-09-15", validEnd: "2026-11-15", stock: 200, status: "停用", operator: "Bella", updatedAt: "2026-09-10 15:40" }
     ],
     wheelActivities: [
@@ -596,12 +593,12 @@
         { lang: "简体中文", name: "首席策略官", desc: "成为首席策略官可获得徽章" }
       ] },
       { id: 3, icon: "https://ginfx-prod.s3.ap-southeast-1.amazonaws.com/badge/20260812/86022981638.png", conditionType: "总入金", conditionText: "总入金：金额 >= 10000", status: "启用", createdAt: "2026-08-12 08:16:05", updatedAt: "2026-08-12 08:16:05", languages: [
-        { lang: "英语", name: "Svip Badge", desc: "Deposit over 10000 USDT in total to earn a badge." },
-        { lang: "简体中文", name: "Svip 徽章", desc: "累计入金>10000 USDT可获得徽章" }
+        { lang: "英语", name: "Svip Badge", desc: "Deposit over ¥10,000 in total to earn a badge." },
+        { lang: "简体中文", name: "Svip 徽章", desc: "累计入金>10000元可获得徽章" }
       ] },
       { id: 4, icon: "https://ginfx-prod.s3.ap-southeast-1.amazonaws.com/badge/20260812/24850501274.png", conditionType: "总入金", conditionText: "总入金：金额 >= 100", status: "启用", createdAt: "2026-08-12 08:10:00", updatedAt: "2026-08-25 18:44:26", languages: [
-        { lang: "英语", name: "Vip Badge", desc: "Deposit over 100 USDT in total to earn a badge." },
-        { lang: "简体中文", name: "Vip徽章", desc: "累计入金>100 USDT可获得徽章" }
+        { lang: "英语", name: "Vip Badge", desc: "Deposit over ¥100 in total to earn a badge." },
+        { lang: "简体中文", name: "Vip徽章", desc: "累计入金>100元可获得徽章" }
       ] },
       { id: 5, icon: "https://ginfx-prod.s3.ap-southeast-1.amazonaws.com/badge/20260812/59307705266.png", conditionType: "平仓", conditionText: "统一交易帐户： 盈利金额 >= 100", status: "启用", createdAt: "2026-08-12 08:08:03", updatedAt: "2026-08-12 08:08:03", languages: [
         { lang: "英语", name: "Cumulative_Profit", desc: "Earn the badge when your cumulative profit reaches 100." },
@@ -611,7 +608,7 @@
     cascaderOptions: {
       coupon: { text: "优惠券", second: ["抹亏券", "交易返现券", "手续费减免券"], third: ["测试待激活展示", "正式测试抹亏券", "loss-recover-10"] },
       bonus: { text: "奖励", second: ["资金账户", "模拟账户", "赠金账户"], third: [] },
-      points: { text: "积分", second: ["XP", "Drop"], third: [] }
+      points: { text: "积分", second: ["XP", "金币"], third: [] }
     }
   };
 })(window.AdminApp);

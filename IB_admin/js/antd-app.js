@@ -73,7 +73,7 @@
     }, xp, " XP");
     if (drop > 0) return /*#__PURE__*/React.createElement(Tag, {
       color: "gold"
-    }, drop, " Drop");
+    }, drop, " 金币");
     return /*#__PURE__*/React.createElement(Text, {
       type: "secondary"
     }, "-");
@@ -110,7 +110,7 @@
         marginBottom: 10
       }
     }, /*#__PURE__*/React.createElement(Input, {
-      placeholder: "如：什么是外汇与 CFD 市场",
+      placeholder: "如：什么是贵金属现货与延期市场",
       maxLength: 40
     })), /*#__PURE__*/React.createElement(Form.Item, {
       name: [field.name, "videoType"],
@@ -231,7 +231,7 @@
         triggerDates: rule && rule.ruleType !== "课程任务" ? rule.triggerDates || [] : [],
         cycleRange: rule && rule.ruleType !== "课程任务" && rule.timeRange && rule.timeRange.includes(" 至 ") ? [dayjs(rule.timeRange.split(" 至 ")[0]), dayjs(rule.timeRange.split(" 至 ")[1])] : undefined,
         rewardValue: Number(rule?.rewardXp || rule?.rewardDrop || 0),
-        rewardType: Number(rule?.rewardDrop || 0) > 0 && Number(rule?.rewardXp || 0) <= 0 ? "Drop" : "XP",
+        rewardType: Number(rule?.rewardDrop || 0) > 0 && Number(rule?.rewardXp || 0) <= 0 ? "金币" : "XP",
         triggerEvent: rule && rule.ruleType !== "课程任务" ? rule?.triggerEvent === "首次连续签到" ? "连续签到" : rule?.triggerEvent || "开仓" : "开仓",
         accountScope: "all",
         conditions: [],
@@ -259,7 +259,7 @@
       }] : []);
       const rewardValue = form.getFieldValue("rewardValue");
       if (triggerEvent === "开仓" && !rewardValue) {
-        form.setFieldValue("rewardType", "Drop");
+        form.setFieldValue("rewardType", "金币");
         form.setFieldValue("rewardValue", 100);
       }
       if (triggerEvent !== "开仓" && !rewardValue) {
@@ -301,7 +301,7 @@
           triggerEvent: values.courseTriggerEvent || "课程",
           cyclePeriod: "不限",
           rewardXp: courseRewardType === "XP" ? courseRewardValue : 0,
-          rewardDrop: courseRewardType === "Drop" ? courseRewardValue : 0,
+          rewardDrop: courseRewardType === "金币" ? courseRewardValue : 0,
           timeRange: "-"
         };
         const coursePayload = {
@@ -335,7 +335,7 @@
         return;
       }
       const rewardXp = rewardType === "XP" ? rewardValue : 0;
-      const rewardDrop = rewardType === "Drop" ? rewardValue : 0;
+      const rewardDrop = rewardType === "金币" ? rewardValue : 0;
       const conditionSummary = values.triggerEvent === "手动触发" ? "后台人工触发" : conditionText ? conditions.length > 1 ? `${conditionText}（${relationText}）` : conditionText : "未设置";
       const cyclePeriod = values.cyclePeriod || "不限";
       const cycleRange = cyclePeriod !== "不限" ? values.cycleRange : null;
@@ -578,7 +578,7 @@
         message: "请选择奖励类型"
       }]
     }, /*#__PURE__*/React.createElement(Select, {
-      options: ["XP", "Drop"].map(value => ({
+      options: ["XP", "金币"].map(value => ({
         value,
         label: value
       }))
@@ -729,7 +729,7 @@
         message: "请选择奖励类型"
       }]
     }, /*#__PURE__*/React.createElement(Select, {
-      options: ["XP", "Drop"].map(value => ({
+      options: ["XP", "金币"].map(value => ({
         value,
         label: value
       }))
@@ -1262,7 +1262,7 @@
       placeholder: "请输入投递数量"
     })), /*#__PURE__*/React.createElement(Form.Item, {
       name: "pointAmount",
-      label: objectPath?.[1] === "points-1" ? "Drop" : "XP"
+      label: objectPath?.[1] === "points-1" ? "金币" : "XP"
     }, /*#__PURE__*/React.createElement(InputNumber, {
       min: 0,
       precision: 0,
@@ -1475,7 +1475,7 @@
       placeholder: "投递物",
       allowClear: true,
       className: "select-input",
-      options: ["抹亏券", "资金账户奖金", "XP", "Drop"].map(value => ({
+      options: ["抹亏券", "资金账户奖金", "XP", "金币"].map(value => ({
         value,
         label: value
       }))
@@ -1701,34 +1701,6 @@
         label: "佣金管理"
       }]
     }, {
-      key: "masterGroup",
-      label: "高手管理",
-      children: [{
-        key: "masterApplications",
-        label: "高手申请列表",
-        disabled: true
-      }, {
-        key: "masterLevel",
-        label: "等级配置",
-        disabled: true
-      }, {
-        key: "potentialMaster",
-        label: "潜在高手",
-        disabled: true
-      }, {
-        key: "masterList",
-        label: "高手管理",
-        disabled: true
-      }, {
-        key: "followRelation",
-        label: "跟随关系管理",
-        disabled: true
-      }, {
-        key: "profitShare",
-        label: "分润结算",
-        disabled: true
-      }]
-    }, {
       key: "grantGroup",
       label: "发放管理",
       children: [{
@@ -1756,10 +1728,6 @@
       }, {
         key: "mailPush",
         label: "邮件PUSH",
-        disabled: true
-      }, {
-        key: "article",
-        label: "文章管理",
         disabled: true
       }]
     }, {
@@ -1833,7 +1801,7 @@
     }), /*#__PURE__*/React.createElement("span", null, "Cui")), /*#__PURE__*/React.createElement(Menu, {
       mode: "inline",
       selectedKeys: [currentPage],
-      defaultOpenKeys: ["customerGroup", "orderGroup", "contentGroup", "marketingGroup", "incentiveGroup", "grantGroup", "fundsGroup", "agentGroup", "masterGroup", "systemGroup"],
+      defaultOpenKeys: ["customerGroup", "orderGroup", "contentGroup", "marketingGroup", "incentiveGroup", "grantGroup", "fundsGroup", "agentGroup", "systemGroup"],
       items: menuItems,
       onClick: ({
         key

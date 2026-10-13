@@ -23,7 +23,7 @@
 
   const activityTypeOptions = ["线下活动"];
   const cityOptions = ["伦敦", "吉隆坡", "新加坡"];
-  const crowdOptions = ["Web3用户", "本地交易社区", "跟单交易学习者", "市场教育团体", "新手交易用户", "KOL/社区主理人"];
+  const crowdOptions = ["贵金属投资者", "本地交易社区", "跟单交易学习者", "市场教育团体", "新手交易用户", "KOL/社区主理人"];
   const statusOptions = ["待上线", "上线", "作废"];
   const langPool = ["English", "日语", "俄语", "越南语"];
   const statusColor = { "待上线": "processing", "上线": "success", "作废": "error" };

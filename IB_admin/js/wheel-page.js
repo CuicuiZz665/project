@@ -203,7 +203,7 @@
               options: coupons.filter(coupon => coupon.status === "启用").map(coupon => ({ value: coupon.id, label: coupon.name }))
             })) : null,
             prizeType === "积分" ? [
-              e(Form.Item, { key: "pl", name: [field.name, "pointsLabel"], noStyle: true }, e(Select, { style: { width: 80 }, options: ["XP", "Drop"].map(value => ({ value, label: value })) })),
+              e(Form.Item, { key: "pl", name: [field.name, "pointsLabel"], noStyle: true }, e(Select, { style: { width: 80 }, options: ["XP", "金币"].map(value => ({ value, label: value })) })),
               e(Form.Item, { key: "pa", name: [field.name, "pointsAmount"], noStyle: true }, e(InputNumber, { min: 1, style: { width: 110 }, placeholder: "积分值" }))
             ] : null,
             prizeType === "奖励" ? [

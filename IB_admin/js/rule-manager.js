@@ -82,7 +82,7 @@
     rewardHtml(rule) {
       const rewards = [];
       if (Number(rule.rewardXp) > 0) rewards.push(`<span class="reward-pill xp">${rule.rewardXp} XP</span>`);
-      if (Number(rule.rewardDrop) > 0) rewards.push(`<span class="reward-pill drop">${rule.rewardDrop} Drop</span>`);
+      if (Number(rule.rewardDrop) > 0) rewards.push(`<span class="reward-pill drop">${rule.rewardDrop} 金币</span>`);
       return `<div class="reward-cell">${rewards.join("") || '<span class="muted">-</span>'}</div>`;
     }
 

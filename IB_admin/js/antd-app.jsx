@@ -63,7 +63,7 @@
   function rewardNode(record) {
     const tags = [];
     if (Number(record.rewardXp) > 0) tags.push(<Tag color="blue" key="xp">{record.rewardXp} XP</Tag>);
-    if (Number(record.rewardDrop) > 0) tags.push(<Tag color="gold" key="drop">{record.rewardDrop} Drop</Tag>);
+    if (Number(record.rewardDrop) > 0) tags.push(<Tag color="gold" key="drop">{record.rewardDrop} 金币</Tag>);
     return tags.length ? <Space size={4} wrap>{tags}</Space> : <Text type="secondary">-</Text>;
   }
 
@@ -105,7 +105,7 @@
         internalName: rule?.internalName ? (mode === "copy" ? `${rule.internalName}-副本` : rule.internalName) : "",
         taskType: rule?.taskType || "全部",
         rewardValue: Number(rule?.rewardXp || rule?.rewardDrop || 0),
-        rewardType: Number(rule?.rewardDrop || 0) > 0 && Number(rule?.rewardXp || 0) <= 0 ? "Drop" : "XP",
+        rewardType: Number(rule?.rewardDrop || 0) > 0 && Number(rule?.rewardXp || 0) <= 0 ? "金币" : "XP",
         triggerEvent: rule?.triggerEvent === "首次连续签到" ? "连续签到" : (rule?.triggerEvent || "开仓"),
         accountScope: "all",
         accountTypes: [],
@@ -129,7 +129,7 @@
       form.setFieldValue("conditions", params.length ? [{ param: params[0], value: conditionDefaults[params[0]] }] : []);
       const rewardValue = form.getFieldValue("rewardValue");
       if (triggerEvent === "开仓" && !rewardValue) {
-        form.setFieldValue("rewardType", "Drop");
+        form.setFieldValue("rewardType", "金币");
         form.setFieldValue("rewardValue", 100);
       }
       if (triggerEvent !== "开仓" && !rewardValue) {
@@ -172,7 +172,7 @@
       }
       const range = values.timeRange || [];
       const rewardXp = rewardType === "XP" ? rewardValue : 0;
-      const rewardDrop = rewardType === "Drop" ? rewardValue : 0;
+      const rewardDrop = rewardType === "金币" ? rewardValue : 0;
       const conditionSummary = values.triggerEvent === "手动触发"
         ? "后台人工触发"
         : (conditionText
@@ -236,7 +236,7 @@
               <Select options={["全部", "新手任务"].map(value => ({ value, label: value }))} />
             </Form.Item>
             <Form.Item name="rewardType" label="奖励类型" rules={[{ required: true, message: "请选择奖励类型" }]}>
-              <Select options={["XP", "Drop"].map(value => ({ value, label: value }))} />
+              <Select options={["XP", "金币"].map(value => ({ value, label: value }))} />
             </Form.Item>
             <Form.Item name="rewardValue" label="奖励值">
               <InputNumber min={0} precision={0} className="full-control" placeholder="0" />
@@ -648,7 +648,7 @@
           {selectedKey === "points" && (
             <div className="form-grid-antd">
               <Form.Item name="pointCount" label="投递数量（份）"><InputNumber min={0} precision={0} className="full-control" placeholder="请输入投递数量" /></Form.Item>
-              <Form.Item name="pointAmount" label={objectPath?.[1] === "points-1" ? "Drop" : "XP"}><InputNumber min={0} precision={0} className="full-control" /></Form.Item>
+              <Form.Item name="pointAmount" label={objectPath?.[1] === "points-1" ? "金币" : "XP"}><InputNumber min={0} precision={0} className="full-control" /></Form.Item>
               <Form.Item name="probability" label={event === "大转盘" ? "中奖概率" : "事件参数"}><Input placeholder={event === "大转盘" ? "请输入中奖概率" : "请输入事件参数"} /></Form.Item>
             </div>
           )}
@@ -767,7 +767,7 @@
             <Select value={objectFilter} onChange={value => {
               setObjectFilter(value);
               setPage(1);
-            }} placeholder="投递物" allowClear className="select-input" options={["抹亏券", "资金账户奖金", "XP", "Drop"].map(value => ({ value, label: value }))} />
+            }} placeholder="投递物" allowClear className="select-input" options={["抹亏券", "资金账户奖金", "XP", "金币"].map(value => ({ value, label: value }))} />
             <Select value={statusFilter} onChange={value => {
               setStatusFilter(value);
               setPage(1);

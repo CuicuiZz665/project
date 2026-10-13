@@ -99,7 +99,6 @@
   }
 
   function DashboardPage({ data, customers = [] }) {
-    const [accountMode, setAccountMode] = React.useState("real");
     const [dateMode, setDateMode] = React.useState("week");
     const [customRange, setCustomRange] = React.useState(() => [dayjs("2026-08-12"), dayjs("2026-09-11")]);
     const [chartCount, setChartCount] = React.useState(3);
@@ -126,16 +125,16 @@
         label: "资金与分成",
         metrics: [
           {
-            key: "netDeposits", label: "净入金金额", unit: "USDT", icon: "trendingUp", tone: "teal",
+            key: "netDeposits", label: "净入金金额", unit: "元", icon: "trendingUp", tone: "teal",
             subtitle: m => `入金 ${m.deposits.value} · 出金 ${m.withdrawals.value}`
           },
-          { key: "tradingAmount", label: "交易金额", unit: "USDT", icon: "activity", tone: "orange" },
+          { key: "tradingAmount", label: "交易金额", unit: "元", icon: "activity", tone: "orange" },
           {
-            key: "ibRebateAmount", label: "IB返佣金额", unit: "USDT", icon: "dollar", tone: "indigo",
+            key: "ibRebateAmount", label: "IB返佣金额", unit: "元", icon: "dollar", tone: "indigo",
             subtitle: m => `返佣客户 ${m.ibRebateCustomers.value} 人`
           },
           {
-            key: "expertRebatePaid", label: "高手已返金额", unit: "USDT", icon: "send", tone: "amber",
+            key: "expertRebatePaid", label: "高手已返金额", unit: "元", icon: "send", tone: "amber",
             subtitle: m => `返佣高手 ${m.expertRebateCustomers.value} 人`
           }
         ]
@@ -188,7 +187,7 @@
     }
     function runQuery() {
       const rangeLabel = { today: "今日", week: "近七天", custom: "自定义时间" }[dateMode] || "近七天";
-      message.success(`已更新全部${accountMode === "real" ? "实盘" : "模拟盘"}数据（${rangeLabel}）`);
+      message.success(`已更新全部数据（${rangeLabel}）`);
     }
 
     function resetFilters() {
@@ -231,9 +230,9 @@
         customers: "交易客户数",
         firstDepositCustomers: "首次入金客户数",
         lots: "交易手数",
-        amount: "交易金额（USDT）",
-        deposits: "入金金额（USDT）",
-        withdrawals: "出金金额（USDT）",
+        amount: "交易金额（元）",
+        deposits: "入金金额（元）",
+        withdrawals: "出金金额（元）",
         volume: "交易量"
       }[metric];
       const axisTicks = [maxValue, maxValue * 0.75, maxValue * 0.5, maxValue * 0.25, 0]
@@ -301,7 +300,7 @@
 
     function renderRankingCard() {
       const totalLabels = { lots: "总手数", amount: "总金额", orders: "总订单数" };
-      const totalUnits = { lots: "Lot", amount: "USDT" };
+      const totalUnits = { lots: "手", amount: "元" };
       const ranked = data.symbols
         .map(item => ({ item, value: parseRankValue(item[rankMetric]) }))
         .sort((a, b) => b.value - a.value);
@@ -423,29 +422,7 @@
       e("div", { className: "dashboard-heading", key: "heading" }, [
         e("div", { key: "title" }, [
           e(Title, { level: 3, key: "h" }, "数据概览")
-        ]),
-        e(Segmented, {
-          key: "mode",
-          className: `dashboard-mode-switch is-${accountMode}`,
-          value: accountMode,
-          onChange: setAccountMode,
-          options: [
-            {
-              value: "real",
-              label: e("span", { className: "dashboard-mode-option", key: "real" }, [
-                e("i", { className: "dashboard-mode-dot is-real", "aria-hidden": true, key: "dot" }),
-                "实盘"
-              ])
-            },
-            {
-              value: "demo",
-              label: e("span", { className: "dashboard-mode-option", key: "demo" }, [
-                e("i", { className: "dashboard-mode-dot is-demo", "aria-hidden": true, key: "dot" }),
-                "模拟盘"
-              ])
-            }
-          ]
-        })
+        ])
       ]),
       e(Card, { className: "dashboard-filter-card", key: "filters" }, [
         e("div", { className: "dashboard-filter-main", key: "main" }, [
