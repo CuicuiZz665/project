@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Cui Admin Console</title>
+  <link rel="icon" type="image/svg+xml" href="images/favicon-cui.svg">
+  <link rel="stylesheet" href="vendor/antd/reset.css">
+  <link rel="stylesheet" href="css/login.css">
+  <script>
+    // Apply the theme before first paint (stored preference, else system).
+    // Mirrors the live page's data-theme / data-theme-preference contract.
+    (function () {
+      var pref = "system";
+      try { pref = localStorage.getItem("cui-login-theme") || "system"; } catch (e) {}
+      var dark = pref === "dark" ||
+        (pref === "system" && window.matchMedia &&
+          window.matchMedia("(prefers-color-scheme: dark)").matches);
+      var root = document.documentElement;
+      root.dataset.theme = dark ? "dark" : "light";
+      root.dataset.themePreference = pref;
+      root.style.colorScheme = dark ? "dark" : "light";
+    })();
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script src="js/login-bootstrap.js?v=20261013-login"></script>
+</body>
+</html>

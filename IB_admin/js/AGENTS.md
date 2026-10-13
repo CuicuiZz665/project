@@ -48,6 +48,11 @@ bootstrap.js
 |-- user-settings-page.js
 |-- global-nav.js
 `-- antd-app.js          # composition root, mounts #root
+
+login-bootstrap.js       # separate entry for login.html (does not load the admin app)
+|-- (vendor: react, react-dom, dayjs, antd)
+|-- namespace.js
+`-- login-page.js        # mounts #root with the login screen
 ```
 
 When changing this order, verify every dependency below still loads before its consumer. Legacy vanilla modules (`utils.js`, `pagination.js`, `toast.js`, `confirm-dialog.js`, `rule-modal.js`, `rule-manager.js`, `delivery-modal.js`, `delivery-manager.js`, `app-shell.js`, `app.js`) still exist on disk but are no longer loaded by `bootstrap.js`; do not add new consumers of them.
@@ -62,6 +67,27 @@ When changing this order, verify every dependency below still loads before its c
 - Consumers: `index.html`.
 - Change when: adding/removing/renaming JS modules or correcting dependency order.
 - Validate: every listed file exists, and the browser console has no script load failures when `index.html` is opened directly.
+
+### `login-bootstrap.js`
+
+- Role: dynamic script loader entry for `login.html` (the standalone sign-in page), mirroring `bootstrap.js` but loading only `namespace.js` + `login-page.js`, then calling `app.LoginPage.mount(#root)`.
+- Registers: nothing on `window.AdminApp`.
+- Depends on: browser DOM APIs only.
+- Consumers: `login.html`.
+- Change when: the login page's module list or version key changes.
+- Validate: `login.html` opened directly renders the login screen with no console errors.
+
+### `login-page.js`
+
+- Role: 1:1 replica of the live Cui (was GinX) admin login screen — brand panel (logo, particle hero, heading) + underline-style Sign In form, with theme (system/light/dark) and language corner dropdowns.
+- Registers: `app.LoginPage.mount(rootEl)`.
+- Depends on: `React`, `ReactDOM`, `antd` (`App`, `Button`, `Card`, `ConfigProvider`, `Dropdown`, `Flex`, `Form`, `Input`, `Typography`, `theme`); `namespace.js` for `window.AdminApp`.
+- Consumers: `login-bootstrap.js`.
+- Behavior: dark-by-default CSS variables with `:root[data-theme="light"]` overrides (same contract as the live page, applied pre-paint by an inline script in `login.html` and persisted to `localStorage` key `cui-login-theme`); the System dropdown switches preference and re-renders the antd algorithm without remounting canvases; full-viewport `.login-network` canvas (drifting dots + proximity links) and `.particle-logo-core` canvas (3600-point rotating fibonacci sphere + ~3200 amber→coral "C" letter particles sampled from an offscreen text render, pointer tilt parallax, `is-webgl-ready`/`is-hovered` classes); mock captcha drawn on a canvas (126×42 jpeg data URL, 5 skewed chars, click image to refresh); submit validates required fields, checks the captcha case-insensitively (wrong → error toast + auto refresh), then simulates loading and redirects to `index.html`.
+- DOM hooks (styled in `css/login.css`, class names ported verbatim from the live stylesheet): `.login-wrapper`, `.login-top-actions`, `.login-source-bg`, `.login-source-orb--1..5`, `.login-network`, `.login-stage`, `.login-brand`, `.login-brand-lockup/-logo`, `.login-hero-art`, `.particle-logo-core` (+ `__canvas`/`__orbit`/`__orbit--alt`/`__logo-fallback`/`__scanline`), `.login-brand-copy/-title/-subtitle`, `.login-card-shell`, `.login-card`, `.login-card-heading`, `.login-card-spark`, `.login-title`, `.login-form`, `.login-captcha-row/-input/-trigger/-image`, plus antd overrides on `.ant-input-affix-wrapper`/`.ant-btn-primary`.
+- Assets: `images/auth-login/cui-logo.svg` (C-ring mark + "Cui" wordmark; light theme renders it black via `--login-logo-filter: brightness(0)`), `images/favicon-cui.svg`. Inline SVG icon set (`user`/`lock`/`eye-invisible`/`safety-certificate`/`global`/`desktop`) ported from the live page because the vendor antd bundle ships without `@ant-design/icons`.
+- Change when: login layout, branding, animation, captcha rules, or the post-login redirect target change.
+- Regression scope: light and dark render, corner dropdowns (language toast, theme switch + persistence), empty-submit validation, wrong-captcha error + refresh, correct-captcha sign-in redirect, responsive breakpoints (880px / 520px), and `prefers-reduced-motion` static frame.
 
 ### `namespace.js`
 

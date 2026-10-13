@@ -1,0 +1,16 @@
+<svg width="340" height="190" viewBox="0 0 340 190" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cui-mark" x1="18" y1="16" x2="108" y2="112" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fbb03b"/>
+      <stop offset="0.42" stop-color="#f7931a"/>
+      <stop offset="0.78" stop-color="#f2603c"/>
+      <stop offset="1" stop-color="#e6395f"/>
+    </linearGradient>
+  </defs>
+  <!-- C mark: thick ring centered (64,64), opening on the right with angular end cuts -->
+  <path d="M98.7 22.6 A54 54 0 1 0 98.7 105.4 L89.2 83.7 A32 32 0 1 1 89.2 44.3 Z" fill="url(#cui-mark)"/>
+  <!-- wordmark -->
+  <text x="122" y="86" fill="#ffffff" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="58" font-weight="800" letter-spacing="1">Cui</text>
+  <!-- tagline -->
+  <text x="124" y="122" fill="#aab2bd" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif" font-size="15" font-weight="600" letter-spacing="5.5">ADMIN CONSOLE</text>
+</svg>

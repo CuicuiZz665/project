@@ -7,11 +7,16 @@ Modular handoff guide for AI agents working on this project. This is a small sta
 ```text
 admin/
 |-- index.html                 # Static shell: page structure, business containers, modal/drawer DOM, CSS links, bootstrap entry
+|-- login.html                 # Standalone sign-in page (1:1 replica of the live Cui login): loads js/login-bootstrap.js
 |-- css/
 |   |-- tokens.css             # Global variables, base typography, forms, buttons, shared filter areas
 |   |-- layout.css             # App layout, sidebar, topbar, workspace, view show/hide behavior
 |   |-- tables.css             # Tables, pagination, tags, reward pills, row actions
-|   `-- modals.css             # Modals, masks, confirm dialog, drawer, cascader, dynamic form blocks, toast
+|   |-- modals.css             # Modals, masks, confirm dialog, drawer, cascader, dynamic form blocks, toast
+|   `-- login.css              # Login page only: theme variables, hero art, underline form, captcha row
+|-- images/
+|   |-- favicon-cui.svg        # Login favicon (C mark with brand gradient)
+|   `-- auth-login/cui-logo.svg  # Login brand lockup (C mark + "Cui" wordmark + tagline)
 `-- js/
     |-- bootstrap.js           # Only script entry: dynamically injects all JS files below in order
     |-- namespace.js           # Creates the window.AdminApp global namespace
@@ -23,7 +28,9 @@ admin/
     |-- rule-manager.js        # RuleManager: point rule list, filters, sorting, pagination, column settings, status actions
     |-- delivery-modal.js      # DeliveryModal: delivery add/edit modal, cascader, automatic/manual form sections
     |-- delivery-manager.js    # DeliveryManager: delivery list, filters, enable/void actions, detail drawer
-    `-- app-shell.js           # AppShell: page switching, breadcrumbs, business module initialization
+    |-- app-shell.js           # AppShell: page switching, breadcrumbs, business module initialization
+    |-- login-bootstrap.js     # Login page script entry: vendor deps + namespace.js + login-page.js
+    `-- login-page.js          # app.LoginPage: React+antd login screen, particle/network canvases, mock captcha
 ```
 
 ## Startup Chain
@@ -129,6 +136,13 @@ To change the sidebar, topbar, or page switching layout
 |-- index.html
 |-- css/layout.css
 `-- js/app-shell.js
+
+To change the login page
+|-- login.html
+|-- js/login-page.js
+|-- js/login-bootstrap.js
+|-- css/login.css
+`-- images/auth-login/cui-logo.svg
 
 To change the point rule list
 |-- js/rule-manager.js
