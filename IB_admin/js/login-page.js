@@ -29,6 +29,62 @@
   const FONT_STACK =
     "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif";
 
+  const LOCALES = {
+    zh: {
+      htmlLang: "zh-CN",
+      docTitle: "Cui 管理控制台",
+      brandTitle: "Cui 管理控制台",
+      brandSubtitle: "使用您的账号、密码和验证码登录 Cui 管理控制台。",
+      formTitle: "登录",
+      account: "账号",
+      password: "密码",
+      captcha: "验证码",
+      usernamePlaceholder: "请输入用户名",
+      passwordPlaceholder: "请输入密码",
+      captchaPlaceholder: "请输入验证码",
+      usernameRequired: "请输入用户名",
+      passwordRequired: "请输入密码",
+      captchaRequired: "请输入验证码",
+      captchaExtra: "点击左侧图片刷新验证码",
+      signIn: "登 录",
+      signInSuccess: "登录成功",
+      captchaMismatch: "验证码错误，请重试",
+      refreshTitle: "刷新",
+      captchaAlt: "登录验证码",
+      langSwitched: "语言已切换：简体中文",
+      sysFollow: "跟随系统",
+      sysLight: "浅色",
+      sysDark: "深色"
+    },
+    en: {
+      htmlLang: "en",
+      docTitle: "Cui Admin Console",
+      brandTitle: "Cui Admin Console",
+      brandSubtitle:
+        "Use your account, password, and verification code to access Cui Admin Console.",
+      formTitle: "Sign In",
+      account: "Account",
+      password: "Password",
+      captcha: "Captcha",
+      usernamePlaceholder: "Enter username",
+      passwordPlaceholder: "Enter password",
+      captchaPlaceholder: "Enter captcha",
+      usernameRequired: "Please enter username",
+      passwordRequired: "Please enter password",
+      captchaRequired: "Please enter captcha",
+      captchaExtra: "Click the image on the left to refresh the captcha",
+      signIn: "Sign in",
+      signInSuccess: "Sign in successful",
+      captchaMismatch: "Incorrect captcha, please try again",
+      refreshTitle: "Refresh",
+      captchaAlt: "Sign-in captcha",
+      langSwitched: "Language switched: English",
+      sysFollow: "Follow system",
+      sysLight: "Light",
+      sysDark: "Dark"
+    }
+  };
+
   /* ------------------------------------------------------------------ */
   /* Inline icons — SVG paths ported from the live login page           */
   /* (the vendored antd bundle ships without @ant-design/icons)          */
@@ -406,7 +462,14 @@
   /* ------------------------------------------------------------------ */
 
   const CaptchaRow = React.forwardRef(function CaptchaRow(props, ref) {
-    const { value, onChange, captchaUrl, refreshing, onRefresh } = props;
+    const {
+      value,
+      onChange,
+      captchaUrl,
+      refreshing,
+      onRefresh,
+      labels,
+    } = props;
     return h(
       "div",
       { className: "login-captcha-row", ref },
@@ -414,8 +477,8 @@
         Button,
         {
           className: "login-captcha-trigger",
-          "aria-label": "Refresh",
-          title: "Refresh",
+          "aria-label": labels.refreshTitle,
+          title: labels.refreshTitle,
           onClick: onRefresh,
           disabled: refreshing,
         },
@@ -423,16 +486,16 @@
           className:
             "login-captcha-image" +
             (refreshing ? " login-captcha-image--refreshing" : ""),
-          alt: "Sign-in captcha",
+          alt: labels.captchaAlt,
           src: captchaUrl,
         })
       ),
       h(Input, {
         id: "captcha",
-        "aria-label": "Captcha",
+        "aria-label": labels.captcha,
         className: "login-captcha-input",
         size: "large",
-        placeholder: "Enter captcha",
+        placeholder: labels.captchaPlaceholder,
         autoComplete: "off",
         prefix: h(Icon, { name: "safety-certificate" }),
         value,
@@ -474,16 +537,42 @@
     return "system";
   }
 
+  function readLanguage() {
+    try {
+      const stored = localStorage.getItem("cui-login-lang");
+      if (stored === "zh" || stored === "en") {
+        return stored;
+      }
+    } catch (e) {
+      /* ignore */
+    }
+    return "zh";
+  }
+
   function LoginView({ themePref, setThemePref, dark }) {
     const { message } = App.useApp();
     const [form] = Form.useForm();
-    const [lang, setLang] = useState("en");
+    const [lang, setLang] = useState(readLanguage);
+    const t = LOCALES[lang];
     const [captcha, setCaptcha] = useState(() => makeCaptcha());
     const [refreshing, setRefreshing] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const networkRef = useRef(null);
     const heroContainerRef = useRef(null);
     const heroCanvasRef = useRef(null);
+
+    useEffect(
+      function syncLanguage() {
+        document.title = t.docTitle;
+        document.documentElement.lang = t.htmlLang;
+        try {
+          localStorage.setItem("cui-login-lang", lang);
+        } catch (e) {
+          /* file:// or privacy mode — keep session-only */
+        }
+      },
+      [lang, t.docTitle, t.htmlLang]
+    );
 
     useEffect(() => {
       const destroyNetwork = networkRef.current
@@ -510,7 +599,7 @@
     const onFinish = useCallback(
       function (values) {
         if ((values.captcha || "").trim().toUpperCase() !== captcha.code) {
-          message.error("Incorrect captcha, please try again");
+          message.error(t.captchaMismatch);
           refreshCaptcha();
           form.setFieldValue("captcha", "");
           return;
@@ -518,7 +607,7 @@
         setSubmitting(true);
         window.setTimeout(function () {
           setSubmitting(false);
-          message.success("Sign in successful");
+          message.success(t.signInSuccess);
           window.setTimeout(function () {
             window.location.href = "index.html";
           }, 650);
@@ -532,13 +621,11 @@
       selectedKeys: [lang],
       onClick: function (info) {
         setLang(info.key);
-        message.info(
-          info.key === "zh" ? "语言已切换:简体中文(演示)" : "Language switched: English"
-        );
+        message.info(LOCALES[info.key].langSwitched);
       },
       items: [
-        { key: "en", label: "English" },
         { key: "zh", label: "简体中文" },
+        { key: "en", label: "English" },
       ],
     };
 
@@ -549,9 +636,9 @@
         setThemePref(info.key);
       },
       items: [
-        { key: "system", label: "Follow system" },
-        { key: "light", label: "Light" },
-        { key: "dark", label: "Dark" },
+        { key: "system", label: t.sysFollow },
+        { key: "light", label: t.sysLight },
+        { key: "dark", label: t.sysDark },
       ],
     };
 
@@ -671,12 +758,12 @@
                   id: "login-page-heading",
                   level: 1,
                 },
-                "Cui Admin Console"
+                t.brandTitle
               ),
               h(
                 Typography.Paragraph,
                 { className: "login-brand-subtitle" },
-                "Use your account, password, and verification code to access Cui Admin Console."
+                t.brandSubtitle
               )
             )
           ),
@@ -704,7 +791,7 @@
                       id: "login-form-heading",
                       level: 2,
                     },
-                    "Sign In"
+                    t.formTitle
                   )
                 ),
                 h(
@@ -722,17 +809,17 @@
                     h(
                       Form.Item,
                       {
-                        label: "Account",
+                        label: t.account,
                         name: "username",
                         rules: [
-                          { required: true, message: "Please enter username" },
+                          { required: true, message: t.usernameRequired },
                         ],
                         style: { marginBottom: 0 },
                       },
                       h(Input, {
                         id: "username",
                         size: "large",
-                        placeholder: "Enter username",
+                        placeholder: t.usernamePlaceholder,
                         autoComplete: "username",
                         prefix: h(Icon, { name: "user" }),
                       })
@@ -740,17 +827,17 @@
                     h(
                       Form.Item,
                       {
-                        label: "Password",
+                        label: t.password,
                         name: "password",
                         rules: [
-                          { required: true, message: "Please enter password" },
+                          { required: true, message: t.passwordRequired },
                         ],
                         style: { marginBottom: 0 },
                       },
                       h(Input.Password, {
                         id: "password",
                         size: "large",
-                        placeholder: "Enter password",
+                        placeholder: t.passwordPlaceholder,
                         autoComplete: "current-password",
                         prefix: h(Icon, { name: "lock" }),
                       })
@@ -758,22 +845,28 @@
                     h(
                       Form.Item,
                       {
-                        label: "Captcha",
+                        label: t.captcha,
                         name: "captcha",
                         rules: [
-                          { required: true, message: "Please enter captcha" },
+                          { required: true, message: t.captchaRequired },
                         ],
                         style: { marginBottom: 0 },
                         extra: h(
                           Typography.Text,
                           { type: "secondary" },
-                          "Click the image on the left to refresh the captcha"
+                          t.captchaExtra
                         ),
                       },
                       h(CaptchaRow, {
                         captchaUrl: captcha.url,
                         refreshing,
                         onRefresh: refreshCaptcha,
+                        labels: {
+                          refreshTitle: t.refreshTitle,
+                          captchaAlt: t.captchaAlt,
+                          captcha: t.captcha,
+                          captchaPlaceholder: t.captchaPlaceholder,
+                        },
                       })
                     ),
                     h(
@@ -788,7 +881,7 @@
                           htmlType: "submit",
                           loading: submitting,
                         },
-                        "Sign in"
+                        t.signIn
                       )
                     )
                   )
