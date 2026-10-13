@@ -9,7 +9,7 @@
     { key: "email", label: "邮箱" },
     { key: "phone", label: "电话" },
     { key: "region", label: "市/区" },
-    { key: "registeredAt", label: "注册时间(GMT+0)" }
+    { key: "registeredAt", label: "注册时间(GMT+8)" }
   ];
   const allUserColumnKeys = userColumnOptions.map(item => item.key);
   const defaultUserColumnKeys = [...allUserColumnKeys];
@@ -107,7 +107,7 @@
       email: { title: "邮箱", dataIndex: "email", width: 190 },
       phone: { title: "电话", dataIndex: "phone", width: 140 },
       region: { title: "市/区", dataIndex: "region", width: 150 },
-      registeredAt: { title: "注册时间(GMT+0)", dataIndex: "registeredAt", width: 180 }
+      registeredAt: { title: "注册时间(GMT+8)", dataIndex: "registeredAt", width: 180 }
     };
     const columns = [
       ...visibleKeys.map(key => ({ ...columnMap[key], key })),

@@ -6,7 +6,7 @@
     },
     rules: [
       { id: 9, ruleType: "课程任务", internalName: "完成新手村课程", externalName: "英语: Complete Newbie Village", triggerEvent: "", cyclePeriod: "不限", rewardXp: 200, rewardDrop: 0, taskType: "新手任务", timeRange: "-", status: "启用", canEdit: true, courseId: 1, courseName: "新手村", operator: "Bella" },
-      { id: 10, internalName: "模拟盘交易激励", externalName: "英语: Demo trade incentive", triggerEvent: "开仓", cyclePeriod: "按天", rewardXp: 0, rewardDrop: 100, taskType: "新手任务", timeRange: "2026-10-06 00:00:00 至 2026-10-31 23:59:59", status: "启用", canEdit: true, operator: "Bella", conditions: [{ param: "手数", value: 5 }], relation: "all" },
+      { id: 10, internalName: "模拟盘交易激励", externalName: "英语: Demo trade incentive", triggerEvent: "开仓", cyclePeriod: "按天", rewardXp: 0, rewardDrop: 100, taskType: "新手任务", timeRange: "2026-10-06 00:00:00 至 2026-10-31 23:59:59", status: "启用", canEdit: true, operator: "Bella", conditions: [{ param: "订单数", value: 5 }], relation: "all" },
       { id: 1, internalName: "首次签到连续5天", externalName: "英语: 首次签到连续5天", triggerEvent: "首次连续签到", cyclePeriod: "不限", rewardXp: 33, rewardDrop: 0, taskType: "全部", timeRange: "-", status: "启用", canEdit: false, operator: "Bella" },
       { id: 2, internalName: "连续签到5天", externalName: "英语: 连续签到5天", triggerEvent: "连续签到", cyclePeriod: "不限", rewardXp: 555, rewardDrop: 0, taskType: "全部", timeRange: "-", status: "启用", canEdit: false, operator: "Bella" },
       { id: 3, internalName: "真实账号交易奖励", externalName: "英语: First trade reward", triggerEvent: "开仓", cyclePeriod: "按天", rewardXp: 0, rewardDrop: 100, taskType: "新手任务", timeRange: "-", status: "启用", canEdit: true, operator: "Bella" },
@@ -110,9 +110,9 @@
         id: "root",
         name: "Root",
         parentId: null,
-        permissions: ["佣金记录管理", "佣金配置列表", "代理等级配置", "代理商修改等级", "代理商列表", "代理申请列表", "数据概览", "黑名单", "白名单", "用户登录日志", "客户列表", "订单列表", "挂单列表", "文章管理", "广告列表", "广告位条目配置", "查询验证码", "消息管理", "邮件管理", "站内信管理", "Layout管理", "报名列表", "活动配置", "投递记录", "投递列表", "投递操作设置", "优惠券核销", "优惠券操作管理", "优惠券列表", "积分明细", "积分配置", "徽章列表", "返现结算", "费用流水", "财务明细", "比赛用户统计", "资格赛设置", "比赛列表", "资金管理", "出入金网络配置", "汇率管理", "入金管理", "出金管理-风控审核", "出金管理-财务操作", "资金流水", "品种类标", "版本控制", "编辑角色", "创建角色", "角色管理设置", "用户设置管理", "修改密码"]
+        permissions: ["佣金记录管理", "佣金配置列表", "代理等级配置", "代理商修改等级", "代理商列表", "代理申请列表", "数据概览", "黑名单", "白名单", "用户登录日志", "客户列表", "订单列表", "广告列表", "广告位条目配置", "查询验证码", "消息管理", "邮件管理", "站内信管理", "Layout管理", "报名列表", "活动配置", "投递记录", "投递列表", "投递操作设置", "优惠券核销", "优惠券操作管理", "优惠券列表", "积分明细", "积分配置", "徽章列表", "返现结算", "费用流水", "财务明细", "比赛用户统计", "资格赛设置", "比赛列表", "资金管理", "充值提现网络配置", "汇率管理", "充值管理", "提现管理-风控审核", "提现管理-财务操作", "资金流水", "品种类标", "版本控制", "编辑角色", "创建角色", "角色管理设置", "用户设置管理", "修改密码"]
       },
-      { id: "customer-service", name: "客户服务", parentId: null, permissions: ["数据概览", "黑名单", "白名单", "用户登录日志", "客户列表", "订单列表", "挂单列表", "查询验证码", "消息管理", "积分明细"] },
+      { id: "customer-service", name: "客户服务", parentId: null, permissions: ["数据概览", "黑名单", "白名单", "用户登录日志", "客户列表", "订单列表", "查询验证码", "消息管理", "积分明细"] },
       { id: "test", name: "测试", parentId: null, permissions: ["数据概览", "客户列表", "活动配置", "报名列表", "优惠券列表", "比赛列表"] }
     ],
     userSettings: [
@@ -164,7 +164,7 @@
         loginDevice: "iOS 18 · Safari",
         registerIp: "153.127.40.92",
         deviceFingerprint: "fp_91A7C2",
-        note: "新注册已入金客户，当前无上级代理。",
+        note: "新注册已充值客户，当前无上级代理。",
         firstName: "-",
         lastName: "-",
         countryName: "日本",
@@ -184,13 +184,13 @@
         ],
         fundRecords: [
           { id: "fund-1", userId: "315899879", fundType: "资金划转", createdAt: "2026-09-11 09:03:33", source: "Funding", target: "UTA", amount: "-40", balanceAfter: "0", orderNo: "—" },
-          { id: "fund-2", userId: "315899879", fundType: "入金", createdAt: "2026-09-11 09:03:33", source: "TESEVtfbF8uYnuC85q4Gwkkxz6cXLATUSV", target: "Funding", amount: "40", balanceAfter: "40", orderNo: "CZ1178911696745521" },
+          { id: "fund-2", userId: "315899879", fundType: "充值", createdAt: "2026-09-11 09:03:33", source: "TESEVtfbF8uYnuC85q4Gwkkxz6cXLATUSV", target: "Funding", amount: "40", balanceAfter: "40", orderNo: "CZ1178911696745521" },
           { id: "fund-3", userId: "315899879", fundType: "资金划转", createdAt: "2026-09-11 09:03:02", source: "Funding", target: "UTA", amount: "-10", balanceAfter: "0", orderNo: "—" },
-          { id: "fund-4", userId: "315899879", fundType: "入金", createdAt: "2026-09-11 09:03:02", source: "TESEVtfbF8uYnuC85q4Gwkkxz6cXLATUSV", target: "Funding", amount: "10", balanceAfter: "10", orderNo: "CZ1178911671222621" },
+          { id: "fund-4", userId: "315899879", fundType: "充值", createdAt: "2026-09-11 09:03:02", source: "TESEVtfbF8uYnuC85q4Gwkkxz6cXLATUSV", target: "Funding", amount: "10", balanceAfter: "10", orderNo: "CZ1178911671222621" },
           { id: "fund-5", userId: "315899879", fundType: "资金划转", createdAt: "2026-09-11 09:02:43", source: "Funding", target: "UTA", amount: "-10", balanceAfter: "0", orderNo: "—" },
           { id: "fund-6", userId: "315899879", fundType: "红包", createdAt: "2026-09-11 08:49:40", source: "系统", target: "Funding", amount: "10", balanceAfter: "10", orderNo: "—" },
           { id: "fund-7", userId: "315899879", fundType: "资金划转", createdAt: "2026-09-11 07:52:12", source: "Funding", target: "UTA", amount: "-200", balanceAfter: "0", orderNo: "—" },
-          { id: "fund-8", userId: "315899879", fundType: "入金", createdAt: "2026-09-11 07:52:12", source: "TESEVtfbF8uYnuC85q4Gwkkxz6cXLATUSV", target: "Funding", amount: "200", balanceAfter: "200", orderNo: "CZ1178911391572921" }
+          { id: "fund-8", userId: "315899879", fundType: "充值", createdAt: "2026-09-11 07:52:12", source: "TESEVtfbF8uYnuC85q4Gwkkxz6cXLATUSV", target: "Funding", amount: "200", balanceAfter: "200", orderNo: "CZ1178911391572921" }
         ],
         subAccountFundRecords: [
           { id: "subfund-1", subAccountId: "4833996790", fundType: "资金划转", createdAt: "2026-09-11 09:03:33", source: "Funding", target: "UTA", amount: "40", balanceAfter: "260", orderNo: "—" },
@@ -202,9 +202,6 @@
         partnerInfo: { isAgent: "否", userType: "Trader", userLevel: "-", parentAgentId: "0", agentLevel: "-", agentSince: "-" },
         levelChangeRecords: [],
         commissionInfo: { settled: "-", pending: "-" },
-        followingRecords: [
-          { id: "following-1", traderId: "T-10086", traderName: "Alpha Pro", amount: "200", status: "跟随中", createdAt: "2026-09-11 09:20:12" }
-        ],
         followerRecords: [
           { id: "follower-1", followerId: "686566723", followerName: "Bonny Block", amount: "100", shareRate: "10%", createdAt: "2026-09-11 09:35:42" }
         ],
@@ -248,7 +245,7 @@
         countryName: "中国",
         specialCustomer: "-",
         network: "-",
-        riskTags: ["未入金"],
+        riskTags: ["未充值"],
         accounts: []
       },
       "548302071": {
@@ -362,7 +359,7 @@
         countryName: "澳大利亚",
         specialCustomer: "-",
         network: "-",
-        riskTags: ["未分配客服", "未入金"],
+        riskTags: ["未分配客服", "未充值"],
         accounts: []
       },
       "766328994": {
@@ -417,13 +414,11 @@
         tradingLots: { value: "716", change: "+9.8%", note: "较上周期" },
         tradingAmount: { value: "9,670", change: "+11.6%", note: "较上周期" },
         firstDepositCustomers: { value: "18", change: "+12.5%", note: "较上周期" },
-        deposits: { value: "128.0万", change: "+8.4%", note: "入金金额" },
-        withdrawals: { value: "43.8万", change: "-4.2%", note: "出金金额" },
-        netDeposits: { value: "84.2万", change: "+11.0%", note: "净入金" },
+        deposits: { value: "128.0万", change: "+8.4%", note: "充值金额" },
+        withdrawals: { value: "43.8万", change: "-4.2%", note: "提现金额" },
+        netDeposits: { value: "84.2万", change: "+11.0%", note: "净充值" },
         ibRebateCustomers: { value: "14", change: "+9.3%", note: "较上周期" },
-        ibRebateAmount: { value: "2.65万", change: "+15.2%", note: "较上周期" },
-        expertRebateCustomers: { value: "6", change: "+7.7%", note: "较上周期" },
-        expertRebatePaid: { value: "0.99万", change: "+11.4%", note: "较上周期" }
+        ibRebateAmount: { value: "2.65万", change: "+15.2%", note: "较上周期" }
       },
       trend: [
         { label: "08/12", lots: 42, amount: 520, customers: 8 },
@@ -555,9 +550,9 @@
       { orderId: "PT117900155987330500001", pid: "340629858", level: "V3", amount: "0.0662" }
     ],
     blacklist: [
-      { id: 1, userId: "314061187", registerType: "邮箱注册", registeredAt: "2026-10-01 04:56:12", email: "ndossbhssg@gmail10p.com", walletAddress: "-", operator: "系统", operatedAt: "2026-10-01 04:58:08", reason: "同一 IP 和设备标识在 1 小时内登录用户达到 3 人，系统自动限制出金", deposited: "否", restrictions: ["限制出金"] },
-      { id: 2, userId: "767680997", registerType: "邮箱注册", registeredAt: "2026-10-01 04:58:08", email: "jdornridbsb@suiemail.com", walletAddress: "-", operator: "系统", operatedAt: "2026-10-01 04:58:08", reason: "同一 IP 和设备标识在 1 小时内登录用户达到 3 人，系统自动限制出金", deposited: "否", restrictions: ["限制出金"] },
-      { id: 3, userId: "680222466", registerType: "邮箱注册", registeredAt: "2026-10-01 00:21:32", email: "spmbsusbvccxx@gmail10p.com", walletAddress: "-", operator: "系统", operatedAt: "2026-10-01 00:21:33", reason: "同一 IP 和设备标识在 1 小时内登录用户达到 3 人，系统自动限制出金", deposited: "否", restrictions: ["限制出金"] }
+      { id: 1, userId: "314061187", registerType: "邮箱注册", registeredAt: "2026-10-01 04:56:12", email: "ndossbhssg@gmail10p.com", walletAddress: "-", operator: "系统", operatedAt: "2026-10-01 04:58:08", reason: "同一 IP 和设备标识在 1 小时内登录用户达到 3 人，系统自动限制提现", deposited: "否", restrictions: ["限制提现"] },
+      { id: 2, userId: "767680997", registerType: "邮箱注册", registeredAt: "2026-10-01 04:58:08", email: "jdornridbsb@suiemail.com", walletAddress: "-", operator: "系统", operatedAt: "2026-10-01 04:58:08", reason: "同一 IP 和设备标识在 1 小时内登录用户达到 3 人，系统自动限制提现", deposited: "否", restrictions: ["限制提现"] },
+      { id: 3, userId: "680222466", registerType: "邮箱注册", registeredAt: "2026-10-01 00:21:32", email: "spmbsusbvccxx@gmail10p.com", walletAddress: "-", operator: "系统", operatedAt: "2026-10-01 00:21:33", reason: "同一 IP 和设备标识在 1 小时内登录用户达到 3 人，系统自动限制提现", deposited: "否", restrictions: ["限制提现"] }
     ],
     whitelist: [
       { id: 1, userId: "815262925", nickName: "Light LSK", registerType: "邮箱注册", registeredAt: "2026-09-20 11:05:13", email: "leo@11.com", walletAddress: "-", operator: "Sara", operatedAt: "2026-09-20 11:05:59", country: "-", deposited: "否" },
@@ -584,21 +579,13 @@
       }
     ],
     badges: [
-      { id: 2, icon: "https://ginfx-prod.s3.ap-southeast-1.amazonaws.com/badge/20260812/68114362947.png", conditionType: "高手被跟随", conditionText: "高手被跟随：跟单人数 >= 10", status: "启用", createdAt: "2026-08-12 08:29:46", updatedAt: "2026-08-25 18:44:59", languages: [
-        { lang: "英语", name: "Copy_Hero", desc: "Earn a badge when 10 users copy your trades" },
-        { lang: "简体中文", name: "跟单英雄", desc: "达成10人跟单可获得徽章" }
-      ] },
-      { id: 6, icon: "https://ginfx-prod.s3.ap-southeast-1.amazonaws.com/badge/20260812/52477841928.png", conditionType: "高手等级变化", conditionText: "高手等级变化：首席策略官", status: "启用", createdAt: "2026-08-12 08:21:41", updatedAt: "2026-08-25 18:44:59", languages: [
-        { lang: "英语", name: "Gold_trader", desc: "Earn a badge by becoming a Chief Strategy Officer." },
-        { lang: "简体中文", name: "首席策略官", desc: "成为首席策略官可获得徽章" }
-      ] },
-      { id: 3, icon: "https://ginfx-prod.s3.ap-southeast-1.amazonaws.com/badge/20260812/86022981638.png", conditionType: "总入金", conditionText: "总入金：金额 >= 10000", status: "启用", createdAt: "2026-08-12 08:16:05", updatedAt: "2026-08-12 08:16:05", languages: [
+      { id: 3, icon: "https://ginfx-prod.s3.ap-southeast-1.amazonaws.com/badge/20260812/86022981638.png", conditionType: "总充值", conditionText: "总充值：金额 >= 10000", status: "启用", createdAt: "2026-08-12 08:16:05", updatedAt: "2026-08-12 08:16:05", languages: [
         { lang: "英语", name: "Svip Badge", desc: "Deposit over ¥10,000 in total to earn a badge." },
-        { lang: "简体中文", name: "Svip 徽章", desc: "累计入金>10000元可获得徽章" }
+        { lang: "简体中文", name: "Svip 徽章", desc: "累计充值>10000元可获得徽章" }
       ] },
-      { id: 4, icon: "https://ginfx-prod.s3.ap-southeast-1.amazonaws.com/badge/20260812/24850501274.png", conditionType: "总入金", conditionText: "总入金：金额 >= 100", status: "启用", createdAt: "2026-08-12 08:10:00", updatedAt: "2026-08-25 18:44:26", languages: [
+      { id: 4, icon: "https://ginfx-prod.s3.ap-southeast-1.amazonaws.com/badge/20260812/24850501274.png", conditionType: "总充值", conditionText: "总充值：金额 >= 100", status: "启用", createdAt: "2026-08-12 08:10:00", updatedAt: "2026-08-25 18:44:26", languages: [
         { lang: "英语", name: "Vip Badge", desc: "Deposit over ¥100 in total to earn a badge." },
-        { lang: "简体中文", name: "Vip徽章", desc: "累计入金>100元可获得徽章" }
+        { lang: "简体中文", name: "Vip徽章", desc: "累计充值>100元可获得徽章" }
       ] },
       { id: 5, icon: "https://ginfx-prod.s3.ap-southeast-1.amazonaws.com/badge/20260812/59307705266.png", conditionType: "平仓", conditionText: "统一交易帐户： 盈利金额 >= 100", status: "启用", createdAt: "2026-08-12 08:08:03", updatedAt: "2026-08-12 08:08:03", languages: [
         { lang: "英语", name: "Cumulative_Profit", desc: "Earn the badge when your cumulative profit reaches 100." },
@@ -609,6 +596,177 @@
       coupon: { text: "优惠券", second: ["抹亏券", "交易返现券", "手续费减免券"], third: ["测试待激活展示", "正式测试抹亏券", "loss-recover-10"] },
       bonus: { text: "奖励", second: ["资金账户", "模拟账户", "赠金账户"], third: [] },
       points: { text: "积分", second: ["XP", "金币"], third: [] }
-    }
+    },
+    // —— 内容管理 / 广告位管理：条目与广告 ——
+    adEntries: [
+      { id: 1, name: "首页轮播", identifier: "home_banner", description: "App 首页顶部轮播广告位" },
+      { id: 2, name: "开屏广告", identifier: "splash", description: "冷启动开屏插画位" },
+      { id: 3, name: "学院横幅", identifier: "academy_banner", description: "学院页顶部横幅" },
+      { id: 4, name: "弹窗活动位", identifier: "popup_activity", description: "首页活动弹窗，配合大转盘等运营活动" }
+    ],
+    adPlatformOptions: [
+      { code: "iOS", label: "iOS" },
+      { code: "Android", label: "Android" },
+      { code: "H5", label: "H5" }
+    ],
+    adStatusOptions: [
+      { code: 1, label: "启用" },
+      { code: 0, label: "禁用" }
+    ],
+    adInternalModules: [
+      { module: "wheel", name: "大转盘活动页" },
+      { module: "academy", name: "学院课程页" },
+      { module: "coupon", name: "优惠券中心" },
+      { module: "deposit", name: "充值页" }
+    ],
+    ads: [
+      { id: 3, identifier: "splash", name: "国庆开屏-金秋行情", description: "金秋贵金属行情推广开屏", start_time: "2026-10-01 00:00:00", end_time: "2026-10-20 23:59:59", platform: ["iOS", "Android"], operate_user_name: "Bella", status: 1, status_name: "启用", locale_configs: [
+        { lang: "英语", platform: "iOS", img_url: "uploads/ads/splash-en-ios.png", target_type: 1, target_param: "wheel" },
+        { lang: "简体中文", platform: "iOS", img_url: "uploads/ads/splash-zh-ios.png", target_type: 2, link: "https://cui.example.com/autumn" },
+        { lang: "英语", platform: "Android", img_url: "uploads/ads/splash-en-android.png", target_type: 1, target_param: "wheel" }
+      ] },
+      { id: 2, identifier: "home_banner", name: "新手村轮播", description: "新手村课程引流轮播图", start_time: "2026-09-01 00:00:00", end_time: "2026-12-31 23:59:59", platform: ["iOS", "Android", "H5"], operate_user_name: "Amy", status: 1, status_name: "启用", locale_configs: [
+        { lang: "英语", platform: "iOS", img_url: "uploads/ads/newbie-en.png", target_type: 1, target_param: "academy" },
+        { lang: "简体中文", platform: "iOS", img_url: "uploads/ads/newbie-zh.png", target_type: 1, target_param: "academy" },
+        { lang: "英语", platform: "H5", img_url: "uploads/ads/newbie-en-h5.png", target_type: 2, link: "https://cui.example.com/academy" }
+      ] },
+      { id: 1, identifier: "popup_activity", name: "大转盘弹窗", description: "抽奖活动召回弹窗", start_time: "2026-09-10 00:00:00", end_time: "2026-10-31 23:59:59", platform: ["iOS"], operate_user_name: "Bella", status: 0, status_name: "禁用", locale_configs: [
+        { lang: "简体中文", platform: "iOS", img_url: "uploads/ads/wheel-zh.png", target_type: 1, target_param: "wheel" }
+      ] }
+    ],
+    // —— 内容管理 / 消息管理 + 查询验证码 ——
+    messageLanguages: [
+      { key: "en", value: "英语" },
+      { key: "zh-CN", value: "简体中文" },
+      { key: "zh-TW", value: "繁体中文" },
+      { key: "ja", value: "日语" }
+    ],
+    messages: [
+      { id: 3, resource: "指定客户", user_code: "315899879, 643448777", title: { "英语": "Deposit bonus activated", "简体中文": "赠金已到账" }, content: { "英语": "Your trading bonus has been credited.", "简体中文": "您的交易赠金已到账，请在资金记录中查看。" }, created_at: "2026-10-09 08:31:02", status: 1 },
+      { id: 2, resource: "所有客户", user_code: "", title: { "简体中文": "国庆假期提现处理时效公告" }, content: { "简体中文": "国庆假期期间提现申请将在次一工作日集中处理。" }, created_at: "2026-09-30 11:00:00", status: 1 },
+      { id: 1, resource: "所有客户", user_code: "", title: { "英语": "Scheduled maintenance", "简体中文": "系统维护通知" }, content: { "英语": "We will perform maintenance at 02:00 GMT+0.", "简体中文": "系统将于 GMT+0 02:00 进行维护。" }, created_at: "2026-09-28 03:20:45", status: 0 }
+    ],
+    emailCodeLogs: [
+      { email: "jiumamuyindian@163.com", reason: "客服工单 #4021 客户无法登录", user_code: "315899879", operator_name: "QQ", operated_at: "2026-10-11 09:12:33" },
+      { email: "didi20260910@163.com", reason: "客户申诉邮箱验证码未收到", user_code: "643448777", operator_name: "cs1", operated_at: "2026-10-10 17:45:02" },
+      { email: "lolo511527@sina.com", reason: "风控复核登录异常", user_code: "548302071", operator_name: "Rita", operated_at: "2026-10-09 14:08:41" },
+      { email: "000@999.com", reason: "客服工单 #3987 换绑邮箱", user_code: "686566723", operator_name: "cs2", operated_at: "2026-10-08 10:22:15" }
+    ],
+    // —— 内容管理 / 邮件PUSH：触发事件、内部链接、Layout、邮件与站内信 ——
+    mailEvents: [
+      { value: "register", description: "注册成功" },
+      { value: "deposit_success", description: "充值成功" },
+      { value: "withdraw_audit", description: "提现审核通知" },
+      { value: "kyc_approved", description: "实名认证通过" },
+      { value: "password_changed", description: "密码修改成功" }
+    ],
+    mailEventVariables: {
+      register: [ { variable: "{{email}}", description: "客户邮箱" }, { variable: "{{user_code}}", description: "客户通行证 ID" } ],
+      deposit_success: [ { variable: "{{amount}}", description: "充值金额" }, { variable: "{{channel}}", description: "支付渠道" }, { variable: "{{user_code}}", description: "客户通行证 ID" } ],
+      withdraw_audit: [ { variable: "{{amount}}", description: "提现金额" }, { variable: "{{status}}", description: "审核结果" } ],
+      kyc_approved: [ { variable: "{{user_code}}", description: "客户通行证 ID" } ],
+      password_changed: [ { variable: "{{time}}", description: "修改时间" } ]
+    },
+    mailInternalPages: [
+      { value: "deposit", label: "充值页" },
+      { value: "withdraw", label: "提现页" },
+      { value: "wheel", label: "大转盘活动页" },
+      { value: "academy", label: "学院课程页" },
+      { value: "coupon", label: "优惠券中心" }
+    ],
+    mailLayouts: [
+      { id: 1, name: "官方默认模板", content: "<div style=\"padding:24px;font-family:sans-serif\"><h2>Cui</h2><div>{{content}}</div><p style=\"color:#999\">Cui 团队</p></div>", status: 1, updated_at: "2026-09-05 08:20:11" },
+      { id: 2, name: "活动营销模板", content: "<div style=\"padding:24px;background:#fff7e6\"><h2>活动速递</h2><div>{{content}}</div></div>", status: 1, updated_at: "2026-09-18 15:41:37" },
+      { id: 3, name: "安全通知模板", content: "<div style=\"padding:24px;border-left:4px solid #1677ff\"><div>{{content}}</div></div>", status: 0, updated_at: "2026-10-02 10:05:49" }
+    ],
+    mailNotices: [
+      { id: 3, title: "您的充值已到账", lang: "简体中文", event_key: "deposit_success", event_text: "充值成功", layout_id: 1, layout_name: "官方默认模板", content: "<p>尊敬的客户，您本次充值 {{amount}} 元已到账。</p>" },
+      { id: 2, title: "Welcome to Cui", lang: "英语", event_key: "register", event_text: "注册成功", layout_id: 1, layout_name: "官方默认模板", content: "<p>Welcome aboard! Complete your first demo trade to earn rewards.</p>" },
+      { id: 1, title: "提现审核结果通知", lang: "简体中文", event_key: "withdraw_audit", event_text: "提现审核通知", layout_id: 3, layout_name: "安全通知模板", content: "<p>您的提现申请 {{amount}} 元已{{status}}，请留意账户变动。</p>" }
+    ],
+    siteNotices: [
+      { id: 3, title: "赠金已发放", lang: "简体中文", event_type: 2, event_key: "deposit_success", event_text: "充值成功", link: "deposit", content: "[{\"k\":\"到账金额\",\"v\":\"¥1,000.00\",\"t\":1},{\"k\":\"说明\",\"v\":\"赠金将在完成订单数要求后自动解除限制。\",\"t\":0}]" },
+      { id: 2, title: "实名认证已通过", lang: "简体中文", event_type: 1, event_text: "实名认证通过", link: "", content: "[{\"k\":\"认证结果\",\"v\":\"您已完成实名认证，可进行充值提现操作。\",\"t\":0}]" },
+      { id: 1, title: "Welcome bonus ready", lang: "英语", event_type: 1, event_text: "注册成功", link: "wheel", content: "[{\"k\":\"Reward\",\"v\":\"Your welcome coupon is ready. Open the wheel to claim it.\",\"t\":1}]" }
+    ],
+    // —— 设置 / 版本设置 ——
+    releasePlatformOptions: [
+      { code: "ios", label: "iOS" },
+      { code: "android", label: "Android" },
+      { code: "testflight", label: "TestFlight" },
+      { code: "miniapp", label: "小程序" },
+      { code: "web", label: "Web" }
+    ],
+    appReleases: [
+      { id: 1, platform: "ios", version: "2.4.0", build_number: 0, is_forced_update: 0, download_url: "https://apps.apple.com/cn/app/cui/id000000000", created_at: "2026-09-30 06:12:00", updated_at: "2026-10-08 09:30:00", locale_configs: [
+        { lang: "简体中文", title: "2.4.0 更新", description: "新增金所贵金属行情卡片与消息中心。" },
+        { lang: "英语", title: "2.4.0 Update", description: "Added market cards and message center." }
+      ] },
+      { id: 2, platform: "android", version: "2.4.1", build_number: 0, is_forced_update: 1, download_url: "https://download.cui.example.com/android/cui-2.4.1.apk", created_at: "2026-10-01 10:00:00", updated_at: "2026-10-11 15:20:00", locale_configs: [
+        { lang: "简体中文", title: "重要更新", description: "修复部分机型行情闪烁问题，请立即更新。" }
+      ] },
+      { id: 3, platform: "testflight", version: "2.5.0-beta1", build_number: 32, is_forced_update: 0, download_url: "https://testflight.apple.com/join/xxxxx", created_at: "2026-10-09 03:00:00", updated_at: "2026-10-09 03:00:00", locale_configs: [
+        { lang: "简体中文", title: "内测 2.5.0", description: "新版跟单模块内测，欢迎反馈。" },
+        { lang: "英语", title: "Beta 2.5.0", description: "Copy trading beta. Feedback welcome." }
+      ] },
+      { id: 4, platform: "miniapp", version: "1.8.0", build_number: 0, is_forced_update: 0, download_url: "", created_at: "2026-09-12 08:00:00", updated_at: "2026-09-12 08:00:00", locale_configs: [
+        { lang: "简体中文", title: "小程序 1.8.0", description: "支持微信登录与模拟盘快捷开仓。" }
+      ] }
+    ],
+    // —— 资金管理 / 资金管理（单条 + 批量） ——
+    fundTypeOptions: ["活动奖励", "赠金调整", "手续费返还", "违规扣除", "体验金回收"],
+    fundRecords: [
+      { id: 4, user_code: "315899879", direction: "发放", payable_deduction_amount: "500.00", amount: "500.00", operation_source: "人工", fund_type_text: "活动奖励", reason: "大转盘中奖发放", remark: "十月大转盘", operator_name: "Bella", created_at: "2026-10-11 09:40:12" },
+      { id: 3, user_code: "643448777", direction: "扣除", payable_deduction_amount: "200.00", amount: "180.00", operation_source: "系统", fund_type_text: "违规扣除", reason: "套利风控扣除", remark: "", operator_name: "系统", created_at: "2026-10-10 22:15:04" },
+      { id: 2, user_code: "548302071", direction: "发放", payable_deduction_amount: "88.00", amount: "88.00", operation_source: "人工", fund_type_text: "赠金调整", reason: "客诉补偿", remark: "九月客诉", operator_name: "QQ", created_at: "2026-10-08 14:02:55" },
+      { id: 1, user_code: "499516984", direction: "发放", payable_deduction_amount: "1,000.00", amount: "1,000.00", operation_source: "人工", fund_type_text: "活动奖励", remark: "国庆首充", reason: "国庆首充活动奖励", operator_name: "Amy", created_at: "2026-10-03 11:30:41" }
+    ],
+    fundBatchRecords: [
+      { id: 2, direction_text: "发放", fund_type_text: "手续费返还", created_by_name: "Bella", created_at: "2026-10-09 16:20:00", total_count: 120, success_count: 118, fail_count: 2, success_amount: "23,600.00", status: 2, status_text: "部分成功", remark: "" },
+      { id: 1, direction_text: "扣除", fund_type_text: "体验金回收", created_by_name: "系统", created_at: "2026-10-01 00:05:00", total_count: 56, success_count: 56, fail_count: 0, success_amount: "11,200.00", status: 3, status_text: "成功", remark: "" }
+    ],
+    fundBatchItemsByJob: {
+      2: [
+        { user_code: "315899879", amount: "300.00", activity_name: "手续费返还-十月", reason: "十月手续费返还", error_message: "" },
+        { user_code: "643448777", amount: "150.00", activity_name: "手续费返还-十月", reason: "十月手续费返还", error_message: "" },
+        { user_code: "548302071", amount: "100.00", activity_name: "手续费返还-十月", reason: "十月手续费返还", error_message: "账户状态异常，发放失败" }
+      ],
+      1: [
+        { user_code: "686566723", amount: "-200.00", activity_name: "", reason: "体验金到期回收", error_message: "" },
+        { user_code: "766328994", amount: "-200.00", activity_name: "", reason: "体验金到期回收", error_message: "" }
+      ]
+    },
+    // —— 资金管理 / 资金流水 ——
+    fundFlowTypes: [
+      { name: "交易账户", code: "trade", sub_types: [ { name: "充值", code: "deposit" }, { name: "提现", code: "withdraw" }, { name: "手续费", code: "fee" }, { name: "盈亏", code: "pnl" } ] },
+      { name: "佣金账户", code: "commission", sub_types: [ { name: "返佣发放", code: "rebate" }, { name: "佣金转资金", code: "transfer" } ] },
+      { name: "赠金账户", code: "bonus", sub_types: [ { name: "赠金发放", code: "grant" }, { name: "赠金扣除", code: "deduct" } ] }
+    ],
+    fundFlows: [
+      { id: 1006, user_code: "315899879", fund_type_text: "交易账户-充值", created_at: "2026-10-12 02:11:45", from: "银行卡", to: "交易账户", amount: "+5,000.00", after_balance: "31,840.00" },
+      { id: 1005, user_code: "315899879", fund_type_text: "交易账户-盈亏", created_at: "2026-10-11 14:36:20", from: "Au(T+D)", to: "交易账户", amount: "+682.50", after_balance: "26,840.00" },
+      { id: 1004, user_code: "643448777", fund_type_text: "交易账户-手续费", created_at: "2026-10-11 09:05:12", from: "交易账户", to: "平台", amount: "-36.80", after_balance: "2,143.60" },
+      { id: 1003, user_code: "548302071", fund_type_text: "赠金账户-赠金发放", created_at: "2026-10-10 18:44:31", from: "活动奖励", to: "赠金账户", amount: "+88.00", after_balance: "88.00" },
+      { id: 1002, user_code: "499516984", fund_type_text: "交易账户-提现", created_at: "2026-10-10 08:20:03", from: "交易账户", to: "银行卡", amount: "-2,000.00", after_balance: "18,420.00" },
+      { id: 1001, user_code: "315899879", fund_type_text: "佣金账户-返佣发放", created_at: "2026-10-09 06:00:00", from: "代理返佣", to: "佣金账户", amount: "+215.40", after_balance: "1,073.20" }
+    ],
+    // —— 订单管理 / 订单列表 ——
+    orderAccountTypes: [
+      { name: "真实账户", code: 0 },
+      { name: "模拟账户", code: 1 },
+      { name: "赠金账户", code: 2 }
+    ],
+    orderClosedTypes: [
+      { name: "未平仓", code: 0 },
+      { name: "已平仓", code: 1 }
+    ],
+    orders: [
+      { id: 1, user_code: "315899879", login: "888001", trade_account_type_name: "真实账户", ticket: "20261012001", source: "Au99.99", trade_volume: "1.00", so_type: 0, so_type_name: "市价", cmd: 0, leverage: "20", open_time: "2026-10-12 02:15:33", close_time: "", open_price: "612.40", close_price: "", margin_order: "3,062.00", profit: "+226.00", fee: "-24.50", funding_fee: "0.00", order_status: 0, close_type: -1 },
+      { id: 2, user_code: "315899879", login: "888001", trade_account_type_name: "真实账户", ticket: "20261011088", source: "Au(T+D)", trade_volume: "2.00", so_type: 0, so_type_name: "市价", cmd: 1, leverage: "10", open_time: "2026-10-11 07:22:10", close_time: "2026-10-11 14:36:20", open_price: "610.85", close_price: "614.25", margin_order: "6,108.50", profit: "+682.50", fee: "-49.00", funding_fee: "-8.60", order_status: 1, close_type: 1 },
+      { id: 3, user_code: "643448777", login: "888012", trade_account_type_name: "模拟账户", ticket: "20261011090", source: "Ag(T+D)", trade_volume: "5.00", so_type: 1, so_type_name: "限价", cmd: 0, leverage: "10", open_time: "2026-10-11 05:40:00", close_time: "2026-10-11 09:05:12", open_price: "7,842.00", close_price: "7,815.00", margin_order: "19,605.00", profit: "-135.00", fee: "-36.80", funding_fee: "-2.20", order_status: 1, close_type: 3 },
+      { id: 4, user_code: "548302071", login: "900204", trade_account_type_name: "真实账户", ticket: "20261010055", source: "mAu50g", trade_volume: "1.00", so_type: 0, so_type_name: "市价", cmd: 0, leverage: "20", open_time: "2026-10-10 03:18:44", close_time: "2026-10-10 11:52:09", open_price: "30,620.00", close_price: "30,855.00", margin_order: "30,620.00", profit: "+235.00", fee: "-28.00", funding_fee: "0.00", order_status: 1, close_type: 4 },
+      { id: 5, user_code: "499516984", login: "877310", trade_account_type_name: "真实账户", ticket: "20261010061", source: "Au100g", trade_volume: "0.50", so_type: 0, so_type_name: "市价", cmd: 1, leverage: "10", open_time: "2026-10-10 02:02:57", close_time: "", open_price: "61,240.00", close_price: "", margin_order: "15,310.00", profit: "-96.00", fee: "-12.20", funding_fee: "0.00", order_status: 0, close_type: -1 },
+      { id: 6, user_code: "686566723", login: "901103", trade_account_type_name: "赠金账户", ticket: "20261009012", source: "Ag(T+D)", trade_volume: "3.00", so_type: 2, so_type_name: "止损", cmd: 1, leverage: "10", open_time: "2026-10-09 08:30:15", close_time: "2026-10-09 16:44:31", open_price: "7,898.00", close_price: "7,860.00", margin_order: "11,847.00", profit: "+114.00", fee: "-22.10", funding_fee: "-1.10", order_status: 1, close_type: 5 }
+    ]
   };
 })(window.AdminApp);

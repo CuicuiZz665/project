@@ -323,7 +323,7 @@
               })
             ]),
             e("label", { className: "customer-filter-item", key: "range" }, [
-              e("span", { key: "label" }, "登录时间(GMT+0)"),
+              e("span", { key: "label" }, "登录时间(GMT+8)"),
               e(RangePicker, {
                 key: "picker",
                 value: draft.range,

@@ -21,7 +21,7 @@
   const e = React.createElement;
 
   const STATUS_OPTIONS = ["启用", "禁用"];
-  const CONDITION_OPTIONS = ["高手被跟随", "高手等级变化", "总入金", "平仓"];
+  const CONDITION_OPTIONS = ["总充值", "平仓"];
   const LANG_OPTIONS = ["英语", "简体中文", "繁体中文"];
   // 原型模拟上传：从已有徽章图中随机取一张作为图标。
   const SAMPLE_ICONS = [...new Set((app.mockData.badges || []).map(item => item.icon))];
@@ -32,8 +32,8 @@
     { key: "conditionType", label: "获取条件" },
     { key: "conditionText", label: "获取条件说明" },
     { key: "status", label: "状态" },
-    { key: "createdAt", label: "创建时间(GMT+0)" },
-    { key: "updatedAt", label: "更新时间(GMT+0)" }
+    { key: "createdAt", label: "创建时间(GMT+8)" },
+    { key: "updatedAt", label: "更新时间(GMT+8)" }
   ];
   const allColumnKeys = columnOptions.map(item => item.key);
   // 与源系统一致：创建时间默认隐藏。
@@ -71,8 +71,8 @@
         e("div", { key: "desc" }, [e(Text, { type: "secondary" }, "获取条件描述"), e("strong", null, lang.desc || "-")])
       ])),
       e("div", { className: "detail-list", key: "times" }, [
-        e("div", { key: "created" }, [e(Text, { type: "secondary" }, "创建时间(GMT+0)"), e("strong", null, badge.createdAt)]),
-        e("div", { key: "updated" }, [e(Text, { type: "secondary" }, "更新时间(GMT+0)"), e("strong", null, badge.updatedAt)])
+        e("div", { key: "created" }, [e(Text, { type: "secondary" }, "创建时间(GMT+8)"), e("strong", null, badge.createdAt)]),
+        e("div", { key: "updated" }, [e(Text, { type: "secondary" }, "更新时间(GMT+8)"), e("strong", null, badge.updatedAt)])
       ])
     ]));
   }
@@ -305,8 +305,8 @@
         title: "状态", dataIndex: "status", width: 90,
         render: value => e(Tag, { color: value === "启用" ? "success" : "default" }, value)
       },
-      createdAt: { title: "创建时间(GMT+0)", dataIndex: "createdAt", width: 160 },
-      updatedAt: { title: "更新时间(GMT+0)", dataIndex: "updatedAt", width: 160 }
+      createdAt: { title: "创建时间(GMT+8)", dataIndex: "createdAt", width: 160 },
+      updatedAt: { title: "更新时间(GMT+8)", dataIndex: "updatedAt", width: 160 }
     };
 
     const columns = React.useMemo(() => {

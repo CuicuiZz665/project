@@ -20,14 +20,14 @@
   const e = React.createElement;
 
   const SORT_OPTIONS = ["添加时间", "注册时间"];
-  const RESTRICTION_OPTIONS = ["限制登录", "限制入金", "限制出金", "限制开仓"];
-  const EXPORT_HEADERS = ["用户ID", "注册方式", "注册时间(GMT+0)", "邮箱", "收款账号", "最后操作人", "添加时间(GMT+0)", "拉黑原因", "是否充值", "权限限制"];
-  const RESTRICTION_TAG_COLOR = { "限制登录": "orange", "限制入金": "gold", "限制出金": "error", "限制开仓": "purple" };
+  const RESTRICTION_OPTIONS = ["限制登录", "限制充值", "限制提现", "限制开仓"];
+  const EXPORT_HEADERS = ["用户ID", "注册方式", "注册时间(GMT+8)", "邮箱", "收款账号", "最后操作人", "添加时间(GMT+8)", "拉黑原因", "是否充值", "权限限制"];
+  const RESTRICTION_TAG_COLOR = { "限制登录": "orange", "限制充值": "gold", "限制提现": "error", "限制开仓": "purple" };
 
   // 列设置分组：操作列固定不可取消，与源系统一致。
   const columnGroups = [
     { key: "customer", label: "客户信息", columns: [{ key: "userId", label: "用户ID" }] },
-    { key: "register", label: "注册信息", columns: [{ key: "registerType", label: "注册方式" }, { key: "registeredAt", label: "注册时间(GMT+0)" }] },
+    { key: "register", label: "注册信息", columns: [{ key: "registerType", label: "注册方式" }, { key: "registeredAt", label: "注册时间(GMT+8)" }] },
     { key: "contact", label: "联系与地址", columns: [{ key: "email", label: "邮箱" }, { key: "walletAddress", label: "收款账号" }] },
     { key: "record", label: "名单信息", columns: [{ key: "reason", label: "拉黑原因" }, { key: "operator", label: "最后操作人" }, { key: "operatedAt", label: "添加时间" }] },
     { key: "status", label: "状态与权限", columns: [{ key: "deposited", label: "是否充值" }, { key: "restriction", label: "权限限制" }] }
@@ -256,7 +256,7 @@
         }, value)
       },
       registerType: { title: "注册方式", dataIndex: "registerType", width: 100 },
-      registeredAt: { title: "注册时间(GMT+0)", dataIndex: "registeredAt", width: 160 },
+      registeredAt: { title: "注册时间(GMT+8)", dataIndex: "registeredAt", width: 160 },
       email: { title: "邮箱", dataIndex: "email", width: 190, ellipsis: true },
       walletAddress: { title: "收款账号", dataIndex: "walletAddress", width: 120, ellipsis: true },
       reason: { title: "拉黑原因", dataIndex: "reason", width: 230, ellipsis: true },
@@ -409,13 +409,13 @@
               className: "select-input",
               options: SORT_OPTIONS.map(value => ({ value, label: value }))
             }), "sortBy"),
-            filterItem("添加时间(GMT+0) :", e(RangePicker, {
+            filterItem("添加时间(GMT+8) :", e(RangePicker, {
               value: draft.addedRange,
               onChange: range => updateDraft({ addedRange: range }),
               format: "YYYY-MM-DD",
               className: "login-log-range"
             }), "addedRange"),
-            filterItem("注册时间(GMT+0) :", e(RangePicker, {
+            filterItem("注册时间(GMT+8) :", e(RangePicker, {
               value: draft.registerRange,
               onChange: range => updateDraft({ registerRange: range }),
               format: "YYYY-MM-DD",

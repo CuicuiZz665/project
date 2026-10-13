@@ -24,12 +24,20 @@
     "js/wheel-page.js",
     "js/coupon-page.js",
     "js/badge-page.js",
+    "js/ad-pages.js",
+    "js/message-pages.js",
+    "js/mail-push-pages.js",
+    "js/version-setting-page.js",
+    "js/change-password-page.js",
+    "js/funds-manage-page.js",
+    "js/fund-flow-page.js",
+    "js/order-list-page.js",
     "js/role-settings-page.js",
     "js/user-settings-page.js",
     "js/global-nav.js",
     "js/antd-app.js"
   ];
-  const appVersion = "20261008-commission-view-actions";
+  const appVersion = "20261013-blockmatrix-pages";
   const scriptTimeout = 12000;
 
   function showDependencyError(detail) {

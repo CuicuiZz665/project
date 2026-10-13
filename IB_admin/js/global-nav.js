@@ -27,7 +27,19 @@
     courses: ["course", "kecheng", "课程", "学院", "新手村", "视频", "academy"],
     courseLessons: ["lesson", "chapter", "zhangjie", "章节", "讲次", "视频"],
     roles: ["role", "juese", "角色", "权限"],
-    users: ["user", "yonghu", "用户", "账号", "设置"]
+    users: ["user", "yonghu", "用户", "账号", "设置"],
+    adList: ["ad", "advertis", "ggw", "广告", "广告列表", "banner"],
+    adEntry: ["entry", "tiao", "条目", "广告位", "配置"],
+    messageManage: ["message", "xiaoxi", "消息", "站内", "发送"],
+    emailCode: ["email", "code", "captcha", "yanzhengma", "验证码", "查询"],
+    mailList: ["mail", "email", "youjian", "邮件", "push", "模板"],
+    siteList: ["site", "zhannei", "站内信", "通知"],
+    mailTemplates: ["layout", "template", "moban", "模板", "布局"],
+    versionSetting: ["version", "banben", "版本", "release", "app"],
+    changePassword: ["password", "mima", "密码", "修改"],
+    fundsManage: ["fund", "zijin", "资金", "发放", "扣除", "批量"],
+    fundFlow: ["flow", "liushui", "流水", "transactions"],
+    orderList: ["order", "dingdan", "订单", "交易", "持仓", "平仓"]
   };
 
   // 把侧边栏 menuItems 拍平成可搜索/可显示的页面索引 { key, label, path, keywords }。

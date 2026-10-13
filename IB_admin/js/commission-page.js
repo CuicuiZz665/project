@@ -484,7 +484,7 @@
         width: 90,
         render: value => e(Tag, { color: value === "启用" ? "green" : "default" }, value)
       },
-      { title: "创建时间(GMT+0)", dataIndex: "createdAt", width: 170 },
+      { title: "创建时间(GMT+8)", dataIndex: "createdAt", width: 170 },
       { title: "审核通过时间", dataIndex: "approvedAt", width: 160, render: value => value || "-" },
       { title: "操作人", dataIndex: "operator", width: 90 },
       {

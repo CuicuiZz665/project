@@ -49,7 +49,7 @@
         width: 110,
         render: value => e(Text, { type: value.startsWith("-") ? "danger" : "success" }, value)
       },
-      time: { title: "获取时间(GMT+0)", dataIndex: "time", width: 170 }
+      time: { title: "获取时间(GMT+8)", dataIndex: "time", width: 170 }
     };
 
     const columns = [

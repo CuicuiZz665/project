@@ -109,46 +109,42 @@
     const [rankMetric, setRankMetric] = React.useState("lots");
 
     // 顶部指标卡：2 行 × 4 卡分组展示。人数类指标并入对应金额卡的副标题；
-    // 交易手数/交易金额独立成卡：净入金金额整卡移至「资金与分成」首位，交易金额补原出金金额卡位，
-    // 交易手数补原净入金金额卡位，入金/出金金额不再单独成卡（数值保留在净入金金额卡副标题）
+    // 交易订单数/交易金额独立成卡：净充值金额整卡移至「资金与分成」首位，交易金额补原提现金额卡位，
+    // 交易订单数补原净充值金额卡位，充值/提现金额不再单独成卡（数值保留在净充值金额卡副标题）
     const metricRows = [
       {
         label: "客户与结果",
         metrics: [
           { key: "registered", label: "注册客户数", unit: "人", icon: "user", tone: "blue" },
           { key: "tradingCustomers", label: "交易客户数", unit: "人", icon: "users", tone: "violet" },
-          { key: "firstDepositCustomers", label: "首次入金客户数", unit: "人", icon: "userPlus", tone: "cyan" },
-          { key: "tradingLots", label: "交易手数", unit: "手", icon: "barChart", tone: "green" }
+          { key: "firstDepositCustomers", label: "首次充值客户数", unit: "人", icon: "userPlus", tone: "cyan" },
+          { key: "tradingLots", label: "交易订单数", unit: "单", icon: "barChart", tone: "green" }
         ]
       },
       {
         label: "资金与分成",
         metrics: [
           {
-            key: "netDeposits", label: "净入金金额", unit: "元", icon: "trendingUp", tone: "teal",
-            subtitle: m => `入金 ${m.deposits.value} · 出金 ${m.withdrawals.value}`
+            key: "netDeposits", label: "净充值金额", unit: "元", icon: "trendingUp", tone: "teal",
+            subtitle: m => `充值 ${m.deposits.value} · 提现 ${m.withdrawals.value}`
           },
           { key: "tradingAmount", label: "交易金额", unit: "元", icon: "activity", tone: "orange" },
           {
-            key: "ibRebateAmount", label: "IB返佣金额", unit: "元", icon: "dollar", tone: "indigo",
+            key: "ibRebateAmount", label: "代理返佣金额", unit: "元", icon: "dollar", tone: "indigo",
             subtitle: m => `返佣客户 ${m.ibRebateCustomers.value} 人`
-          },
-          {
-            key: "expertRebatePaid", label: "高手已返金额", unit: "元", icon: "send", tone: "amber",
-            subtitle: m => `返佣高手 ${m.expertRebateCustomers.value} 人`
           }
         ]
       }
     ];
-    // 趋势模块使用独立清单：顶部卡片改为客户/资金/返佣口径后，交易手数、交易金额等历史曲线仍保留在趋势图里
+    // 趋势模块使用独立清单：顶部卡片改为客户/资金/返佣口径后，交易订单数、交易金额等历史曲线仍保留在趋势图里
     const trendOptions = [
-      { id: "tradingLots", name: "交易手数", metric: "lots" },
+      { id: "tradingLots", name: "交易订单数", metric: "lots" },
       { id: "tradingAmount", name: "交易金额", metric: "amount" },
       { id: "tradingCustomers", name: "交易客户数", metric: "customers" },
       { id: "registered", name: "注册客户数", metric: "registered" },
-      { id: "firstDepositCustomers", name: "首次入金客户数", metric: "firstDepositCustomers" },
-      { id: "deposits", name: "入金金额", metric: "deposits" },
-      { id: "withdrawals", name: "出金金额", metric: "withdrawals" },
+      { id: "firstDepositCustomers", name: "首次充值客户数", metric: "firstDepositCustomers" },
+      { id: "deposits", name: "充值金额", metric: "deposits" },
+      { id: "withdrawals", name: "提现金额", metric: "withdrawals" },
       { id: "pnl", name: "交易量", metric: "volume" }
     ].map(item => Object.assign({}, item, { title: `${item.name}趋势` }));
     const chartCountOptions = [3, 4, 5, 6, 7, 8].map(value => ({ label: `${value} 张`, value }));
@@ -228,11 +224,11 @@
       const metricLabel = {
         registered: "注册客户数",
         customers: "交易客户数",
-        firstDepositCustomers: "首次入金客户数",
-        lots: "交易手数",
+        firstDepositCustomers: "首次充值客户数",
+        lots: "交易订单数",
         amount: "交易金额（元）",
-        deposits: "入金金额（元）",
-        withdrawals: "出金金额（元）",
+        deposits: "充值金额（元）",
+        withdrawals: "提现金额（元）",
         volume: "交易量"
       }[metric];
       const axisTicks = [maxValue, maxValue * 0.75, maxValue * 0.5, maxValue * 0.25, 0]
@@ -299,8 +295,8 @@
     }
 
     function renderRankingCard() {
-      const totalLabels = { lots: "总手数", amount: "总金额", orders: "总订单数" };
-      const totalUnits = { lots: "手", amount: "元" };
+      const totalLabels = { lots: "总订单数", amount: "总金额", orders: "总订单笔数" };
+      const totalUnits = { lots: "单", amount: "元" };
       const ranked = data.symbols
         .map(item => ({ item, value: parseRankValue(item[rankMetric]) }))
         .sort((a, b) => b.value - a.value);
@@ -319,7 +315,7 @@
           size: "small",
           value: rankMetric,
           onChange: setRankMetric,
-          options: [{ value: "lots", label: "手数" }, { value: "amount", label: "交易金额" }, { value: "orders", label: "订单数" }]
+          options: [{ value: "lots", label: "订单数" }, { value: "amount", label: "交易金额" }, { value: "orders", label: "订单笔数" }]
         })
       }, [
         e("div", { className: "dashboard-ranking-list", key: "list" },

@@ -79,14 +79,14 @@
     }, "-");
   }
   const conditionParamMap = {
-    "开仓": ["手数", "交易金额", "订单笔数"],
+    "开仓": ["订单数", "交易金额", "订单笔数"],
     "手续费": ["手续费金额"],
     "跟单": ["跟单金额", "跟单笔数"],
     "连续签到": ["签到天数"],
     "手动触发": []
   };
   const conditionDefaults = {
-    "手数": 5,
+    "订单数": 5,
     "交易金额": 1000,
     "订单笔数": 1,
     "手续费金额": 100,
@@ -1592,6 +1592,16 @@
     const [courseLessons, setCourseLessons] = React.useState(() => cloneData(app.mockData.courseLessons));
     const [coupons, setCoupons] = React.useState(() => cloneData(app.mockData.coupons));
     const [wheelActivities, setWheelActivities] = React.useState(() => cloneData(app.mockData.wheelActivities));
+    const [adEntries, setAdEntries] = React.useState(() => cloneData(app.mockData.adEntries));
+    const [ads, setAds] = React.useState(() => cloneData(app.mockData.ads));
+    const [messages, setMessages] = React.useState(() => cloneData(app.mockData.messages));
+    const [emailCodeLogs, setEmailCodeLogs] = React.useState(() => cloneData(app.mockData.emailCodeLogs));
+    const [mailNotices, setMailNotices] = React.useState(() => cloneData(app.mockData.mailNotices));
+    const [siteNotices, setSiteNotices] = React.useState(() => cloneData(app.mockData.siteNotices));
+    const [mailLayouts, setMailLayouts] = React.useState(() => cloneData(app.mockData.mailLayouts));
+    const [appReleases, setAppReleases] = React.useState(() => cloneData(app.mockData.appReleases));
+    const [fundRecords, setFundRecords] = React.useState(() => cloneData(app.mockData.fundRecords));
+    const [fundBatchRecords, setFundBatchRecords] = React.useState(() => cloneData(app.mockData.fundBatchRecords));
     const [signupActivityId, setSignupActivityId] = React.useState(null);
     const [openTabs, setOpenTabs] = React.useState(["overview"]);
     const menuItems = [{
@@ -1618,30 +1628,25 @@
       label: "订单管理",
       children: [{
         key: "orderList",
-        label: "订单列表",
-        disabled: true
-      }, {
-        key: "pendingOrders",
-        label: "挂单列表",
-        disabled: true
+        label: "订单列表"
       }]
     }, {
       key: "fundsGroup",
       label: "资金管理",
       children: [{
         key: "depositWithdraw",
-        label: "出入金管理",
+        label: "充值提现管理",
         children: [{
           key: "depositManage",
-          label: "入金管理",
+          label: "充值管理",
           disabled: true
         }, {
           key: "withdrawRisk",
-          label: "出金审核 - 风控",
+          label: "提现审核 - 风控",
           disabled: true
         }, {
           key: "withdrawFinance",
-          label: "出金审核 - 财务",
+          label: "提现审核 - 财务",
           disabled: true
         }, {
           key: "exchangeRate",
@@ -1649,17 +1654,19 @@
           disabled: true
         }, {
           key: "depositWithdrawNetwork",
-          label: "出入金网络配置",
+          label: "充值提现网络配置",
           disabled: true
         }]
       }, {
         key: "fundsManage",
-        label: "资金管理",
-        disabled: true
+        label: "资金管理"
       }, {
-        key: "fundFlow",
-        label: "资金流水",
-        disabled: true
+        key: "fundFlowGroup",
+        label: "流水管理",
+        children: [{
+          key: "fundFlow",
+          label: "资金流水"
+        }]
       }]
     }, {
       key: "marketingGroup",
@@ -1718,17 +1725,38 @@
       key: "contentGroup",
       label: "内容管理",
       children: [{
-        key: "adSlot",
+        key: "adSlotGroup",
         label: "广告位管理",
-        disabled: true
+        children: [{
+          key: "adList",
+          label: "广告列表"
+        }, {
+          key: "adEntry",
+          label: "广告位条目配置"
+        }]
       }, {
-        key: "messageCenter",
+        key: "messageGroup",
         label: "消息管理",
-        disabled: true
+        children: [{
+          key: "messageManage",
+          label: "消息管理"
+        }, {
+          key: "emailCode",
+          label: "查询验证码"
+        }]
       }, {
-        key: "mailPush",
+        key: "mailPushGroup",
         label: "邮件PUSH",
-        disabled: true
+        children: [{
+          key: "mailList",
+          label: "邮件管理"
+        }, {
+          key: "siteList",
+          label: "站内信管理"
+        }, {
+          key: "mailTemplates",
+          label: "Layout管理"
+        }]
       }]
     }, {
       key: "symbolList",
@@ -1745,12 +1773,10 @@
         label: "用户设置管理"
       }, {
         key: "versionSetting",
-        label: "版本设置",
-        disabled: true
+        label: "版本设置"
       }, {
         key: "changePassword",
-        label: "修改密码",
-        disabled: true
+        label: "修改密码"
       }]
     }];
     const navPages = app.buildNavIndex(menuItems);
@@ -1801,7 +1827,7 @@
     }), /*#__PURE__*/React.createElement("span", null, "Cui")), /*#__PURE__*/React.createElement(Menu, {
       mode: "inline",
       selectedKeys: [currentPage],
-      defaultOpenKeys: ["customerGroup", "orderGroup", "contentGroup", "marketingGroup", "incentiveGroup", "grantGroup", "fundsGroup", "agentGroup", "systemGroup"],
+      defaultOpenKeys: ["customerGroup", "orderGroup", "contentGroup", "marketingGroup", "incentiveGroup", "grantGroup", "fundsGroup", "agentGroup", "systemGroup", "adSlotGroup", "messageGroup", "mailPushGroup", "fundFlowGroup"],
       items: menuItems,
       onClick: ({
         key
@@ -1949,7 +1975,44 @@
       coupons: coupons,
       setCoupons: setCoupons,
       wheelActivities: wheelActivities
-    }) : currentPage === "rules" ? /*#__PURE__*/React.createElement(RulesPage, {
+    }) : currentPage === "orderList" ? React.createElement(app.OrderListPage, {
+      orders: app.mockData.orders
+    }) : currentPage === "fundsManage" ? React.createElement(app.FundsManagePage, {
+      records: fundRecords,
+      setRecords: setFundRecords,
+      batchRecords: fundBatchRecords,
+      setBatchRecords: setFundBatchRecords,
+      fundTypes: app.mockData.fundTypeOptions
+    }) : currentPage === "fundFlow" ? React.createElement(app.FundFlowPage, {
+      flows: app.mockData.fundFlows
+    }) : currentPage === "adList" ? React.createElement(app.AdListPage, {
+      ads: ads,
+      setAds: setAds,
+      entries: adEntries
+    }) : currentPage === "adEntry" ? React.createElement(app.AdEntryPage, {
+      entries: adEntries,
+      setEntries: setAdEntries
+    }) : currentPage === "messageManage" ? React.createElement(app.MessageManagePage, {
+      messages: messages,
+      setMessages: setMessages
+    }) : currentPage === "emailCode" ? React.createElement(app.EmailCodePage, {
+      logs: emailCodeLogs,
+      setLogs: setEmailCodeLogs
+    }) : currentPage === "mailList" ? React.createElement(app.MailListPage, {
+      notices: mailNotices,
+      setNotices: setMailNotices,
+      layouts: mailLayouts
+    }) : currentPage === "siteList" ? React.createElement(app.SiteListPage, {
+      notices: siteNotices,
+      setNotices: setSiteNotices
+    }) : currentPage === "mailTemplates" ? React.createElement(app.MailTemplatePage, {
+      layouts: mailLayouts,
+      setLayouts: setMailLayouts
+    }) : currentPage === "versionSetting" ? React.createElement(app.VersionSettingPage, {
+      releases: appReleases,
+      setReleases: setAppReleases
+    }) : currentPage === "changePassword" ? React.createElement(app.ChangePasswordPage, null
+    ) : currentPage === "rules" ? /*#__PURE__*/React.createElement(RulesPage, {
       rules: rules,
       setRules: setRules,
       courses: courses,

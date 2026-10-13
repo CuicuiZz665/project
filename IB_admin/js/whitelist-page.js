@@ -13,12 +13,12 @@
   const { Text } = Typography;
   const e = React.createElement;
 
-  const EXPORT_HEADERS = ["用户ID", "昵称", "注册方式", "注册时间(GMT+0)", "邮箱", "收款账号", "最后操作人", "添加时间(GMT+0)", "国家/地区", "是否充值"];
+  const EXPORT_HEADERS = ["用户ID", "昵称", "注册方式", "注册时间(GMT+8)", "邮箱", "收款账号", "最后操作人", "添加时间(GMT+8)", "国家/地区", "是否充值"];
 
   // 列设置分组：操作列固定不可取消，与源系统一致。
   const columnGroups = [
     { key: "customer", label: "客户信息", columns: [{ key: "userId", label: "用户ID" }, { key: "nickName", label: "昵称" }] },
-    { key: "register", label: "注册信息", columns: [{ key: "registerType", label: "注册方式" }, { key: "registeredAt", label: "注册时间(GMT+0)" }] },
+    { key: "register", label: "注册信息", columns: [{ key: "registerType", label: "注册方式" }, { key: "registeredAt", label: "注册时间(GMT+8)" }] },
     { key: "contact", label: "联系与地址", columns: [{ key: "email", label: "邮箱" }, { key: "walletAddress", label: "收款账号" }] },
     { key: "record", label: "名单信息", columns: [{ key: "operator", label: "最后操作人" }, { key: "operatedAt", label: "添加时间" }, { key: "country", label: "国家/地区" }] },
     { key: "status", label: "状态与权限", columns: [{ key: "deposited", label: "是否充值" }] }
@@ -126,7 +126,7 @@
         render: value => e(Text, { type: "secondary" }, value)
       },
       registerType: { title: "注册方式", dataIndex: "registerType", width: 100 },
-      registeredAt: { title: "注册时间(GMT+0)", dataIndex: "registeredAt", width: 160 },
+      registeredAt: { title: "注册时间(GMT+8)", dataIndex: "registeredAt", width: 160 },
       email: { title: "邮箱", dataIndex: "email", width: 180, ellipsis: true },
       walletAddress: { title: "收款账号", dataIndex: "walletAddress", width: 120, ellipsis: true },
       operator: { title: "最后操作人", dataIndex: "operator", width: 100 },

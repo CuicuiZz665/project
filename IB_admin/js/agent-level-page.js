@@ -291,7 +291,7 @@
       { title: "分佣比例", dataIndex: "rebateRate", width: 100, render: value => `${value}%` },
       { title: "营销激励", dataIndex: "marketingRate", width: 100, render: value => `${value}%` },
       { title: "等级考核规则", key: "upgrade", width: 280, render: (_, record) => renderUpgrade(record) },
-      { title: "更新时间(GMT+0)", dataIndex: "updatedAt", width: 170, render: value => value || "-" },
+      { title: "更新时间(GMT+8)", dataIndex: "updatedAt", width: 170, render: value => value || "-" },
       { title: "操作人", dataIndex: "operator", width: 90, render: value => value || "-" },
       {
         title: "操作",

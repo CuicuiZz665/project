@@ -12,21 +12,15 @@
       ]
     },
     {
-      value: "高手管理", label: "高手管理", children: [
-        { value: "高手申请列表", label: "高手申请列表" }, { value: "潜在高手", label: "潜在高手" }, { value: "等级配置", label: "等级配置" }, { value: "高手管理", label: "高手管理" }, { value: "跟随关系管理", label: "跟随关系管理" }, { value: "分润结算", label: "分润结算" }
-      ]
-    },
-    {
       value: "客户管理", label: "客户管理", children: [
         { value: "数据看板", label: "数据看板", children: [{ value: "数据概览", label: "数据概览" }] },
         { value: "特殊客户", label: "特殊客户", children: [{ value: "黑名单", label: "黑名单" }, { value: "白名单", label: "白名单" }] },
         { value: "客户管理", label: "客户管理", children: [{ value: "用户登录日志", label: "用户登录日志" }, { value: "客户列表", label: "客户列表" }] }
       ]
     },
-    { value: "订单管理", label: "订单管理", children: [{ value: "订单列表", label: "订单列表" }, { value: "挂单列表", label: "挂单列表" }] },
+    { value: "订单管理", label: "订单管理", children: [{ value: "订单列表", label: "订单列表" }] },
     {
       value: "内容管理", label: "内容管理", children: [
-        { value: "文章管理", label: "文章管理" },
         { value: "广告位管理", label: "广告位管理", children: [{ value: "广告列表", label: "广告列表" }, { value: "广告位条目配置", label: "广告位条目配置" }] },
         { value: "消息管理", label: "消息管理", children: [{ value: "查询验证码", label: "查询验证码" }, { value: "消息管理", label: "消息管理" }] },
         { value: "邮件PUSH", label: "邮件PUSH", children: [{ value: "邮件管理", label: "邮件管理" }, { value: "站内信管理", label: "站内信管理" }, { value: "Layout管理", label: "Layout管理" }] }
@@ -58,7 +52,7 @@
     {
       value: "资金管理", label: "资金管理", children: [
         { value: "资金管理", label: "资金管理" },
-        { value: "出入金管理", label: "出入金管理", children: [{ value: "出入金网络配置", label: "出入金网络配置" }, { value: "汇率管理", label: "汇率管理" }, { value: "入金管理", label: "入金管理" }, { value: "出金管理-风控审核", label: "出金管理-风控审核" }, { value: "出金管理-财务操作", label: "出金管理-财务操作" }] },
+        { value: "充值提现管理", label: "充值提现管理", children: [{ value: "充值提现网络配置", label: "充值提现网络配置" }, { value: "汇率管理", label: "汇率管理" }, { value: "充值管理", label: "充值管理" }, { value: "提现管理-风控审核", label: "提现管理-风控审核" }, { value: "提现管理-财务操作", label: "提现管理-财务操作" }] },
         { value: "流水管理", label: "流水管理", children: [{ value: "资金流水", label: "资金流水" }] }
       ]
     },

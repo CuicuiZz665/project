@@ -199,7 +199,6 @@
       partnerInfo: { isAgent: "-", userType: "-", userLevel: "-", parentAgentId: "-", agentLevel: "-", agentSince: "-" },
       levelChangeRecords: [],
       commissionInfo: { settled: "-", pending: "-" },
-      followingRecords: [],
       followerRecords: [],
       activityRecords: [],
       ...detail
@@ -265,7 +264,7 @@
     ]);
   }
 
-  /* 用户级资产总览卡片：余额为主指标，入金/提现/净入金/赠金为次要指标，只统计真实账户 */
+  /* 用户级资产总览卡片：余额为主指标，充值/提现/净充值/赠金为次要指标，只统计真实账户 */
   function renderAssetStrip(extra) {
     const accounts = extra.accounts || [];
     const hasAssets = accounts.some(account => account.type !== "模拟账户");
@@ -282,9 +281,9 @@
             e("span", { key: "cap", className: "customer-asset-caption" }, "客户当前资产合计")
           ]),
           e("div", { className: "customer-asset-grid", key: "grid" }, [
-            ["总入金", fmtSum(sumAccounts(accounts, "totalDeposit"), null), ""],
+            ["总充值", fmtSum(sumAccounts(accounts, "totalDeposit"), null), ""],
             ["总提现", fmtSum(sumAccounts(accounts, "totalWithdrawal"), null), ""],
-            ["净入金", fmtSum(sumAccounts(accounts, "netDeposit"), null), ""],
+            ["净充值", fmtSum(sumAccounts(accounts, "netDeposit"), null), ""],
             ["赠金金额", fmtAmount(extra.bonusAmount, null), " is-orange"]
           ].map(([label, value, cls]) => e("div", { className: "customer-asset-field", key: label }, [
             e("span", { key: "l", className: "customer-asset-label" }, [
@@ -294,7 +293,7 @@
             e("strong", { key: "v", className: cls.trim() || undefined }, value)
           ])))
         ])
-        : e("div", { className: "customer-asset-empty", key: "empty" }, "该客户尚未入金，暂无资产数据"));
+        : e("div", { className: "customer-asset-empty", key: "empty" }, "该客户尚未充值，暂无资产数据"));
   }
 
   /* ---------- 子账号卡片（核心指标 + 次要字段折叠） ---------- */
@@ -706,8 +705,8 @@
         { label: "子账号", type: "select", placeholder: "请选择子账号", options: (extra.accounts || []).map(account => account.accountNo) },
         { label: "订单号", placeholder: "请输入订单号" },
         { label: "是否平仓", type: "select", options: ["全部", "是", "否"] },
-        { label: "开仓时间(GMT+0)", type: "range", wide: true },
-        { label: "平仓时间(GMT+0)", type: "range", wide: true }
+        { label: "开仓时间(GMT+8)", type: "range", wide: true },
+        { label: "平仓时间(GMT+8)", type: "range", wide: true }
       ],
       columns: [
         { title: "订单号", dataIndex: "orderNo", width: 140 },
@@ -716,8 +715,8 @@
         { title: "保证金", dataIndex: "margin", width: 110 },
         { title: "盈亏", dataIndex: "pnl", width: 100 },
         { title: "开平仓费用", dataIndex: "fee", width: 120 },
-        { title: "开仓时间(GMT+0)", dataIndex: "openedAt", width: 150 },
-        { title: "平仓时间(GMT+0)", dataIndex: "closedAt", width: 150 },
+        { title: "开仓时间(GMT+8)", dataIndex: "openedAt", width: 150 },
+        { title: "平仓时间(GMT+8)", dataIndex: "closedAt", width: 150 },
         { title: "是否平仓", dataIndex: "closed", width: 90, render: value => e(Tag, { color: value === "是" ? "green" : "default" }, value) },
         { title: "平仓类型", dataIndex: "closeType", width: 110, render: value => e(Tag, null, value) }
       ],
@@ -754,8 +753,8 @@
         { label: "账户ID", placeholder: "请输入账户ID" },
         { label: "单号", placeholder: "交易单号/订单号" },
         { label: "账号类型", type: "select", placeholder: "请选择账号类型", searchable: true, options: ["主账户", "子账号"] },
-        { label: "资金类型", type: "select", placeholder: "请选择资金类型", searchable: true, options: ["入金", "资金划转", "红包", "赠金", "提现"] },
-        { label: "生成时间(GMT+0)", type: "range", wide: true }
+        { label: "资金类型", type: "select", placeholder: "请选择资金类型", searchable: true, options: ["充值", "资金划转", "红包", "赠金", "提现"] },
+        { label: "生成时间(GMT+8)", type: "range", wide: true }
       ],
       columns: [
         { title: "账号类型", dataIndex: "accountType", width: 100 },
@@ -766,7 +765,7 @@
         { title: "去向", dataIndex: "target", width: 120 },
         { title: "金额", dataIndex: "amount", width: 100 },
         { title: "变动后余额", dataIndex: "balanceAfter", width: 120 },
-        { title: "生成时间(GMT+0)", dataIndex: "createdAt", width: 170 }
+        { title: "生成时间(GMT+8)", dataIndex: "createdAt", width: 170 }
       ],
       data: rows,
       total: rows.length
@@ -777,11 +776,11 @@
     return renderRecordTable({
       filters: [
         { label: "奖励来源", type: "select", placeholder: "请选择奖励来源", searchable: true, options: ["大转盘活动", "邀请好友"] },
-        { label: "获取时间(GMT+0)", type: "rangePicker" }
+        { label: "获取时间(GMT+8)", type: "rangePicker" }
       ],
       columns: [
         { title: "奖励来源", dataIndex: "source" },
-        { title: "获取时间(GMT+0)", dataIndex: "obtainedAt" },
+        { title: "获取时间(GMT+8)", dataIndex: "obtainedAt" },
         { title: "奖励明细", dataIndex: "rewardDetail" }
       ],
       data: extra.activityRecords,
@@ -793,7 +792,7 @@
     return renderRecordTable({
       filters: [
         { label: "订单号", placeholder: "订单号" },
-        { label: "生成时间(GMT+0)", type: "range", wide: true }
+        { label: "生成时间(GMT+8)", type: "range", wide: true }
       ],
       columns,
       data: records,
@@ -1199,13 +1198,6 @@
             })
           }, "客户下线")
         ];
-        const followColumns = [
-          { title: "高手ID", dataIndex: "traderId", width: 120 },
-          { title: "高手昵称", dataIndex: "traderName", width: 130 },
-          { title: "跟随金额", dataIndex: "amount", width: 110 },
-          { title: "跟随状态", dataIndex: "status", width: 110 },
-          { title: "创建时间", dataIndex: "createdAt", width: 170 }
-        ];
         const followerColumns = [
           { title: "跟单者ID", dataIndex: "followerId", width: 120 },
           { title: "跟单者昵称", dataIndex: "followerName", width: 130 },
@@ -1248,11 +1240,6 @@
                 key: "partner",
                 label: tabLabel("Partner Program", partnerCount),
                 children: renderPartnerInfo(extra)
-              },
-              {
-                key: "following",
-                label: tabLabel("跟随的高手", recordCount(extra.followingRecords)),
-                children: renderSimpleRecords(extra.followingRecords, followColumns)
               },
               {
                 key: "followers",
