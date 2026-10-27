@@ -817,6 +817,19 @@
     );
   }
 
+  // 返回目标页面在侧边栏中的祖先分组 key 链（跳转后自动展开对应分组用）
+  function collectMenuAncestors(items, targetKey, parents = []) {
+    for (const item of items || []) {
+      const chain = parents.concat(item.key);
+      if (item.key === targetKey) return parents;
+      if (item.children) {
+        const found = collectMenuAncestors(item.children, targetKey, chain);
+        if (found) return found;
+      }
+    }
+    return null;
+  }
+
   function AdminApp() {
     const [currentPage, setCurrentPage] = React.useState("overview");
     const [rules, setRules] = React.useState(() => cloneData(app.mockData.rules));
@@ -824,6 +837,7 @@
     const [agentLevels, setAgentLevels] = React.useState(() => cloneData(app.mockData.agentLevels));
     const [commissionRules, setCommissionRules] = React.useState(() => cloneData(app.mockData.commissionRules));
     const [openTabs, setOpenTabs] = React.useState(["overview"]);
+    const [siderOpenKeys, setSiderOpenKeys] = React.useState([]);
     const menuItems = [
       {
         key: "customerGroup",
@@ -871,6 +885,12 @@
 
     const navPages = app.buildNavIndex(menuItems);
     const navKeys = navPages.map(page => page.key);
+    // 无论从菜单、页签、全局搜索还是概览卡跳转进入页面，都自动展开其所在分组链；手动折叠仍生效
+    React.useEffect(() => {
+      const chain = collectMenuAncestors(menuItems, currentPage) || [];
+      if (!chain.length) return;
+      setSiderOpenKeys(prev => (chain.every(key => prev.includes(key)) ? prev : Array.from(new Set(prev.concat(chain)))));
+    }, [currentPage]);
     React.useEffect(() => {
       setOpenTabs(tabs => tabs.includes(currentPage) ? tabs : [...tabs, currentPage]);
     }, [currentPage]);
@@ -908,7 +928,8 @@
               <Menu
                 mode="inline"
                 selectedKeys={[currentPage]}
-                defaultOpenKeys={["customerGroup", "agentGroup", "points", "deliveryGroup", "systemGroup"]}
+                openKeys={siderOpenKeys}
+                onOpenChange={setSiderOpenKeys}
                 items={menuItems}
                 onClick={({ key }) => {
                   if (navKeys.includes(key)) setCurrentPage(key);
@@ -977,7 +998,7 @@
               </Header>
               <Content className="admin-content">
                 {currentPage === "overview" ? (
-                  <app.DashboardPage data={app.mockData.dashboard} customers={app.mockData.customers} />
+                  <app.DashboardPage data={app.mockData.dashboard} onNavigate={setCurrentPage} />
                 ) : currentPage === "customer" ? (
                   <app.CustomerPage
                     customers={app.mockData.customers}
