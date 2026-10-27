@@ -41,7 +41,7 @@
     "js/global-nav.js",
     "js/antd-app.js"
   ];
-  const appVersion = "20261013-finance-cash-pages";
+  const appVersion = "20261027-finance-cash-pages";
   const scriptTimeout = 12000;
 
   function showDependencyError(detail) {

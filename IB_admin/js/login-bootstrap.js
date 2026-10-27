@@ -6,7 +6,7 @@
     "vendor/antd/antd.min.js"
   ];
   const appScripts = ["js/namespace.js", "js/login-page.js"];
-  const appVersion = "20261013-login";
+  const appVersion = "20261027-login-authed";
   const scriptTimeout = 12000;
 
   function showDependencyError(detail) {

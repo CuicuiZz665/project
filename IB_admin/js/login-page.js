@@ -609,7 +609,11 @@
           setSubmitting(false);
           message.success(t.signInSuccess);
           window.setTimeout(function () {
-            sessionStorage.setItem("cui-admin-authed", "1");
+            try {
+              sessionStorage.setItem("cui-admin-authed", "1");
+            } catch (error) {
+              // 无痕/隐私模式禁用存储时忽略，不影响进入后台
+            }
             window.location.href = "index.html";
           }, 650);
         }, 900);

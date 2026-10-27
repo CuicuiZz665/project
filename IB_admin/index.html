@@ -6,8 +6,12 @@
   <title>Project</title>
   <script>
     // 登录拦截：本次浏览器会话内没有登录标记时，先进登录页（登录成功后由 login-page.js 写入标记）
-    if (sessionStorage.getItem("cui-admin-authed") !== "1") {
-      location.replace("login.html");
+    try {
+      if (sessionStorage.getItem("cui-admin-authed") !== "1") {
+        location.replace("login.html");
+      }
+    } catch (error) {
+      // 存储被禁用（无痕/隐私模式）时放行，避免登录后循环弹回
     }
   </script>
   <link rel="stylesheet" href="vendor/antd/reset.css">
@@ -19,6 +23,6 @@
 <body>
   <div id="root"></div>
 
-  <script src="js/bootstrap.js?v=20261013-finance-cash-pages"></script>
+  <script src="js/bootstrap.js?v=20261027-finance-cash-pages"></script>
 </body>
 </html>
