@@ -22,6 +22,7 @@
   const { TextArea } = Input;
   const { Text } = Typography;
   const e = React.createElement;
+  const { ListActions, SearchInput } = app.sharedActions;
 
   const DIRECTION_OPTIONS = [
     { label: "发放", value: "grant" },
@@ -111,11 +112,20 @@
     ]);
   }
 
-  // —— 单条/批量 列表筛选（更多筛选渐进展开） ——
-
-  function ProgressiveFilters({ form, primary, secondary, activeSecondaryCount, loading, onSubmit, onReset }) {
+  // —— 单条/批量 列表筛选（更多筛选渐进展开）；
+  // 与 finance-shared 同款"回车即查/点选即查"：instantFields 里的字段改动即应用 ——
+  function ProgressiveFilters({ form, primary, secondary, activeSecondaryCount, onSubmit, onReset, instantFields }) {
     const [expanded, setExpanded] = React.useState(false);
-    return e(Form, { form, layout: "inline", onFinish: onSubmit, style: { gap: 16, flexWrap: "wrap" } }, [
+    const instant = instantFields || [];
+    return e(Form, {
+      form,
+      layout: "inline",
+      onFinish: onSubmit,
+      onValuesChange: changed => {
+        if (Object.keys(changed).some(key => instant.includes(key))) onSubmit(form.getFieldsValue());
+      },
+      style: { gap: 16, flexWrap: "wrap" }
+    }, [
       e("div", { key: "primary", style: { display: "flex", gap: 16, flexWrap: "wrap", width: "100%" } }, [
         ...primary,
         secondary ? e(Form.Item, { key: "toggle" },
@@ -129,10 +139,7 @@
             activeSecondaryCount > 0 ? e("span", { key: "count", style: { marginLeft: 4, color: "#1677ff" } }, activeSecondaryCount) : null
           ])) : null,
         e(Form.Item, { key: "actions" },
-          e(Space, null, [
-            e(Button, { key: "search", type: "primary", htmlType: "submit", loading }, "查询"),
-            e(Button, { key: "reset", onClick: onReset }, "重置")
-          ]))
+          e(ListActions, { onReset }))
       ]),
       secondary ? e("div", { key: "secondary", hidden: !expanded, style: { display: expanded ? "flex" : "none", gap: 16, flexWrap: "wrap", width: "100%" } }, secondary) : null
     ]);
@@ -424,9 +431,10 @@
                 activeSecondaryCount: singleSecondaryActive,
                 onSubmit: values => setSingleApplied(values),
                 onReset: () => { singleForm.resetFields(); setSingleApplied({}); },
+                instantFields: ["direction", "operation_source", "fund_type", "operate_time"],
                 primary: [
                   e(Form.Item, { key: "user", label: "用户ID", name: "user_code" },
-                    e(Input, { allowClear: true, placeholder: "用户ID", style: { width: 160 } })),
+                    e(SearchInput, { allowClear: true, placeholder: "用户ID", style: { width: 160 }, onSearch: () => singleForm.submit() })),
                   e(Form.Item, { key: "direction", label: "管理方向", name: "direction" },
                     e(Select, { allowClear: true, placeholder: "管理方向", options: DIRECTION_FILTER_OPTIONS.map(item => ({ label: item.label, value: item.label })), style: { width: 160 } })),
                   e(Form.Item, { key: "source", label: "操作来源", name: "operation_source" },
@@ -495,9 +503,10 @@
                 activeSecondaryCount: batchSecondaryActive,
                 onSubmit: values => setBatchApplied(values),
                 onReset: () => { batchForm.resetFields(); setBatchApplied({}); },
+                instantFields: ["direction", "fund_type", "status", "created_time"],
                 primary: [
                   e(Form.Item, { key: "operator", label: "操作人ID", name: "created_by" },
-                    e(Input, { allowClear: true, placeholder: "操作人ID", style: { width: 160 } })),
+                    e(SearchInput, { allowClear: true, placeholder: "操作人ID", style: { width: 160 }, onSearch: () => batchForm.submit() })),
                   e(Form.Item, { key: "direction", label: "管理方向", name: "direction" },
                     e(Select, { allowClear: true, placeholder: "管理方向", options: DIRECTION_FILTER_OPTIONS.map(item => ({ label: item.label, value: item.label })), style: { width: 160 } })),
                   e(Form.Item, { key: "fund-type", label: "资金类型", name: "fund_type" },

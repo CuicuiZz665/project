@@ -1,6 +1,7 @@
 (function registerUserSettingsPage(app) {
   const { Button, Checkbox, Form, Input, Modal, Popover, Select, Space, Table, Tag, message } = antd;
   const e = React.createElement;
+  const { ListActions, ColumnSettingsTrigger, SearchInput } = app.sharedActions;
 
   const userColumnOptions = [
     { key: "name", label: "姓名" },
@@ -151,14 +152,14 @@
     return e("section", { className: "page-surface user-settings-page" }, [
       e("div", { className: "toolbar", key: "toolbar" },
         e(Space, { wrap: true }, [
-          e(Input, {
+          e(SearchInput, {
             key: "keyword",
             value: draft.keyword,
             placeholder: "搜索姓名 / 账号 / 邮箱",
             allowClear: true,
             className: "keyword-input",
             onChange: event => setDraft(Object.assign({}, draft, { keyword: event.target.value })),
-            onPressEnter: () => setFilters({ ...draft })
+            onSearch: () => setFilters({ ...draft })
           }),
           e(Select, {
             key: "role",
@@ -167,7 +168,10 @@
             allowClear: true,
             className: "select-input",
             options: roles.map(role => ({ value: role.id, label: role.name })),
-            onChange: value => setDraft(Object.assign({}, draft, { role: value }))
+            onChange: value => {
+              setDraft(Object.assign({}, draft, { role: value }));
+              setFilters(Object.assign({}, draft, { role: value }));
+            }
           }),
           e(Select, {
             key: "status",
@@ -176,31 +180,33 @@
             allowClear: true,
             className: "select-input",
             options: [{ value: "启用", label: "启用" }, { value: "停用", label: "停用" }],
-            onChange: value => setDraft(Object.assign({}, draft, { status: value }))
+            onChange: value => {
+              setDraft(Object.assign({}, draft, { status: value }));
+              setFilters(Object.assign({}, draft, { status: value }));
+            }
           }),
-          e(Button, { key: "search", type: "primary", onClick: () => setFilters({ ...draft }) }, "查询"),
-          e(Button, {
-            key: "reset",
-            onClick: () => {
+          e(ListActions, {
+            key: "actions-core",
+            onReset: () => {
               const cleared = { keyword: "", role: undefined, status: "启用" };
               setDraft(cleared);
               setFilters(cleared);
-            }
-          }, "重置")
-        ]),
-        e(Space, null, [
-          e(Button, { key: "add", type: "primary", onClick: openCreate }, "添加"),
-          e(Popover, {
-            key: "columns",
-            trigger: "click",
-            placement: "bottomRight",
-            open: columnsOpen,
-            onOpenChange: open => {
-              setColumnDraft(visibleKeys);
-              setColumnsOpen(open);
             },
-            content: columnPanel
-          }, e(Button, null, "列设置"))
+            trailing: [
+              e(Button, { key: "add", type: "primary", onClick: openCreate }, "添加"),
+              e(Popover, {
+                key: "columns",
+                trigger: "click",
+                placement: "bottomRight",
+                open: columnsOpen,
+                onOpenChange: open => {
+                  setColumnDraft(visibleKeys);
+                  setColumnsOpen(open);
+                },
+                content: columnPanel
+              }, e(ColumnSettingsTrigger))
+            ]
+          })
         ])),
       e(Table, {
         key: "table",

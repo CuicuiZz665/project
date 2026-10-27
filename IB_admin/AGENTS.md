@@ -189,6 +189,20 @@ To add shared capability
 - Git 的提交、推送和“先同步git”的执行语义统一见 [GIT.md](GIT.md)。
 - 如果用户说“先同步git”，先检查本次该提交是否已经完成，再按 [GIT.md](GIT.md) 的流程同步远端 `origin/project`。
 
+## 筛选区标准（2026-10-27 定稿，全站强制）
+
+所有列表页筛选区（`.toolbar` 卡片与 `.progressive-filter-form` 表单）遵循以下标准；新页面照此实现，老页面改动时保持一致，不得局部另搞一套：
+
+1. **交互 —— 回车即查 / 点选即查，无查询按钮**
+   - 文本条件一律用 `app.sharedActions.SearchInput`（右侧常驻放大镜，回车或点图标触发 `onSearch` 提交）；输入过程中不得过滤。
+   - 下拉 / 日期 / 级联等点选条件在 `onChange` 中立即应用到生效条件并回到第 1 页。
+   - 重置按钮保留（`ListActions`），负责一键清空全部条件；查询按钮已全局移除，不得恢复。
+2. **工具栏结构** —— 页面级操作按钮（新增 / 添加等）通过 `ListActions` 的 `trailing` 与重置同组渲染，整组不换行（宽度不足时整组随筛选行换行）；更多筛选开关用 `extra`。
+3. **导出 / 列设置** —— 统一幽灵圆形图标钮（`ExportTrigger` / `ColumnSettingsTrigger`），绝对定位钉在筛选卡片右上角：列设置贴角（right 14px），导出在其左侧（right 52px）；各页弹层交互不变。唯一例外：代理商列表批量操作栏内的文字“导出”保留。
+4. **控件高度** —— 筛选区内所有控件（输入框 / 下拉 / 日期 / 级联 / 数字框 / 按钮）统一 34px，由 `css/layout.css` 的 `.toolbar` / `.progressive-filter-form` 强制规则保证；外壳内层 input 高度保持 auto，由外壳 flex 垂直居中，不得单独设高。
+5. **渐进筛选组件** —— `finance-shared.js`（及 `funds-manage-page.js` 本地副本）的 `ProgressiveFilters`：`instantFields` 声明点选类字段名即改即查；`aside` 挂钉右上角的元素（必须挂 Form 层——antd 的 `.ant-form-item-control-input` 自带 `position:relative`，会截走绝对定位锚点）。
+6. **版本号** —— 改 `js/` 必须同步升 `bootstrap.js` 的 `appVersion` 与 `index.html` 的 bootstrap 引用版本；改 `css/` 必须升对应 css link 的版本，避免浏览器缓存旧资源。
+
 ## Validation Checklist
 
 ```text

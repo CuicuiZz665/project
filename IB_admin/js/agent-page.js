@@ -14,6 +14,7 @@
   } = antd;
   const { Text } = Typography;
   const e = React.createElement;
+  const { ListActions, ColumnSettingsTrigger } = app.sharedActions;
 
   function AgentPage({ agents = [] }) {
     const [userIdFilter, setUserIdFilter] = React.useState();
@@ -220,22 +221,19 @@
             className: "agent-more-filter",
             onClick: () => setMoreFiltersOpen(value => !value)
           }, "更多筛选"),
-          e(Space, { key: "query", size: 8 }, [
-            e(Button, { type: "primary", key: "search" }, "查询"),
-            e(Button, {
-              key: "reset",
-              onClick: () => {
-                setUserIdFilter(undefined);
-                setAgentIdFilter(undefined);
-                setParentAgentIdFilter(undefined);
-                setLevel(undefined);
-                setUserTypeFilter(undefined);
-                setCommissionStatusFilter(undefined);
-                setProtectionFilter(undefined);
-                setMoreFiltersOpen(false);
-              }
-            }, "重置")
-          ])
+          e(ListActions, {
+            key: "query",
+            onReset: () => {
+              setUserIdFilter(undefined);
+              setAgentIdFilter(undefined);
+              setParentAgentIdFilter(undefined);
+              setLevel(undefined);
+              setUserTypeFilter(undefined);
+              setCommissionStatusFilter(undefined);
+              setProtectionFilter(undefined);
+              setMoreFiltersOpen(false);
+            }
+          })
         ]),
         moreFiltersOpen && e("div", { className: "agent-more-filter-row", key: "more-row" }, [
           e("label", { className: "agent-filter-item", key: "level" }, [
@@ -296,7 +294,7 @@
               e(Input, { placeholder: "请输入用户ID", key: "input", className: "agent-add-input" }),
               e(Button, { key: "button", disabled: true }, "添加代理")
             ]),
-            e(Button, { key: "columns" }, "列设置")
+            e(ColumnSettingsTrigger, { key: "columns" })
           ])
         ])
       ]),
@@ -427,7 +425,7 @@
               key: "back",
               onClick: () => setStructureAgent(null)
             }, "返回"),
-            e(Button, { key: "columns" }, "列设置")
+            e(ColumnSettingsTrigger, { key: "columns" })
           ])
         ]),
         e(Table, {

@@ -1,13 +1,11 @@
 (function registerBadgePage(app) {
   const {
     Button,
-    Checkbox,
     DatePicker,
     Drawer,
     Form,
     Input,
     Modal,
-    Popover,
     Select,
     Space,
     Table,
@@ -19,6 +17,7 @@
   const { RangePicker } = DatePicker;
   const { Text } = Typography;
   const e = React.createElement;
+  const { ListActions, ColumnSettings, SearchInput } = app.sharedActions;
 
   const STATUS_OPTIONS = ["启用", "禁用"];
   const CONDITION_OPTIONS = ["总充值"];
@@ -225,8 +224,6 @@
     const [applied, setApplied] = React.useState(emptyFilters);
     const [page, setPage] = React.useState(1);
     const [visibleColumns, setVisibleColumns] = React.useState(defaultColumnKeys);
-    const [columnDraft, setColumnDraft] = React.useState(defaultColumnKeys);
-    const [columnsOpen, setColumnsOpen] = React.useState(false);
     const [detail, setDetail] = React.useState(null);
     const [modalState, setModalState] = React.useState({ open: false, mode: "add", badge: null });
 
@@ -340,44 +337,15 @@
       return cols;
     }, [visibleColumns, list]);
 
-    const columnPanel = e("div", { className: "column-panel login-log-column-panel" }, [
-      e("div", { className: "column-panel-head", key: "head" }, [
-        e("span", { key: "title" }, "显示字段"),
-        e("span", { key: "count", className: "column-panel-count" }, `已选 ${columnDraft.length}/${columnOptions.length}`)
-      ]),
-      e("div", { className: "column-panel-sub", key: "sub" }, "选择列表中需要展示的信息"),
-      e("div", { className: "login-log-column-actions", key: "actions" }, [
-        e(Button, { key: "all", size: "small", onClick: () => setColumnDraft(allColumnKeys) }, "全选"),
-        e(Button, { key: "clear", size: "small", onClick: () => setColumnDraft([]) }, "清空"),
-        e(Button, { key: "reset", size: "small", onClick: () => setColumnDraft(defaultColumnKeys) }, "恢复默认")
-      ]),
-      e("div", { className: "login-log-column-list", key: "list" }, [
-        e("div", { className: "login-log-column-list-head", key: "list-head" }, [
-          e("span", { key: "label" }, "列表字段"),
-          e("span", { key: "count" }, `${columnDraft.length}/${columnOptions.length}`)
-        ]),
-        e(Checkbox.Group, {
-          key: "group",
-          className: "login-log-column-grid",
-          value: columnDraft,
-          onChange: values => setColumnDraft(values)
-        }, columnOptions.map(item => e(Checkbox, { key: item.key, value: item.key }, item.label)))
-      ]),
-      e("div", { className: "column-panel-footer", key: "footer" }, [
-        e(Button, { key: "cancel", onClick: () => { setColumnDraft(visibleColumns); setColumnsOpen(false); } }, "取消"),
-        e(Button, { key: "apply", type: "primary", onClick: () => { setVisibleColumns(columnDraft); setColumnsOpen(false); } }, "应用")
-      ])
-    ]);
-
     return e("section", { className: "page-surface badge-page" }, [
       e("div", { className: "toolbar", key: "toolbar" }, [
         e(Space, { key: "filters", wrap: true, size: 8 }, [
           e("label", { className: "customer-filter-item", key: "keyword" }, [
             e("span", { key: "label" }, "搜索词 :"),
-            e(Input, {
+            e(SearchInput, {
               value: draft.keyword,
               onChange: event => updateDraft({ keyword: event.target.value }),
-              onPressEnter: search,
+              onSearch: search,
               placeholder: "请输入名称关键字",
               allowClear: true,
               className: "keyword-input"
@@ -387,32 +355,34 @@
             e("span", { key: "label" }, "状态 :"),
             e(Select, {
               value: draft.status,
-              onChange: value => updateDraft({ status: value }),
+              onChange: value => {
+                updateDraft({ status: value });
+                setApplied(prev => Object.assign({}, prev, { status: value }));
+                setPage(1);
+              },
               placeholder: "选择状态",
               allowClear: true,
               className: "select-input",
               options: STATUS_OPTIONS.map(value => ({ value, label: value }))
             })
           ]),
-          e(Button, { key: "search", type: "primary", onClick: search }, "查 询"),
-          e(Button, { key: "reset", onClick: reset }, "重 置")
-        ]),
-        e(Space, { key: "actions" }, [
-          e(Button, {
-            key: "add", type: "primary",
-            onClick: () => setModalState({ open: true, mode: "add", badge: null })
-          }, "创 建"),
-          e(Popover, {
-            key: "columns",
-            trigger: "click",
-            placement: "bottomRight",
-            open: columnsOpen,
-            onOpenChange: open => {
-              setColumnDraft(visibleColumns);
-              setColumnsOpen(open);
-            },
-            content: columnPanel
-          }, e(Button, null, "列设置"))
+          e(ListActions, {
+            key: "actions-core",
+            onReset: reset,
+            trailing: [
+              e(Button, {
+                key: "add", type: "primary",
+                onClick: () => setModalState({ open: true, mode: "add", badge: null })
+              }, "创 建"),
+              e(ColumnSettings, {
+                key: "columns",
+                options: columnOptions,
+                value: visibleColumns,
+                defaultValue: defaultColumnKeys,
+                onChange: setVisibleColumns
+              })
+            ]
+          })
         ])
       ]),
       e(Table, {

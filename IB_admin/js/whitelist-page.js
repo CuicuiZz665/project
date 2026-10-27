@@ -12,6 +12,7 @@
   } = antd;
   const { Text } = Typography;
   const e = React.createElement;
+  const { exportCsv: runExportCsv, ListActions, ColumnSettingsTrigger, ExportTrigger, SearchInput } = app.sharedActions;
 
   const EXPORT_HEADERS = ["用户ID", "昵称", "注册方式", "注册时间(GMT+8)", "邮箱", "收款账号", "最后操作人", "添加时间(GMT+8)", "国家/地区", "是否充值"];
 
@@ -59,22 +60,15 @@
       setPage(1);
     };
 
-    const exportCsv = () => {
-      const csv = [EXPORT_HEADERS, ...filtered.map(item => [
+    const exportCsv = () => runExportCsv(
+      "白名单",
+      EXPORT_HEADERS,
+      filtered.map(item => [
         item.userId, item.nickName, item.registerType, item.registeredAt, item.email,
         item.walletAddress, item.operator, item.operatedAt, item.country, item.deposited
-      ])]
-        .map(row => row.map(cell => `"${String(cell).replaceAll('"', '""')}"`).join(","))
-        .join("\n");
-      const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `白名单_${new Date().toISOString().slice(0, 10)}.csv`;
-      link.click();
-      URL.revokeObjectURL(url);
-      message.success(`已导出 ${filtered.length} 条白名单记录`);
-    };
+      ]),
+      `已导出 ${filtered.length} 条白名单记录`
+    );
 
     function addWhitelist() {
       const target = addUserId.trim();
@@ -225,45 +219,47 @@
         e(Space, { wrap: true, size: 8, key: "filters" }, [
           e("label", { className: "customer-filter-item", key: "userId" }, [
             e("span", { key: "label" }, "用户ID :"),
-            e(Input, {
+            e(SearchInput, {
               value: userId,
               onChange: event => setUserId(event.target.value),
-              onPressEnter: search,
+              onSearch: search,
               placeholder: "请输入用户ID",
               allowClear: true,
               className: "keyword-input"
             })
           ]),
-          e(Button, { key: "search", type: "primary", onClick: search }, "查 询"),
-          e(Button, { key: "reset", onClick: reset }, "重置")
-        ]),
-        e(Space, { wrap: true, size: 8, key: "actions" }, [
-          e(Button, { key: "export", onClick: exportCsv }, "导 出"),
-          e(Space, { key: "add", size: 0 }, [
-            e(Input, {
-              value: addUserId,
-              onChange: event => setAddUserId(event.target.value),
-              onPressEnter: addWhitelist,
-              placeholder: "请输入需要添加的用户ID",
-              className: "whitelist-add-input"
-            }),
-            e(Button, {
-              type: "primary",
-              disabled: !addUserId.trim(),
-              onClick: addWhitelist
-            }, "添加白名单")
-          ]),
-          e(Popover, {
-            key: "columns",
-            trigger: "click",
-            placement: "bottomRight",
-            open: columnsOpen,
-            onOpenChange: open => {
-              setColumnDraft(visibleColumns);
-              setColumnsOpen(open);
-            },
-            content: columnPanel
-          }, e(Button, null, "列设置"))
+          e(ListActions, {
+            key: "actions-core",
+            onReset: reset,
+            trailing: [
+              e(ExportTrigger, { key: "export-pin", onClick: exportCsv }),
+              e(Space, { key: "add", size: 0 }, [
+                e(Input, {
+                  value: addUserId,
+                  onChange: event => setAddUserId(event.target.value),
+                  onPressEnter: addWhitelist,
+                  placeholder: "请输入需要添加的用户ID",
+                  className: "whitelist-add-input"
+                }),
+                e(Button, {
+                  type: "primary",
+                  disabled: !addUserId.trim(),
+                  onClick: addWhitelist
+                }, "添加白名单")
+              ]),
+              e(Popover, {
+                key: "columns",
+                trigger: "click",
+                placement: "bottomRight",
+                open: columnsOpen,
+                onOpenChange: open => {
+                  setColumnDraft(visibleColumns);
+                  setColumnsOpen(open);
+                },
+                content: columnPanel
+              }, e(ColumnSettingsTrigger))
+            ]
+          })
         ])
       ]),
       e(Table, {

@@ -1,9 +1,7 @@
 (function registerAgentApplicationPage(app) {
   const {
     Button,
-    Checkbox,
     DatePicker,
-    Popover,
     Select,
     Space,
     Table,
@@ -12,6 +10,7 @@
   } = antd;
   const { RangePicker } = DatePicker;
   const e = React.createElement;
+  const { exportCsv: runExportCsv, ListActions, ColumnSettings, ExportTrigger } = app.sharedActions;
 
   const STATUS_OPTIONS = ["待审核", "已通过", "已驳回"];
   const EXPORT_HEADERS = ["用户ID", "联系方式", "交易平台", "平台下近三月持仓量", "推广模式", "申请时间", "审核状态", "操作人", "拒绝原因"];
@@ -49,8 +48,6 @@
     const [pageSize] = React.useState(5);
     const [moreOpen, setMoreOpen] = React.useState(false);
     const [visibleColumns, setVisibleColumns] = React.useState(defaultColumnKeys);
-    const [columnDraft, setColumnDraft] = React.useState(defaultColumnKeys);
-    const [columnsOpen, setColumnsOpen] = React.useState(false);
 
     const updateDraft = patch => setDraft(prev => Object.assign({}, prev, patch));
 
@@ -82,19 +79,12 @@
       setPage(1);
     };
 
-    const exportCsv = () => {
-      const csv = [EXPORT_HEADERS, ...filtered.map(item => EXPORT_FIELDS.map(field => item[field]))]
-        .map(row => row.map(cell => `"${String(cell).replaceAll('"', '""')}"`).join(","))
-        .join("\n");
-      const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `代理申请列表_${new Date().toISOString().slice(0, 10)}.csv`;
-      link.click();
-      URL.revokeObjectURL(url);
-      message.success(`已导出 ${filtered.length} 条代理申请`);
-    };
+    const exportCsv = () => runExportCsv(
+      "代理申请列表",
+      EXPORT_HEADERS,
+      filtered.map(item => EXPORT_FIELDS.map(field => item[field])),
+      `已导出 ${filtered.length} 条代理申请`
+    );
 
     const columnMap = {
       contact: {
@@ -158,35 +148,6 @@
       { title: "操作", key: "actions", width: 80, render: () => e("span", null, "-") }
     ];
 
-    const columnPanel = e("div", { className: "column-panel login-log-column-panel" }, [
-      e("div", { className: "column-panel-head", key: "head" }, [
-        e("span", { key: "title" }, "显示字段"),
-        e("span", { key: "count", className: "column-panel-count" }, `已选 ${columnDraft.length}/${columnOptions.length}`)
-      ]),
-      e("div", { className: "column-panel-sub", key: "sub" }, "选择列表中需要展示的信息"),
-      e("div", { className: "login-log-column-actions", key: "actions" }, [
-        e(Button, { key: "all", size: "small", onClick: () => setColumnDraft(defaultColumnKeys) }, "全选"),
-        e(Button, { key: "clear", size: "small", onClick: () => setColumnDraft([]) }, "清空"),
-        e(Button, { key: "reset", size: "small", onClick: () => setColumnDraft(defaultColumnKeys) }, "恢复默认")
-      ]),
-      e("div", { className: "login-log-column-list", key: "list" }, [
-        e("div", { className: "login-log-column-list-head", key: "list-head" }, [
-          e("span", { key: "label" }, "列表字段"),
-          e("span", { key: "count" }, `${columnDraft.length}/${columnOptions.length}`)
-        ]),
-        e(Checkbox.Group, {
-          key: "group",
-          className: "login-log-column-grid",
-          value: columnDraft,
-          onChange: values => setColumnDraft(values)
-        }, columnOptions.map(item => e(Checkbox, { key: item.key, value: item.key }, item.label)))
-      ]),
-      e("div", { className: "column-panel-footer", key: "footer" }, [
-        e(Button, { key: "cancel", onClick: () => { setColumnDraft(visibleColumns); setColumnsOpen(false); } }, "取消"),
-        e(Button, { key: "apply", type: "primary", onClick: () => { setVisibleColumns(columnDraft); setColumnsOpen(false); } }, "应用")
-      ])
-    ]);
-
     const filterItem = (label, control, key) => e("label", { className: "customer-filter-item", key }, [
       e("span", { key: "label" }, label),
       control
@@ -207,7 +168,11 @@
           e(Space, { wrap: true, size: 8, key: "primary" }, [
             filterItem("用户ID :", e(Select, {
               value: draft.userId,
-              onChange: value => updateDraft({ userId: value }),
+              onChange: value => {
+                updateDraft({ userId: value });
+                setApplied(prev => Object.assign({}, prev, { userId: value }));
+                setPage(1);
+              },
               placeholder: "请输入用户ID",
               allowClear: true,
               showSearch: true,
@@ -217,19 +182,46 @@
             }), "userId"),
             filterItem("状态 :", e(Select, {
               value: draft.status,
-              onChange: value => updateDraft({ status: value }),
+              onChange: value => {
+                updateDraft({ status: value });
+                setApplied(prev => Object.assign({}, prev, { status: value }));
+                setPage(1);
+              },
               placeholder: "请选择状态",
               allowClear: true,
               className: "select-input",
               options: STATUS_OPTIONS.map(value => ({ value, label: value }))
-            }), "status")
+            }), "status"),
+            e(ListActions, {
+              key: "actions-core",
+              onReset: reset,
+              extra: e(Button, {
+                key: "more",
+                type: "link",
+                onClick: () => setMoreOpen(open => !open)
+              }, moreOpen ? "收起筛选" : "更多筛选"),
+              trailing: [
+                e(ExportTrigger, { key: "export-pin", onClick: exportCsv }),
+                e(ColumnSettings, {
+                  key: "columns",
+                  options: columnOptions,
+                  value: visibleColumns,
+                  defaultValue: defaultColumnKeys,
+                  onChange: setVisibleColumns
+                })
+              ]
+            })
           ]),
           moreOpen
             ? e("div", { className: "login-log-more-row", key: "more" },
                 e(Space, { wrap: true, size: 8 }, [
                   filterItem("操作人 :", e(Select, {
                     value: draft.operator,
-                    onChange: value => updateDraft({ operator: value }),
+                    onChange: value => {
+                      updateDraft({ operator: value });
+                      setApplied(prev => Object.assign({}, prev, { operator: value }));
+                      setPage(1);
+                    },
                     placeholder: "请输入操作人",
                     allowClear: true,
                     showSearch: true,
@@ -239,33 +231,16 @@
                   }), "operator"),
                   filterItem("申请时间 :", e(RangePicker, {
                     value: draft.range,
-                    onChange: range => updateDraft({ range }),
+                    onChange: range => {
+                      updateDraft({ range });
+                      setApplied(prev => Object.assign({}, prev, { range: normalizeRange(range) }));
+                      setPage(1);
+                    },
                     format: "YYYY-MM-DD",
                     className: "login-log-range"
                   }), "range")
                 ]))
             : null
-        ]),
-        e(Space, { wrap: true, size: 8, key: "actions" }, [
-          e(Button, {
-            key: "more",
-            type: "link",
-            onClick: () => setMoreOpen(open => !open)
-          }, moreOpen ? "收起筛选" : "更多筛选"),
-          e(Button, { key: "search", type: "primary", onClick: search }, "查 询"),
-          e(Button, { key: "reset", onClick: reset }, "重置"),
-          e(Button, { key: "export", onClick: exportCsv }, "导 出"),
-          e(Popover, {
-            key: "columns",
-            trigger: "click",
-            placement: "bottomRight",
-            open: columnsOpen,
-            onOpenChange: open => {
-              setColumnDraft(visibleColumns);
-              setColumnsOpen(open);
-            },
-            content: columnPanel
-          }, e(Button, null, "列设置"))
         ])
       ]),
       e(Table, {

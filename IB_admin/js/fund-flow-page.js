@@ -17,6 +17,7 @@
   const { RangePicker } = DatePicker;
   const { Text } = Typography;
   const e = React.createElement;
+  const { ListActions, ExportTrigger, SearchInput } = app.sharedActions;
 
   function textOrDash(value) {
     return value === undefined || value === null || value === "" ? "-" : String(value);
@@ -154,23 +155,27 @@
         layout: "inline",
         className: "toolbar",
         onFinish: values => setApplied(values),
+        onValuesChange: changed => {
+          if (["fund_type", "created_time"].some(key => key in changed)) setApplied(form.getFieldsValue());
+        },
         style: { rowGap: 16 }
       }, [
         e("div", { key: "primary", style: { display: "flex", gap: 16, flexWrap: "wrap", width: "100%" } }, [
           e(Form.Item, { key: "user", label: "User ID", name: "user_code" },
-            e(Input, { allowClear: true, placeholder: "User ID", style: { width: 200 } })),
+            e(SearchInput, { allowClear: true, placeholder: "User ID", style: { width: 200 }, onSearch: () => form.submit() })),
           e(Form.Item, { key: "ticket", label: "订单号", name: "ticket" },
-            e(Input, { allowClear: true, placeholder: "订单号", style: { width: 200 } })),
+            e(SearchInput, { allowClear: true, placeholder: "订单号", style: { width: 200 }, onSearch: () => form.submit() })),
           e(Form.Item, { key: "toggle" },
             e(Button, { type: "text", htmlType: "button", "aria-expanded": expanded, onClick: () => setExpanded(!expanded) }, [
               expanded ? "收起筛选" : "更多筛选",
               secondaryActive > 0 ? e("span", { key: "count", style: { marginLeft: 4, color: "#1677ff" } }, secondaryActive) : null
             ])),
+          // 导出钉在卡片右上角（挂主行层，避开 antd Form.Item 的 relative 锚点）
           e(Form.Item, { key: "actions" },
-            e(Space, null, [
-              e(Button, { key: "search", type: "primary", htmlType: "submit" }, "查询"),
-              e(Button, { key: "reset", onClick: () => { form.resetFields(); setApplied({}); } }, "重置")
-            ]))
+            e(ListActions, {
+              onReset: () => { form.resetFields(); setApplied({}); }
+            })),
+          e(ExportTrigger, { key: "export-pin", onClick: () => { exportForm.setFieldsValue({ format: "xlsx", filename: "" }); setExportOpen(true); } })
         ]),
         e("div", { key: "secondary", hidden: !expanded, style: { display: expanded ? "flex" : "none", gap: 16, flexWrap: "wrap", width: "100%" } }, [
           e(Form.Item, { key: "fund-type", label: "资金类型", name: "fund_type" },
@@ -186,8 +191,6 @@
             e(RangePicker, { showTime: true, style: { width: 320 } }))
         ])
       ]),
-      e("div", { key: "toolbar", style: { marginBottom: 12, display: "flex", justifyContent: "flex-end" } },
-        e(Button, { onClick: () => { exportForm.setFieldsValue({ format: "xlsx", filename: "" }); setExportOpen(true); } }, "导出")),
       e(Table, {
         key: "table",
         rowKey: "id",

@@ -5,9 +5,9 @@
     Input,
     Modal,
     Radio,
-    Select,
     Space,
     Table,
+    Tabs,
     Tag,
     Typography,
     message
@@ -47,19 +47,41 @@
     const [form] = Form.useForm();
     const [modal, modalContextHolder] = antd.Modal.useModal();
     const langOptions = app.mockData.messageLanguages || [];
+    const langNames = langOptions.map(item => item.value ?? item.key ?? "").filter(Boolean);
+    const defaultLang = langNames[0] || "英语";
+    const [langs, setLangs] = React.useState([defaultLang]);
+    const [activeLang, setActiveLang] = React.useState(defaultLang);
     const typeWatch = Form.useWatch("type", form);
 
     function closeCreate() {
       setCreateOpen(false);
       form.resetFields();
+      setLangs([defaultLang]);
+      setActiveLang(defaultLang);
+    }
+
+    function addLang() {
+      const next = langNames.find(name => !langs.includes(name));
+      if (!next) return;
+      setLangs(list => list.concat(next));
+      setActiveLang(next);
+    }
+
+    function removeLang(lang) {
+      if (langs.length <= 1) return;
+      const rest = langs.filter(item => item !== lang);
+      setLangs(rest);
+      if (activeLang === lang) setActiveLang(rest[0]);
     }
 
     function doSend(values) {
+      const localeMap = form.getFieldsValue(true).localeConfigs || {};
       const title = {};
       const content = {};
-      (values.localeConfigs || []).forEach(row => {
-        if (row.lang && row.title) title[row.lang] = row.title;
-        if (row.lang && row.content) content[row.lang] = row.content;
+      langs.forEach(lang => {
+        const row = localeMap[lang] || {};
+        if (row.title) title[lang] = row.title;
+        if (row.content) content[lang] = row.content;
       });
       const nextId = messages.reduce((max, item) => Math.max(max, item.id), 0) + 1;
       setMessages(list => [{
@@ -92,6 +114,8 @@
       if (event?.currentTarget?.dataset?.action === "reset") {
         form.resetFields();
         form.setFieldsValue({ type: 0 });
+        setLangs([defaultLang]);
+        setActiveLang(defaultLang);
         return;
       }
       closeCreate();
@@ -149,7 +173,7 @@
         cancelText: "重置",
         cancelButtonProps: { "data-action": "reset" },
         styles: { body: { maxHeight: "75vh", overflow: "auto" } }
-      }, e(Form, { form, layout: "vertical", initialValues: { type: 0, localeConfigs: [{ lang: "英语", title: "", content: "" }] }, onFinish: doSend }, [
+      }, e(Form, { form, layout: "vertical", initialValues: { type: 0, localeConfigs: { [defaultLang]: { title: "", content: "" } } }, onFinish: doSend }, [
         e(Form.Item, { key: "type", label: "发送类型", name: "type", rules: [{ required: true, message: "请选择发送类型" }] },
           e(Radio.Group, null, [
             e(Radio, { key: "all", value: 0 }, "所有客户"),
@@ -162,61 +186,37 @@
           rules: [{ required: true, message: "请输入通行证 ID，多个请用逗号分隔" }]
         },
           e(Input, { placeholder: "通行证 ID，多个请用逗号分隔" })) : null,
-        e(Form.List, {
-          key: "locales",
-          name: "localeConfigs",
-          rules: [{
-            validator: (_, value) => (!value || value.length === 0)
-              ? Promise.reject(new Error("请先添加语言配置"))
-              : Promise.resolve()
-          }]
-        }, (fields, { add, remove }, { errors }) => e(React.Fragment, null, [
-          e("div", {
-            key: "header",
-            style: { display: "flex", alignItems: "center", gap: 12, padding: "8px 0", borderBottom: "2px solid #f0f0f0", fontWeight: 500, color: "#595959" }
-          }, [
-            e("div", { key: "lang", style: { width: 160 } }, "选择语言"),
-            e("div", { key: "title", style: { flex: 1 } }, "外部展示标题"),
-            e("div", { key: "content", style: { flex: 1.4 } }, "内容"),
-            e("div", { key: "actions", style: { width: 48 } })
-          ]),
-          fields.map(field => e("div", {
-            key: field.key,
-            style: { display: "flex", alignItems: "flex-start", gap: 12, padding: "12px 0", borderBottom: "1px solid #f0f0f0" }
-          }, [
-            e(Form.Item, {
-              key: "lang",
-              name: [field.name, "lang"],
-              rules: [{ required: true, message: "请选择语言" }],
-              style: { width: 160, marginBottom: 0 }
-            },
-              e(Select, { options: langOptions.map(item => ({ label: item.value, value: item.value })), placeholder: "选择语言" })),
-            e(Form.Item, {
-              key: "title",
-              name: [field.name, "title"],
-              rules: [{ required: true, message: "请输入该语言的标题" }],
-              style: { flex: 1, marginBottom: 0 }
-            },
-              e(Input, { placeholder: "请输入该语言的标题" })),
-            e(Form.Item, {
-              key: "content",
-              name: [field.name, "content"],
-              rules: [{ required: true, message: "请输入该语言的内容" }],
-              style: { flex: 1.4, marginBottom: 0 }
-            },
-              e(TextArea, { rows: 2, placeholder: "请输入该语言的内容" })),
-            e(Button, {
-              key: "remove",
-              type: "link",
-              danger: true,
-              disabled: fields.length <= 1,
-              onClick: () => remove(field.name)
-            }, "移除")
-          ])),
-          e(Form.ErrorList, { key: "errors", errors }),
-          e("div", { key: "add", style: { padding: "12px 0" } },
-            e("a", { onClick: () => add({ lang: langOptions[0]?.value || "", title: "", content: "" }) }, "+ 新增语言配置"))
-        ]))
+        e(Tabs, {
+          key: "lang-tabs",
+          activeKey: activeLang,
+          items: langs.map(lang => ({
+            key: lang,
+            label: e(Space, { size: 4 }, lang, lang !== langs[0] && e(Button, {
+              key: "x",
+              type: "text",
+              size: "small",
+              onClick: event => {
+                event.stopPropagation();
+                removeLang(lang);
+              }
+            }, "x"))
+          })).concat({ key: "__add", label: "+ 添加语言" }),
+          onChange: key => key === "__add" ? addLang() : setActiveLang(key)
+        }),
+        e(Form.Item, {
+          key: "title",
+          name: ["localeConfigs", activeLang, "title"],
+          label: "外部展示标题",
+          rules: [{ required: true, message: "请输入该语言的标题" }]
+        },
+          e(Input, { placeholder: "请输入该语言的标题" })),
+        e(Form.Item, {
+          key: "content",
+          name: ["localeConfigs", activeLang, "content"],
+          label: "内容",
+          rules: [{ required: true, message: "请输入该语言的内容" }]
+        },
+          e(TextArea, { rows: 4, placeholder: "请输入该语言的内容" }))
       ]))
     ]);
   }

@@ -1,10 +1,8 @@
 (function registerCommissionRecordPage(app) {
   const {
     Button,
-    Checkbox,
     DatePicker,
     Modal,
-    Popover,
     Select,
     Space,
     Table,
@@ -13,6 +11,7 @@
   } = antd;
   const { RangePicker } = DatePicker;
   const e = React.createElement;
+  const { exportCsv: runExportCsv, ListActions, ColumnSettings, ExportTrigger } = app.sharedActions;
 
   const SETTLE_STATUS_OPTIONS = ["未结算", "已结算", "已驳回"];
   const EXPORT_HEADERS = ["订单号", "品种", "持仓量", "佣金金额", "结算时间", "结算状态"];
@@ -91,15 +90,15 @@
               options: levels.map(name => ({ value: name, label: name }))
             })
           ]),
-          e(Button, { key: "search", type: "primary", onClick: () => setApplied({ userId, level }) }, "查 询"),
-          e(Button, {
-            key: "reset",
-            onClick: () => {
+          e(ListActions, {
+            key: "actions-core",
+            onQuery: () => setApplied({ userId, level }),
+            onReset: () => {
               setUserId(null);
               setLevel(null);
               setApplied({ userId: null, level: null });
             }
-          }, "重 置")
+          })
         ])),
       e(Table, {
         key: "table",
@@ -131,8 +130,6 @@
     const [pageSize] = React.useState(5);
     const [moreOpen, setMoreOpen] = React.useState(false);
     const [visibleColumns, setVisibleColumns] = React.useState(defaultColumnKeys);
-    const [columnDraft, setColumnDraft] = React.useState(defaultColumnKeys);
-    const [columnsOpen, setColumnsOpen] = React.useState(false);
     const [detailRecord, setDetailRecord] = React.useState(null);
 
     const updateDraft = patch => setDraft(prev => Object.assign({}, prev, patch));
@@ -174,19 +171,12 @@
       setPage(1);
     };
 
-    const exportCsv = () => {
-      const csv = [EXPORT_HEADERS, ...filtered.map(item => EXPORT_FIELDS.map(field => item[field]))]
-        .map(row => row.map(cell => `"${String(cell).replaceAll('"', '""')}"`).join(","))
-        .join("\n");
-      const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `佣金记录管理_${new Date().toISOString().slice(0, 10)}.csv`;
-      link.click();
-      URL.revokeObjectURL(url);
-      message.success(`已导出 ${filtered.length} 条佣金记录`);
-    };
+    const exportCsv = () => runExportCsv(
+      "佣金记录管理",
+      EXPORT_HEADERS,
+      filtered.map(item => EXPORT_FIELDS.map(field => item[field])),
+      `已导出 ${filtered.length} 条佣金记录`
+    );
 
     const columnMap = {
       symbol: { title: "品种", dataIndex: "symbol", width: 110 },
@@ -219,35 +209,6 @@
       { title: "操作", key: "actions", width: 90, render: () => e("span", null, "-") }
     ];
 
-    const columnPanel = e("div", { className: "column-panel login-log-column-panel" }, [
-      e("div", { className: "column-panel-head", key: "head" }, [
-        e("span", { key: "title" }, "显示字段"),
-        e("span", { key: "count", className: "column-panel-count" }, `已选 ${columnDraft.length}/${columnOptions.length}`)
-      ]),
-      e("div", { className: "column-panel-sub", key: "sub" }, "选择列表中需要展示的信息"),
-      e("div", { className: "login-log-column-actions", key: "actions" }, [
-        e(Button, { key: "all", size: "small", onClick: () => setColumnDraft(defaultColumnKeys) }, "全选"),
-        e(Button, { key: "clear", size: "small", onClick: () => setColumnDraft([]) }, "清空"),
-        e(Button, { key: "reset", size: "small", onClick: () => setColumnDraft(defaultColumnKeys) }, "恢复默认")
-      ]),
-      e("div", { className: "login-log-column-list", key: "list" }, [
-        e("div", { className: "login-log-column-list-head", key: "list-head" }, [
-          e("span", { key: "label" }, "列表字段"),
-          e("span", { key: "count" }, `${columnDraft.length}/${columnOptions.length}`)
-        ]),
-        e(Checkbox.Group, {
-          key: "group",
-          className: "login-log-column-grid",
-          value: columnDraft,
-          onChange: values => setColumnDraft(values)
-        }, columnOptions.map(item => e(Checkbox, { key: item.key, value: item.key }, item.label)))
-      ]),
-      e("div", { className: "column-panel-footer", key: "footer" }, [
-        e(Button, { key: "cancel", onClick: () => { setColumnDraft(visibleColumns); setColumnsOpen(false); } }, "取消"),
-        e(Button, { key: "apply", type: "primary", onClick: () => { setVisibleColumns(columnDraft); setColumnsOpen(false); } }, "应用")
-      ])
-    ]);
-
     const filterItem = (label, control, key) => e("label", { className: "customer-filter-item", key }, [
       e("span", { key: "label" }, label),
       control
@@ -259,7 +220,11 @@
           e(Space, { wrap: true, size: 8, key: "primary" }, [
             filterItem("订单号 :", e(Select, {
               value: draft.orderId,
-              onChange: value => updateDraft({ orderId: value }),
+              onChange: value => {
+                updateDraft({ orderId: value });
+                setApplied(prev => Object.assign({}, prev, { orderId: value }));
+                setPage(1);
+              },
               placeholder: "请输入订单ID",
               allowClear: true,
               showSearch: true,
@@ -269,21 +234,48 @@
             }), "orderId"),
             filterItem("品种 :", e(Select, {
               value: draft.symbol,
-              onChange: value => updateDraft({ symbol: value }),
+              onChange: value => {
+                updateDraft({ symbol: value });
+                setApplied(prev => Object.assign({}, prev, { symbol: value }));
+                setPage(1);
+              },
               placeholder: "请输入交易品种",
               allowClear: true,
               showSearch: true,
               optionFilterProp: "label",
               className: "keyword-select",
               options: symbolOptions.map(value => ({ value, label: value }))
-            }), "symbol")
+            }), "symbol"),
+            e(ListActions, {
+              key: "actions-core",
+              onReset: reset,
+              extra: e(Button, {
+                key: "more",
+                type: "link",
+                onClick: () => setMoreOpen(open => !open)
+              }, moreOpen ? "收起筛选" : "更多筛选"),
+              trailing: [
+                e(ExportTrigger, { key: "export-pin", onClick: exportCsv }),
+                e(ColumnSettings, {
+                  key: "columns",
+                  options: columnOptions,
+                  value: visibleColumns,
+                  defaultValue: defaultColumnKeys,
+                  onChange: setVisibleColumns
+                })
+              ]
+            })
           ]),
           moreOpen
             ? e("div", { className: "login-log-more-row", key: "more" },
                 e(Space, { wrap: true, size: 8 }, [
                   filterItem("结算状态 :", e(Select, {
                     value: draft.settleStatus,
-                    onChange: value => updateDraft({ settleStatus: value }),
+                    onChange: value => {
+                      updateDraft({ settleStatus: value });
+                      setApplied(prev => Object.assign({}, prev, { settleStatus: value }));
+                      setPage(1);
+                    },
                     placeholder: "请选择结算状态",
                     allowClear: true,
                     className: "select-input",
@@ -291,33 +283,16 @@
                   }), "settleStatus"),
                   filterItem("结算时间 :", e(RangePicker, {
                     value: draft.settledRange,
-                    onChange: range => updateDraft({ settledRange: range }),
+                    onChange: range => {
+                      updateDraft({ settledRange: range });
+                      setApplied(prev => Object.assign({}, prev, { settledRange: normalizeRange(range) }));
+                      setPage(1);
+                    },
                     format: "YYYY-MM-DD",
                     className: "login-log-range"
                   }), "settledRange")
                 ]))
             : null
-        ]),
-        e(Space, { wrap: true, size: 8, key: "actions" }, [
-          e(Button, {
-            key: "more",
-            type: "link",
-            onClick: () => setMoreOpen(open => !open)
-          }, moreOpen ? "收起筛选" : "更多筛选"),
-          e(Button, { key: "search", type: "primary", onClick: search }, "查 询"),
-          e(Button, { key: "reset", onClick: reset }, "重置"),
-          e(Button, { key: "export", onClick: exportCsv }, "导 出"),
-          e(Popover, {
-            key: "columns",
-            trigger: "click",
-            placement: "bottomRight",
-            open: columnsOpen,
-            onOpenChange: open => {
-              setColumnDraft(visibleColumns);
-              setColumnsOpen(open);
-            },
-            content: columnPanel
-          }, e(Button, null, "列设置"))
         ])
       ]),
       e(Table, {

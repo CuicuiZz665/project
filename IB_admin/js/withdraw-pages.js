@@ -320,11 +320,12 @@
         activeSecondaryCount: secondaryActive,
         onSubmit: values => setApplied(values),
         onReset: () => { form.resetFields(); setApplied({}); },
+        instantFields: ["status", "channel", "withdraw_time"],
         primary: [
           e(Form.Item, { key: "user", label: "User ID", name: "user_code" },
-            e(Input, { allowClear: true, placeholder: "User ID", style: { width: 200 } })),
+            e(app.sharedActions.SearchInput, { allowClear: true, placeholder: "User ID", style: { width: 200 }, onSearch: () => form.submit() })),
           e(Form.Item, { key: "order", label: "订单号", name: "order_no" },
-            e(Input, { allowClear: true, placeholder: "订单号", style: { width: 200 } })),
+            e(app.sharedActions.SearchInput, { allowClear: true, placeholder: "订单号", style: { width: 200 }, onSearch: () => form.submit() })),
           e(Form.Item, { key: "status", label: "状态", name: "status" },
             e(Select, { allowClear: true, placeholder: "状态", options: statusOptions, style: { width: 160 } }))
         ],
@@ -333,10 +334,12 @@
             e(Select, { allowClear: true, placeholder: "提现通道", options: channelOptions, style: { minWidth: 180 } })),
           e(Form.Item, { key: "time", label: "提现时间", name: "withdraw_time" },
             e(RangePicker, { showTime: true, style: { width: 320 } }))
+        ],
+        // 导出钉在筛选表单右上角（挂 Form 层，见 ProgressiveFilters aside 说明）
+        aside: [
+          e(app.sharedActions.ExportTrigger, { key: "export-pin", onClick: () => { exportForm.setFieldsValue({ format: "xlsx", filename: "" }); setExportOpen(true); } })
         ]
       }),
-      e("div", { key: "toolbar", style: { marginBottom: 12, display: "flex", justifyContent: "flex-end" } },
-        e(Button, { key: "export", onClick: () => { exportForm.setFieldsValue({ format: "xlsx", filename: "" }); setExportOpen(true); } }, "导出")),
       e(Table, {
         key: "table",
         rowKey: "id",

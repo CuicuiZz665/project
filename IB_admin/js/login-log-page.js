@@ -2,10 +2,8 @@
   const {
     AutoComplete,
     Button,
-    Checkbox,
     DatePicker,
     Input,
-    Popover,
     Select,
     Space,
     Table,
@@ -14,6 +12,7 @@
   } = antd;
   const { RangePicker } = DatePicker;
   const e = React.createElement;
+  const { exportCsv: runExportCsv, ListActions, ColumnSettings, ExportTrigger, SearchInput } = app.sharedActions;
 
   const COUNTRY_OPTIONS = ["CHN", "SGP", "GBR", "USA", "JPN"];
   const METHOD_OPTIONS = ["邮箱登录", "手机登录", "微信登录", "支付宝登录", "Apple 登录"];
@@ -43,8 +42,7 @@
     { key: "method", label: "登录方式" },
     { key: "loginAt", label: "登录时间" }
   ];
-  const allColumnKeys = columnOptions.map(item => item.key);
-  const defaultColumnKeys = [...allColumnKeys];
+  const defaultColumnKeys = columnOptions.map(item => item.key);
 
   const emptyFilters = () => ({
     keyword: "",
@@ -76,8 +74,6 @@
     const [pageSize, setPageSize] = React.useState(20);
     const [moreOpen, setMoreOpen] = React.useState(false);
     const [visibleColumns, setVisibleColumns] = React.useState(defaultColumnKeys);
-    const [columnDraft, setColumnDraft] = React.useState(defaultColumnKeys);
-    const [columnsOpen, setColumnsOpen] = React.useState(false);
 
     const draftRef = React.useRef(draft);
     const updateDraft = patch => setDraft(prev => {
@@ -134,19 +130,12 @@
       setPageSize(20);
     };
 
-    const exportCsv = () => {
-      const csv = [EXPORT_HEADERS, ...filtered.map(log => EXPORT_FIELDS.map(field => log[field]))]
-        .map(row => row.map(cell => `"${String(cell).replaceAll('"', '""')}"`).join(","))
-        .join("\n");
-      const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `用户登录日志_${new Date().toISOString().slice(0, 10)}.csv`;
-      link.click();
-      URL.revokeObjectURL(url);
-      message.success(`已导出 ${filtered.length} 条登录日志`);
-    };
+    const exportCsv = () => runExportCsv(
+      "用户登录日志",
+      EXPORT_HEADERS,
+      filtered.map(log => EXPORT_FIELDS.map(field => log[field])),
+      `已导出 ${filtered.length} 条登录日志`
+    );
 
     const renderLink = value => e(Button, {
       type: "link",
@@ -247,42 +236,13 @@
       ...visibleColumns.map(key => columnMap[key])
     ];
 
-    const columnPanel = e("div", { className: "column-panel login-log-column-panel" }, [
-      e("div", { className: "column-panel-head", key: "head" }, [
-        e("span", { key: "title" }, "显示字段"),
-        e("span", { key: "count", className: "column-panel-count" }, `已选 ${columnDraft.length}/${columnOptions.length}`)
-      ]),
-      e("div", { className: "column-panel-sub", key: "sub" }, "选择列表中需要展示的信息"),
-      e("div", { className: "login-log-column-actions", key: "actions" }, [
-        e(Button, { key: "all", size: "small", onClick: () => setColumnDraft(allColumnKeys) }, "全选"),
-        e(Button, { key: "clear", size: "small", onClick: () => setColumnDraft([]) }, "清空"),
-        e(Button, { key: "reset", size: "small", onClick: () => setColumnDraft(defaultColumnKeys) }, "恢复默认")
-      ]),
-      e("div", { className: "login-log-column-list", key: "list" }, [
-        e("div", { className: "login-log-column-list-head", key: "list-head" }, [
-          e("span", { key: "label" }, "列表字段"),
-          e("span", { key: "count" }, `${columnDraft.length}/${columnOptions.length}`)
-        ]),
-        e(Checkbox.Group, {
-          key: "group",
-          className: "login-log-column-grid",
-          value: columnDraft,
-          onChange: values => setColumnDraft(values)
-        }, columnOptions.map(item => e(Checkbox, { key: item.key, value: item.key }, item.label)))
-      ]),
-      e("div", { className: "column-panel-footer", key: "footer" }, [
-        e(Button, { key: "cancel", onClick: () => { setColumnDraft(visibleColumns); setColumnsOpen(false); } }, "取消"),
-        e(Button, { key: "apply", type: "primary", onClick: () => { setVisibleColumns(columnDraft); setColumnsOpen(false); } }, "应用")
-      ])
-    ]);
-
     const textFilter = (label, field, placeholder, className) => e("label", { className: "customer-filter-item", key: field }, [
       e("span", { key: "label" }, label),
-      e(Input, {
+      e(SearchInput, {
         key: "input",
         value: draft[field],
         onChange: event => updateDraft({ [field]: event.target.value }),
-        onPressEnter: search,
+        onSearch: search,
         placeholder,
         allowClear: true,
         className: className || "keyword-input"
@@ -294,7 +254,11 @@
       e(Select, {
         key: "select",
         value: draft[field],
-        onChange: value => updateDraft({ [field]: value }),
+        onChange: value => {
+          updateDraft({ [field]: value });
+          setApplied(prev => Object.assign({}, prev, { [field]: value }));
+          setPage(1);
+        },
         className: "select-input",
         options: [{ value: "", label: "全部" }].concat(options.map(value => ({ value, label: value })))
       })
@@ -310,6 +274,11 @@
                 key: "autocomplete",
                 value: draft.keyword,
                 onChange: value => updateDraft({ keyword: value || "" }),
+                onSelect: value => {
+                  updateDraft({ keyword: value });
+                  setApplied(prev => Object.assign({}, prev, { keyword: value }));
+                  setPage(1);
+                },
                 className: "keyword-select",
                 placeholder: "搜索或选择 ID、请求 ID、用户 ID、IP",
                 allowClear: true,
@@ -327,11 +296,34 @@
               e(RangePicker, {
                 key: "picker",
                 value: draft.range,
-                onChange: range => updateDraft({ range }),
+                onChange: range => {
+                  updateDraft({ range });
+                  setApplied(prev => Object.assign({}, prev, { range: normalizeRange(range) }));
+                  setPage(1);
+                },
                 format: "YYYY-MM-DD",
                 className: "login-log-range"
               })
-            ])
+            ]),
+          e(ListActions, {
+            key: "actions-core",
+            onReset: reset,
+              extra: e(Button, {
+                key: "more",
+                type: "link",
+                onClick: () => setMoreOpen(open => !open)
+              }, moreOpen ? "收起筛选" : "更多筛选"),
+              trailing: [
+                e(ExportTrigger, { key: "export-pin", onClick: exportCsv }),
+                e(ColumnSettings, {
+                  key: "columns",
+                  options: columnOptions,
+                  value: visibleColumns,
+                  defaultValue: defaultColumnKeys,
+                  onChange: setVisibleColumns
+                })
+              ]
+            })
           ]),
           moreOpen
             ? e("div", { className: "login-log-more-row", key: "more" },
@@ -344,27 +336,6 @@
                   selectFilter("登录方式", "method", METHOD_OPTIONS)
                 ]))
             : null
-        ]),
-        e(Space, { wrap: true, size: 8, key: "actions" }, [
-          e(Button, {
-            key: "more",
-            type: "link",
-            onClick: () => setMoreOpen(open => !open)
-          }, moreOpen ? "收起筛选" : "更多筛选"),
-          e(Button, { key: "search", type: "primary", onClick: search }, "搜 索"),
-          e(Button, { key: "reset", type: "link", onClick: reset }, "重置"),
-          e(Button, { key: "export", onClick: exportCsv }, "导 出"),
-          e(Popover, {
-            key: "columns",
-            trigger: "click",
-            placement: "bottomRight",
-            open: columnsOpen,
-            onOpenChange: open => {
-              setColumnDraft(visibleColumns);
-              setColumnsOpen(open);
-            },
-            content: columnPanel
-          }, e(Button, null, "列设置"))
         ])
       ]),
       e(Table, {

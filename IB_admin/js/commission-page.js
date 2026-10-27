@@ -19,6 +19,7 @@
   } = antd;
   const { Text } = Typography;
   const e = React.createElement;
+  const { ListActions } = app.sharedActions;
 
   const rateRows = [
     { group: "合约", key: "contract", label: "全部" },
@@ -384,15 +385,14 @@
                   options: [{ value: true, label: "上架" }, { value: false, label: "下架" }]
                 })
               ]),
-              e(Space, { key: "buttons", size: 8 }, [
-                e(Button, { type: "primary", onClick: () => setSymbolFilter({ ...symbolDraft }) }, "查 询"),
-                e(Button, {
-                  onClick: () => {
-                    setSymbolDraft(emptySymbolFilter());
-                    setSymbolFilter(emptySymbolFilter());
-                  }
-                }, "重 置")
-              ]),
+              e(ListActions, {
+                key: "buttons",
+                onQuery: () => setSymbolFilter({ ...symbolDraft }),
+                onReset: () => {
+                  setSymbolDraft(emptySymbolFilter());
+                  setSymbolFilter(emptySymbolFilter());
+                }
+              }),
               e(Space, { key: "fill", size: 8, style: { marginLeft: "auto" } }, [
                 e(InputNumber, {
                   key: "input",
@@ -531,12 +531,14 @@
               options: ["已通过", "待审核", "已拒绝"].map(value => ({ value, label: value }))
             })
           ]),
-          e(Space, { key: "buttons", size: 8 }, [
-            e(Button, { type: "primary", key: "search", onClick: () => setKeyword(keyword) }, "查询"),
-            e(Button, { key: "reset", onClick: resetFilters }, "重置")
-          ])
-        ]),
-        e(Button, { key: "add", type: "primary", onClick: openCreate }, "新增佣金规则")
+          e(ListActions, {
+            key: "buttons",
+            onReset: resetFilters,
+            trailing: [
+              e(Button, { key: "add", type: "primary", onClick: openCreate }, "新增佣金规则")
+            ]
+          })
+        ])
       ]),
       e(Table, {
         key: "table",

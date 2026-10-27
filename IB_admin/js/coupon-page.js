@@ -16,6 +16,7 @@
   const { RangePicker } = DatePicker;
   const { Text } = Typography;
   const e = React.createElement;
+  const { ListActions, SearchInput } = app.sharedActions;
 
   const TYPE_OPTIONS = ["抹亏券", "交易返现券", "手续费减免券"];
 
@@ -206,31 +207,36 @@
     return e("section", { className: "page-surface coupon-page" }, [
       e("div", { className: "toolbar", key: "toolbar" }, [
         e(Space, { key: "filters", wrap: true, size: 8 }, [
-          e(Input, {
+          e(SearchInput, {
             value: draft.keyword,
             onChange: event => setDraft({ ...draft, keyword: event.target.value }),
-            onPressEnter: search,
+            onSearch: search,
             placeholder: "券名称",
             allowClear: true,
             className: "keyword-input"
           }),
           e(Select, {
             value: draft.status,
-            onChange: value => setDraft({ ...draft, status: value }),
+            onChange: value => {
+              setDraft({ ...draft, status: value });
+              setApplied({ ...draft, status: value });
+            },
             placeholder: "状态",
             allowClear: true,
             className: "select-input",
             options: ["启用", "停用"].map(value => ({ value, label: value }))
           }),
-          e(Button, { type: "primary", onClick: search }, "查 询"),
-          e(Button, { onClick: reset }, "重 置")
-        ]),
-        e(Space, { key: "actions" }, [
-          e(Text, { key: "hint", type: "secondary" }, "被活动奖池引用的券不可删除"),
-          e(Button, {
-            key: "add", type: "primary",
-            onClick: () => setModalState({ open: true, mode: "add", coupon: null })
-          }, "新增优惠券")
+          e(ListActions, {
+            key: "actions-core",
+            onReset: reset,
+            trailing: [
+              e(Text, { key: "hint", type: "secondary" }, "被活动奖池引用的券不可删除"),
+              e(Button, {
+                key: "add", type: "primary",
+                onClick: () => setModalState({ open: true, mode: "add", coupon: null })
+              }, "新增优惠券")
+            ]
+          })
         ])
       ]),
       e(Table, {

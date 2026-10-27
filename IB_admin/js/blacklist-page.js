@@ -18,6 +18,7 @@
   const { RangePicker } = DatePicker;
   const { Text } = Typography;
   const e = React.createElement;
+  const { exportCsv: runExportCsv, ListActions, ColumnSettingsTrigger, ExportTrigger, SearchInput } = app.sharedActions;
 
   const SORT_OPTIONS = ["添加时间", "注册时间"];
   const RESTRICTION_OPTIONS = ["限制登录", "限制充值", "限制提现"];
@@ -185,22 +186,15 @@
       setPage(1);
     };
 
-    const exportCsv = () => {
-      const csv = [EXPORT_HEADERS, ...filtered.map(item => [
+    const exportCsv = () => runExportCsv(
+      "黑名单",
+      EXPORT_HEADERS,
+      filtered.map(item => [
         item.userId, item.registerType, item.registeredAt, item.email, item.walletAddress,
         item.operator, item.operatedAt, item.reason, item.deposited, item.restrictions.join("/")
-      ])]
-        .map(row => row.map(cell => `"${String(cell).replaceAll('"', '""')}"`).join(","))
-        .join("\n");
-      const blob = new Blob(["\ufeff" + csv], { type: "text/csv;charset=utf-8;" });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-      link.download = `黑名单_${new Date().toISOString().slice(0, 10)}.csv`;
-      link.click();
-      URL.revokeObjectURL(url);
-      message.success(`已导出 ${filtered.length} 条黑名单记录`);
-    };
+      ]),
+      `已导出 ${filtered.length} 条黑名单记录`
+    );
 
     function addBlacklist(values) {
       setList(prev => [{
@@ -376,67 +370,79 @@
       e("div", { className: "toolbar login-log-toolbar", key: "toolbar" }, [
         e("div", { className: "login-log-filter-area", key: "filters" }, [
           e(Space, { wrap: true, size: 8, key: "primary" }, [
-            filterItem("用户ID :", e(Input, {
+            filterItem("用户ID :", e(SearchInput, {
               value: draft.userId,
               onChange: event => updateDraft({ userId: event.target.value }),
-              onPressEnter: search,
+              onSearch: search,
               placeholder: "请输入用户ID",
               allowClear: true,
               className: "keyword-input"
             }), "userId"),
-            filterItem("邮箱 :", e(Input, {
+            filterItem("邮箱 :", e(SearchInput, {
               value: draft.email,
               onChange: event => updateDraft({ email: event.target.value }),
-              onPressEnter: search,
+              onSearch: search,
               placeholder: "请输入邮箱",
               allowClear: true,
               className: "keyword-input"
-            }), "email")
-          ]),
-          e(Space, { wrap: true, size: 8, key: "buttons" }, [
-            e(Button, {
-              key: "more",
-              type: "link",
-              onClick: () => setMoreOpen(open => !open)
-            }, moreOpen ? "收起筛选" : "更多筛选"),
-            e(Button, { key: "search", type: "primary", onClick: search }, "查 询"),
-            e(Button, { key: "reset", onClick: reset }, "重置")
+            }), "email"),
+            e(ListActions, {
+              key: "actions-core",
+              onReset: reset,
+              extra: e(Button, {
+                key: "more",
+                type: "link",
+                onClick: () => setMoreOpen(open => !open)
+              }, moreOpen ? "收起筛选" : "更多筛选"),
+              trailing: [
+                e(ExportTrigger, { key: "export-pin", onClick: exportCsv }),
+                e(Button, { key: "add", type: "primary", onClick: () => setAddOpen(true) }, "添加黑名单"),
+                e(Popover, {
+                  key: "columns",
+                  trigger: "click",
+                  placement: "bottomRight",
+                  open: columnsOpen,
+                  onOpenChange: open => {
+                    setColumnDraft(visibleColumns);
+                    setColumnsOpen(open);
+                  },
+                  content: columnPanel
+                }, e(ColumnSettingsTrigger))
+              ]
+            })
           ]),
           moreOpen ? e("div", { className: "blacklist-more-area", key: "more" }, [
             filterItem("排序方式 :", e(Select, {
               value: draft.sortBy,
-              onChange: value => updateDraft({ sortBy: value }),
+              onChange: value => {
+                updateDraft({ sortBy: value });
+                setApplied(prev => Object.assign({}, prev, { sortBy: value }));
+                setPage(1);
+              },
               className: "select-input",
               options: SORT_OPTIONS.map(value => ({ value, label: value }))
             }), "sortBy"),
             filterItem("添加时间(GMT+8) :", e(RangePicker, {
               value: draft.addedRange,
-              onChange: range => updateDraft({ addedRange: range }),
+              onChange: range => {
+                updateDraft({ addedRange: range });
+                setApplied(prev => Object.assign({}, prev, { addedRange: normalizeRange(range) }));
+                setPage(1);
+              },
               format: "YYYY-MM-DD",
               className: "login-log-range"
             }), "addedRange"),
             filterItem("注册时间(GMT+8) :", e(RangePicker, {
               value: draft.registerRange,
-              onChange: range => updateDraft({ registerRange: range }),
+              onChange: range => {
+                updateDraft({ registerRange: range });
+                setApplied(prev => Object.assign({}, prev, { registerRange: normalizeRange(range) }));
+                setPage(1);
+              },
               format: "YYYY-MM-DD",
               className: "login-log-range"
             }), "registerRange")
           ]) : null
-        ]),
-        e(Space, { wrap: true, size: 8, key: "actions" }, [
-          e(Button, { key: "export", onClick: exportCsv }, "导 出"),
-          e(Button, { key: "add", type: "primary", onClick: () => setAddOpen(true) }, "添加黑名单"),
-          e(Popover, {
-            key: "columns",
-            trigger: "click",
-            placement: "bottomRight",
-            open: columnsOpen,
-            onOpenChange: open => {
-              setColumnDraft(visibleColumns);
-              setColumnsOpen(open);
-            },
-            content: columnPanel
-          }, e(Button, null, "列设置"))
         ])
       ]),
       e(Table, {

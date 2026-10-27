@@ -15,6 +15,7 @@
     message
   } = antd;
   const e = React.createElement;
+  const { ListActions, ColumnSettingsTrigger, ExportTrigger, SearchInput } = app.sharedActions;
 
   const SO_TYPE_COLORS = { 0: "blue", 1: "geekblue", 2: "cyan", 3: "purple" };
 
@@ -242,38 +243,39 @@
         layout: "inline",
         className: "toolbar",
         onFinish: values => setApplied(values),
+        onValuesChange: changed => {
+          if ("account_type" in changed) setApplied(form.getFieldsValue());
+        },
         style: { rowGap: 16 }
       }, [
         e("div", { key: "primary", style: { display: "flex", gap: 16, flexWrap: "wrap", width: "100%" } }, [
           e(Form.Item, { key: "user", label: "用户ID", name: "user_code" },
-            e(Input, { allowClear: true, placeholder: "输入用户ID", style: { width: 160 } })),
+            e(SearchInput, { allowClear: true, placeholder: "输入用户ID", style: { width: 160 }, onSearch: () => form.submit() })),
           e(Form.Item, { key: "login", label: "子账号", name: "login" },
-            e(Input, { allowClear: true, placeholder: "请输入子账号", style: { width: 160 } })),
+            e(SearchInput, { allowClear: true, placeholder: "请输入子账号", style: { width: 160 }, onSearch: () => form.submit() })),
           e(Form.Item, { key: "ticket", label: "订单号", name: "ticket" },
-            e(Input, { allowClear: true, placeholder: "请输入订单号", style: { width: 190 } })),
+            e(SearchInput, { allowClear: true, placeholder: "请输入订单号", style: { width: 190 }, onSearch: () => form.submit() })),
           e(Form.Item, { key: "toggle" },
             e(Button, { type: "text", htmlType: "button", "aria-expanded": expanded, onClick: () => setExpanded(!expanded) }, [
               expanded ? "收起筛选" : "更多筛选",
               secondaryActive > 0 ? e("span", { key: "count", style: { marginLeft: 4, color: "#1677ff" } }, secondaryActive) : null
             ])),
+          // 查询/重置 同组不换行；导出/列设置钉在卡片右上角，面板锚到卡片层（.toolbar 已定位）
           e(Form.Item, { key: "actions" },
-            e(Space, null, [
-              e(Button, { key: "search", type: "primary", htmlType: "submit" }, "查询"),
-              e(Button, { key: "reset", onClick: () => { form.resetFields(); setApplied({}); } }, "重置")
-            ]))
+            e(ListActions, {
+              onReset: () => { form.resetFields(); setApplied({}); }
+            })),
+          e(ExportTrigger, { key: "export-pin", onClick: () => { exportForm.setFieldsValue({ format: "xlsx", filename: "" }); setExportOpen(true); } }),
+          e(ColumnSettingsTrigger, { key: "columns-pin", onClick: () => { setColumnDraft(visibleKeys); setColumnPanelOpen(!columnPanelOpen); } }),
+          columnPanelOpen ? e("div", {
+            key: "panel-wrap",
+            style: { position: "absolute", top: 54, right: 14, zIndex: 20 }
+          }, columnPanel) : null
         ]),
         e("div", { key: "secondary", hidden: !expanded, style: { display: expanded ? "flex" : "none", gap: 16, flexWrap: "wrap", width: "100%" } }, [
           e(Form.Item, { key: "account-type", label: "账号类型", name: "account_type", initialValue: -1 },
             e(Select, { options: accountOptions, style: { width: 150 } }))
         ])
-      ]),
-      e("div", { key: "toolbar", style: { marginBottom: 12, display: "flex", justifyContent: "flex-end", gap: 8, position: "relative" } }, [
-        e(Button, { key: "export", onClick: () => { exportForm.setFieldsValue({ format: "xlsx", filename: "" }); setExportOpen(true); } }, "导出"),
-        e(Button, { key: "columns", onClick: () => { setColumnDraft(visibleKeys); setColumnPanelOpen(!columnPanelOpen); } }, "列设置"),
-        columnPanelOpen ? e("div", {
-          key: "panel-wrap",
-          style: { position: "absolute", top: 40, right: 0, zIndex: 20 }
-        }, columnPanel) : null
       ]),
       e(Table, {
         key: "table",

@@ -4,15 +4,16 @@
     Card,
     Collapse,
     Descriptions,
+    Drawer,
     Empty,
     Form,
     Input,
     InputNumber,
-    Modal,
     Radio,
     Select,
     Skeleton,
     Space,
+    Tabs,
     Tag,
     Typography,
     message
@@ -32,7 +33,6 @@
 
   const PLATFORM_ICONS = {
     miniapp: "🧩",
-    testflight: "✈️",
     ios: "",
     android: "🤖",
     web: "🌐"
@@ -150,11 +150,13 @@
     const [mode, setMode] = React.useState("create");
     const [editing, setEditing] = React.useState(null);
     const [lockedPlatform, setLockedPlatform] = React.useState(null);
+    const [langs, setLangs] = React.useState([]);
+    const [activeLang, setActiveLang] = React.useState("");
     const [form] = Form.useForm();
 
     const platformOptions = app.mockData.releasePlatformOptions || [];
     const languages = app.mockData.messageLanguages || [];
-    const languageOptions = languages.map(item => ({ value: item.key ?? item.value ?? "", label: item.value ?? item.label ?? "-" })).filter(item => item.value);
+    const languageNames = languages.map(item => item.value ?? item.key ?? "").filter(Boolean);
 
     function openCreate(platform) {
       setMode("create");
@@ -178,30 +180,64 @@
     React.useEffect(() => {
       if (!modalOpen) return;
       if (mode === "edit" && editing) {
+        const localeMap = {};
+        (Array.isArray(editing.locale_configs) ? editing.locale_configs : []).forEach(item => {
+          if (item && item.lang) localeMap[item.lang] = { title: item.title || "", description: item.description || "" };
+        });
+        const recordLangs = Object.keys(localeMap);
+        if (!recordLangs.length && languageNames[0]) {
+          recordLangs.push(languageNames[0]);
+          localeMap[languageNames[0]] = { title: "", description: "" };
+        }
+        setLangs(recordLangs);
+        setActiveLang(recordLangs[0] || "");
         form.setFieldsValue({
           platform: editing.platform,
           version: editing.version,
           build_number: editing.build_number,
           is_forced_update: editing.is_forced_update,
           download_url: editing.download_url,
-          locale_configs: editing.locale_configs
+          locale_configs: localeMap
         });
       } else {
+        const first = languageNames[0] || "";
+        setLangs(first ? [first] : []);
+        setActiveLang(first);
         form.resetFields();
         form.setFieldsValue({
           is_forced_update: 0,
-          locale_configs: [{ lang: languageOptions[0]?.value, title: "", description: "" }]
+          locale_configs: first ? { [first]: { title: "", description: "" } } : {}
         });
       }
     }, [modalOpen, mode, editing, form]);
 
+    function addLanguage() {
+      const next = languageNames.find(name => !langs.includes(name));
+      if (!next) return;
+      setLangs(list => list.concat(next));
+      setActiveLang(next);
+    }
+
+    function removeLanguage(lang) {
+      if (langs.length <= 1) return;
+      const rest = langs.filter(item => item !== lang);
+      setLangs(rest);
+      if (activeLang === lang) setActiveLang(rest[0]);
+    }
+
     function handleSubmit() {
       form.validateFields().then(values => {
+        const localeMap = form.getFieldsValue(true).locale_configs || {};
+        const localeConfigs = langs.map(lang => ({
+          lang,
+          title: (localeMap[lang] && localeMap[lang].title) || "",
+          description: (localeMap[lang] && localeMap[lang].description) || ""
+        }));
         if (mode === "edit" && editing) {
           setReleases(list => list.map(item => item.id === editing.id ? Object.assign({}, item, {
             is_forced_update: values.is_forced_update,
             download_url: values.download_url,
-            locale_configs: values.locale_configs,
+            locale_configs: localeConfigs,
             updated_at: dayjs().format("YYYY-MM-DD HH:mm:ss")
           }) : item));
           message.success("版本更新成功");
@@ -217,7 +253,7 @@
             download_url: values.download_url,
             created_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
             updated_at: dayjs().format("YYYY-MM-DD HH:mm:ss"),
-            locale_configs: values.locale_configs,
+            locale_configs: localeConfigs,
             _platformLabel: platformLabel
           }]);
           message.success("版本新增成功");
@@ -249,112 +285,89 @@
           onCreateForPlatform: openCreate,
           onEdit: openEdit
         }))),
-      e(Modal, {
-        key: "modal",
+      e(Drawer, {
+        key: "drawer",
         open: modalOpen,
         destroyOnClose: true,
         width: 760,
         title: isEdit ? "修改版本" : "新增版本",
-        okText: isEdit ? "修改" : "新增",
-        cancelText: "取消",
-        confirmLoading: false,
-        onCancel: closeForm,
-        onOk: handleSubmit,
-        styles: { body: { maxHeight: "72vh", overflow: "auto" } }
-      }, e(Form, { form, layout: "vertical" }, [
-        e(Form.Item, { key: "platform", label: "平台", name: "platform", rules: [{ required: true, message: "请选择平台" }] },
-          e(Select, {
-            disabled: platformDisabled,
-            options: platformOptions.map(item => ({ value: item.code, label: item.label || item.code })),
-            placeholder: "请选择平台",
-            onChange: value => {
-              if (value !== "testflight") form.setFieldValue("build_number", 0);
-            }
-          })),
-        e(Form.Item, { key: "version", label: "版本号", name: "version", rules: [{ required: true, message: "请输入版本号" }] },
-          e(Input, { disabled: isEdit, placeholder: "请输入版本号" })),
-        e(Form.Item, {
-          key: "build",
-          label: "构建号",
-          name: "build_number",
-          dependencies: ["platform"],
-          rules: [
-            { required: true, message: "请输入构建号" },
-            { validator: (_, value) => {
-                const platform = form.getFieldValue("platform");
-                const next = value ?? 0;
-                if (platform === "testflight" && next <= 0) return Promise.reject(new Error("TestFlight 构建号必须大于 0"));
-                if (platform && platform !== "testflight" && next !== 0) return Promise.reject(new Error("非 TestFlight 平台构建号必须为 0"));
-                return Promise.resolve();
-              } }
-          ]
-        },
-          e(InputNumber, { min: 0, precision: 0, disabled: isEdit, style: { width: "100%" }, placeholder: "请输入构建号" })),
-        e(Form.Item, { key: "forced", label: "强制更新", name: "is_forced_update", rules: [{ required: true, message: "请选择是否强更" }] },
-          e(Radio.Group, { options: [{ value: 1, label: "是" }, { value: 0, label: "否" }] })),
-        e(Form.Item, { key: "download", label: "下载地址", name: "download_url" },
-          e(Input, { placeholder: "下载地址" })),
-        e(Form.List, {
-          key: "locales",
-          name: "locale_configs",
-          rules: [{
-            validator: (_, value) => (!value || value.length === 0)
-              ? Promise.reject(new Error("请至少添加一条多语言配置"))
-              : Promise.resolve()
-          }]
-        }, (fields, { add, remove }) => e("div", null, [
-          e(Text, { key: "label", strong: true }, "多语言配置"),
-          e("div", { key: "hint", style: { height: 8 } }),
-          fields.map(field => e("div", {
-            key: field.key,
-            style: { border: "1px solid #f0f0f0", borderRadius: 8, padding: 12, marginBottom: 12 }
-          }, [
-            e("div", { key: "row-lang", style: { display: "flex", gap: 8, alignItems: "flex-start" } }, [
-              e(Form.Item, {
-                key: "lang",
-                name: [field.name, "lang"],
-                label: "语言",
-                rules: [{ required: true, message: "请选择语言" }],
-                style: { marginBottom: 8, flex: 1 }
-              },
-                e(Select, {
-                  options: languageOptions.map(option => ({
-                    ...option,
-                    disabled: (form.getFieldValue("locale_configs") || []).some((row, index) => index !== field.name && row && row.lang === option.value)
-                  })),
-                  placeholder: "请选择语言"
-                })),
-              fields.length > 1 ? e(Button, {
-                key: "remove",
-                type: "link",
-                danger: true,
-                onClick: () => remove(field.name)
-              }, "删除") : null
-            ]),
+        onClose: closeForm,
+        footer: e("div", { className: "drawer-footer-actions" }, [
+          e(Button, { key: "cancel", onClick: closeForm }, "取消"),
+          e(Button, { key: "save", type: "primary", onClick: handleSubmit }, isEdit ? "修改" : "新增")
+        ])
+      }, e(Form, { form, layout: "vertical", className: "admin-form" }, [
+        e("div", { key: "card-basic", className: "drawer-form-card" }, [
+          e("div", { key: "s1", className: "form-section-title" }, "基本信息"),
+          e("div", { key: "row-1", style: { display: "flex", gap: 16 } }, [
+            e(Form.Item, { key: "platform", label: "平台", name: "platform", rules: [{ required: true, message: "请选择平台" }], style: { flex: 1, minWidth: 0 } },
+              e(Select, {
+                disabled: platformDisabled,
+                options: platformOptions.map(item => ({ value: item.code, label: item.label || item.code })),
+                placeholder: "请选择平台",
+                onChange: () => form.setFieldValue("build_number", 0)
+              })),
+            e(Form.Item, { key: "version", label: "版本号", name: "version", rules: [{ required: true, message: "请输入版本号" }], style: { flex: 1, minWidth: 0 } },
+              e(Input, { disabled: isEdit, placeholder: "请输入版本号" }))
+          ]),
+          e("div", { key: "row-2", style: { display: "flex", gap: 16 } }, [
             e(Form.Item, {
-              key: "title",
-              name: [field.name, "title"],
-              label: "标题",
-              rules: [{ required: true, message: "请输入标题" }],
-              style: { marginBottom: 8 }
+              key: "build",
+              label: "构建号",
+              name: "build_number",
+              dependencies: ["platform"],
+              style: { flex: 1, minWidth: 0 },
+              rules: [
+                { required: true, message: "请输入构建号" },
+                { validator: (_, value) => {
+                    const platform = form.getFieldValue("platform");
+                    const next = value ?? 0;
+                    if (platform && next !== 0) return Promise.reject(new Error("构建号必须为 0"));
+                    return Promise.resolve();
+                  } }
+              ]
             },
-              e(Input, { placeholder: "请输入标题" })),
-            e(Form.Item, {
-              key: "description",
-              name: [field.name, "description"],
-              label: "描述",
-              rules: [{ required: true, message: "请输入描述" }],
-              style: { marginBottom: 0 }
-            },
-              e(TextArea, { rows: 3, placeholder: "请输入描述" }))
-          ])),
-          e(Button, {
-            key: "add",
-            type: "dashed",
-            block: true,
-            onClick: () => add({ lang: undefined, title: "", description: "" })
-          }, "+ 新增语言配置")
-        ]))
+              e(InputNumber, { min: 0, precision: 0, disabled: isEdit, style: { width: "100%" }, placeholder: "请输入构建号" })),
+            e(Form.Item, { key: "forced", label: "强制更新", name: "is_forced_update", rules: [{ required: true, message: "请选择是否强更" }], style: { flex: 1, minWidth: 0 } },
+              e(Radio.Group, { options: [{ value: 1, label: "是" }, { value: 0, label: "否" }] }))
+          ]),
+          e(Form.Item, { key: "download", label: "下载地址", name: "download_url" },
+            e(Input, { placeholder: "请输入下载地址" }))
+        ]),
+        e("div", { key: "card-locales", className: "drawer-form-card" }, [
+          e("div", { key: "s2", className: "form-section-title" }, "多语言配置"),
+          e(Tabs, {
+            key: "lang-tabs",
+            activeKey: activeLang,
+            items: langs.map(lang => ({
+              key: lang,
+              label: e(Space, { size: 4 }, lang, lang !== langs[0] && e(Button, {
+                key: "x",
+                type: "text",
+                size: "small",
+                onClick: event => {
+                  event.stopPropagation();
+                  removeLanguage(lang);
+                }
+              }, "x"))
+            })).concat({ key: "__add", label: "+ 添加语言" }),
+            onChange: key => key === "__add" ? addLanguage() : setActiveLang(key)
+          }),
+          e(Form.Item, {
+            key: "title",
+            name: ["locale_configs", activeLang, "title"],
+            label: "标题",
+            rules: [{ required: true, message: "请输入标题" }]
+          },
+          e(Input, { placeholder: "请输入当前语言下的标题" })),
+          e(Form.Item, {
+            key: "description",
+            name: ["locale_configs", activeLang, "description"],
+            label: "描述",
+            rules: [{ required: true, message: "请输入描述" }]
+          },
+          e(TextArea, { rows: 3, placeholder: "请输入当前语言下的描述" }))
+        ])
       ]))
     ]);
   }

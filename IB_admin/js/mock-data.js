@@ -735,7 +735,6 @@
     releasePlatformOptions: [
       { code: "ios", label: "iOS" },
       { code: "android", label: "Android" },
-      { code: "testflight", label: "TestFlight" },
       { code: "miniapp", label: "小程序" },
       { code: "web", label: "Web" }
     ],
@@ -746,10 +745,6 @@
       ] },
       { id: 2, platform: "android", version: "2.4.1", build_number: 0, is_forced_update: 1, download_url: "https://download.cui.example.com/android/cui-2.4.1.apk", created_at: "2026-10-01 10:00:00", updated_at: "2026-10-11 15:20:00", locale_configs: [
         { lang: "简体中文", title: "重要更新", description: "修复部分机型行情闪烁问题，请立即更新。" }
-      ] },
-      { id: 3, platform: "testflight", version: "2.5.0-beta1", build_number: 32, is_forced_update: 0, download_url: "https://testflight.apple.com/join/xxxxx", created_at: "2026-10-09 03:00:00", updated_at: "2026-10-09 03:00:00", locale_configs: [
-        { lang: "简体中文", title: "内测 2.5.0", description: "新版跟单模块内测，欢迎反馈。" },
-        { lang: "英语", title: "Beta 2.5.0", description: "Copy trading beta. Feedback welcome." }
       ] },
       { id: 4, platform: "miniapp", version: "1.8.0", build_number: 0, is_forced_update: 0, download_url: "", created_at: "2026-09-12 08:00:00", updated_at: "2026-09-12 08:00:00", locale_configs: [
         { lang: "简体中文", title: "小程序 1.8.0", description: "支持微信登录与模拟盘快捷交易。" }

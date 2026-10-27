@@ -20,6 +20,7 @@
   const { TextArea } = Input;
   const { Text } = Typography;
   const e = React.createElement;
+  const { ListActions, ColumnSettingsTrigger, SearchInput } = app.sharedActions;
 
   const activityTypeOptions = ["线下活动"];
   const cityOptions = ["伦敦", "吉隆坡", "新加坡"];
@@ -64,55 +65,24 @@
 
   function LangTabs({ languages, activeLang, onActive, onAdd, onRemove }) {
     const canAdd = languages.length < langPool.length;
-    return e("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 12 } },
-      languages.map(name => {
-        const active = name === activeLang;
-        return e("button", {
-          key: name,
-          type: "button",
-          onClick: () => onActive(name),
-          style: {
-            height: 32,
-            padding: "0 14px",
-            borderRadius: 6,
-            border: "none",
-            background: "#f0f2f5",
-            color: active ? "#1677ff" : "#595959",
-            fontWeight: active ? 600 : 400,
-            fontSize: 13,
-            cursor: "pointer",
-            display: "inline-flex",
-            alignItems: "center"
-          }
-        },
-          name,
-          languages.length > 1 && e("span", {
-            onClick: event => {
-              event.stopPropagation();
-              onRemove(name);
-            },
-            style: { marginLeft: 8, fontSize: 13, lineHeight: 1, opacity: 0.65 }
-          }, "×"));
-      }),
-      e("button", {
-        type: "button",
-        title: "新增语言配置",
-        disabled: !canAdd,
-        onClick: onAdd,
-        style: {
-          width: 32,
-          height: 32,
-          borderRadius: 6,
-          border: "none",
-          background: "#f0f2f5",
-          color: "#1677ff",
-          fontSize: 16,
-          fontWeight: 600,
-          lineHeight: 1,
-          cursor: canAdd ? "pointer" : "not-allowed",
-          opacity: canAdd ? 1 : 0.45
+    const items = languages.map(name => ({
+      key: name,
+      label: e(Space, { size: 4 }, name, name !== languages[0] && e(Button, {
+        key: "x",
+        type: "text",
+        size: "small",
+        onClick: event => {
+          event.stopPropagation();
+          onRemove(name);
         }
-      }, "+"));
+      }, "x"))
+    }));
+    if (canAdd) items.push({ key: "__add", label: "+ 添加语言" });
+    return e(Tabs, {
+      activeKey: activeLang,
+      items,
+      onChange: key => key === "__add" ? onAdd() : onActive(key)
+    });
   }
 
   function ActivityDrawer({ open, mode, record, onCancel, onSave }) {
@@ -368,6 +338,7 @@
 
   function ActivityPage({ activities, setActivities, onViewSignups }) {
     const [keyword, setKeyword] = React.useState("");
+    const [appliedKeyword, setAppliedKeyword] = React.useState("");
     const [statusFilter, setStatusFilter] = React.useState();
     const [typeFilter, setTypeFilter] = React.useState();
     const [page, setPage] = React.useState(1);
@@ -377,14 +348,14 @@
     const [publishTarget, setPublishTarget] = React.useState(null);
 
     const filtered = React.useMemo(() => {
-      const term = keyword.trim().toLowerCase();
+      const term = appliedKeyword.trim().toLowerCase();
       return activities.filter(item => {
         const keywordMatched = !term || item.name.toLowerCase().includes(term);
         const statusMatched = !statusFilter || item.status === statusFilter;
         const typeMatched = !typeFilter || item.type === typeFilter;
         return keywordMatched && statusMatched && typeMatched;
       });
-    }, [activities, keyword, statusFilter, typeFilter]);
+    }, [activities, appliedKeyword, statusFilter, typeFilter]);
 
     const columnMap = {
       name: { title: "活动名称", dataIndex: "name", width: 220, render: (_, record) => e(Button, { type: "link", style: { padding: 0 }, onClick: () => setModalState({ open: true, mode: "edit", record }) }, record.name) },
@@ -468,10 +439,13 @@
     return e("section", { className: "page-surface" },
       e("div", { className: "toolbar" },
         e(Space, { wrap: true },
-          e(Input, {
+          e(app.sharedActions.SearchInput, {
             value: keyword,
             onChange: event => setKeyword(event.target.value),
-            onPressEnter: () => { setPage(1); message.success(`查询到 ${filtered.length} 条活动`); },
+            onSearch: () => {
+              setAppliedKeyword(keyword);
+              setPage(1);
+            },
             placeholder: "请输入活动名称关键词",
             allowClear: true,
             className: "keyword-input"
@@ -492,12 +466,21 @@
             className: "select-input",
             options: activityTypeOptions.map(value => ({ value, label: value }))
           }),
-          e(Button, { type: "primary", onClick: () => { setPage(1); message.success(`查询到 ${filtered.length} 条活动`); } }, "查询"),
-          e(Button, { onClick: () => { setKeyword(""); setStatusFilter(undefined); setTypeFilter(undefined); setPage(1); message.success("筛选已重置"); } }, "重置")),
-        e(Space, null,
-          e(Button, { type: "primary", onClick: () => setModalState({ open: true, mode: "add", record: null }) }, "创建"),
-          e(Dropdown, { trigger: ["click"], dropdownRender: () => e("div", { className: "dropdown-panel" }, columnMenu) },
-            e(Button, null, "列设置")))),
+          e(ListActions, {
+            key: "actions-core",
+            onReset: () => {
+              setKeyword("");
+              setAppliedKeyword("");
+              setStatusFilter(undefined);
+              setTypeFilter(undefined);
+              setPage(1);
+            },
+            trailing: [
+              e(Button, { key: "add", type: "primary", onClick: () => setModalState({ open: true, mode: "add", record: null }) }, "创建"),
+              e(Dropdown, { key: "columns", trigger: ["click"], dropdownRender: () => e("div", { className: "dropdown-panel" }, columnMenu) },
+                e(ColumnSettingsTrigger))
+            ]
+          }))),
       e(Table, {
         rowKey: "id",
         columns,

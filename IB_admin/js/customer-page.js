@@ -16,6 +16,7 @@
   const { RangePicker } = DatePicker;
   const { Text } = Typography;
   const e = React.createElement;
+  const { ListActions, ColumnSettingsTrigger, ExportTrigger, SearchInput } = app.sharedActions;
 
   function renderPlainOrDash(value) {
     return value && value !== "-"
@@ -668,8 +669,7 @@
               })
       ])
     )).concat([
-      e(Button, { key: "search", type: "primary" }, "查 询"),
-      e(Button, { key: "reset" }, "重置")
+      e(ListActions, { key: "actions-core" })
     ]));
   }
 
@@ -793,6 +793,7 @@
 
   function CustomerPage({ customers = [], services = [] }) {
     const [keyword, setKeyword] = React.useState("");
+    const [appliedKeyword, setAppliedKeyword] = React.useState("");
     const [depositStatus, setDepositStatus] = React.useState();
     const [serviceFilter, setServiceFilter] = React.useState();
     const [page, setPage] = React.useState(1);
@@ -813,7 +814,7 @@
       : customer.service) ?? null;
 
     const filteredCustomers = React.useMemo(() => {
-      const term = keyword.trim().toLowerCase();
+      const term = appliedKeyword.trim().toLowerCase();
       return customers.filter(customer => {
         const keywordMatched = !term
           || [customer.userId, customer.name]
@@ -826,11 +827,11 @@
           || (serviceFilter === "__none__" ? !serviceOf(customer) : serviceOf(customer) === serviceFilter);
         return keywordMatched && depositMatched && serviceMatched;
       });
-    }, [customers, keyword, depositStatus, serviceFilter, serviceByCustomer]);
+    }, [customers, appliedKeyword, depositStatus, serviceFilter, serviceByCustomer]);
 
     React.useEffect(() => {
       setPage(1);
-    }, [keyword, depositStatus, serviceFilter]);
+    }, [appliedKeyword, depositStatus, serviceFilter]);
 
     const pageRows = filteredCustomers.slice((page - 1) * pageSize, page * pageSize);
     const serviceOptions = React.useMemo(() => makeServiceOptions(services, true), [services]);
@@ -946,6 +947,7 @@
 
     function resetFilters() {
       setKeyword("");
+      setAppliedKeyword("");
       setDepositStatus(undefined);
       setServiceFilter(undefined);
       setPage(1);
@@ -1019,10 +1021,10 @@
         e(Space, { wrap: true, size: 8, key: "filters" }, [
           e("label", { className: "customer-filter-item", key: "keyword" }, [
             e("span", { key: "label" }, "关键词"),
-            e(Input, {
+            e(SearchInput, {
               value: keyword,
               onChange: event => setKeyword(event.target.value),
-              onPressEnter: () => setPage(1),
+              onSearch: () => setAppliedKeyword(keyword),
               placeholder: "请输入UID或昵称",
               allowClear: true,
               className: "keyword-input"
@@ -1054,24 +1056,19 @@
               options: serviceOptions
             })
           ]),
-          e(Button, {
-            key: "search",
-            type: "primary",
-            onClick: () => setPage(1)
-          }, "搜 索"),
-          e(Button, {
-            key: "reset",
-            onClick: resetFilters
-          }, "重置")
-        ]),
-        e(Space, { wrap: true, size: 8, key: "actions" }, [
-          e(Button, { key: "export" }, "导 出"),
-          e(Button, {
-            key: "assign",
-            type: "primary",
-            onClick: openAssign
-          }, selectedCustomerIds.length ? `分配客服(${selectedCustomerIds.length})` : "分配客服"),
-          e(Button, { key: "columns" }, "列设置")
+          e(ListActions, {
+            key: "actions-core",
+            onReset: resetFilters,
+            trailing: [
+              e(ExportTrigger, { key: "export-pin" }),
+              e(Button, {
+                key: "assign",
+                type: "primary",
+                onClick: openAssign
+              }, selectedCustomerIds.length ? `分配客服(${selectedCustomerIds.length})` : "分配客服"),
+              e(ColumnSettingsTrigger, { key: "columns" })
+            ]
+          })
         ])
       ]),
       e(Table, {

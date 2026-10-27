@@ -2,25 +2,27 @@
   const { Button, Checkbox, Dropdown, Input, Select, Space, Table, Tag, Typography, message } = antd;
   const { Text } = Typography;
   const e = React.createElement;
+  const { ListActions, ColumnSettingsTrigger } = app.sharedActions;
 
   const sourceOptions = ["手续费", "连续签到", "首次连续签到", "手动触发", "活动兑换", "完课"].map(value => ({ value, label: value }));
 
   // 积分明细：激励中心下的独立叶子页，只读流水，支持筛选/列设置/分页。
   function PointDetailsPage({ details }) {
     const [keyword, setKeyword] = React.useState("");
+    const [appliedKeyword, setAppliedKeyword] = React.useState("");
     const [source, setSource] = React.useState();
     const [page, setPage] = React.useState(1);
     const [pageSize, setPageSize] = React.useState(10);
     const [visibleColumns, setVisibleColumns] = React.useState(["type", "refName", "courseInfo", "change", "time"]);
 
     const filtered = React.useMemo(() => {
-      const term = keyword.trim().toLowerCase();
+      const term = appliedKeyword.trim().toLowerCase();
       return details.filter(item => {
         const keywordMatched = !term || `${item.userId}${item.refName}`.toLowerCase().includes(term);
         const sourceMatched = !source || item.source === source;
         return keywordMatched && sourceMatched;
       });
-    }, [details, keyword, source]);
+    }, [details, appliedKeyword, source]);
 
     const columnMap = {
       type: {
@@ -78,10 +80,13 @@
     return e("section", { className: "page-surface" },
       e("div", { className: "toolbar" },
         e(Space, { wrap: true },
-          e(Input, {
+          e(app.sharedActions.SearchInput, {
             value: keyword,
             onChange: event => setKeyword(event.target.value),
-            onPressEnter: runQuery,
+            onSearch: () => {
+              setAppliedKeyword(keyword);
+              setPage(1);
+            },
             placeholder: "用户ID/内部规则名称",
             allowClear: true,
             className: "keyword-input"
@@ -94,10 +99,19 @@
             className: "select-input",
             options: sourceOptions
           }),
-          e(Button, { type: "primary", onClick: runQuery }, "查询"),
-          e(Button, { onClick: resetFilters }, "重置")),
-        e(Dropdown, { trigger: ["click"], dropdownRender: () => e("div", { className: "dropdown-panel" }, columnMenu) },
-          e(Button, null, "列设置"))),
+          e(ListActions, {
+            key: "actions-core",
+            onReset: () => {
+              setKeyword("");
+              setAppliedKeyword("");
+              setSource(undefined);
+              setPage(1);
+            },
+            trailing: [
+              e(Dropdown, { key: "columns", trigger: ["click"], dropdownRender: () => e("div", { className: "dropdown-panel" }, columnMenu) },
+                e(ColumnSettingsTrigger))
+            ]
+          }))),
       e(Table, {
         rowKey: "id",
         columns,

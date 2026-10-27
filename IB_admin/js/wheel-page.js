@@ -17,6 +17,7 @@
   const { Text } = Typography;
   const { TextArea } = Input;
   const e = React.createElement;
+  const { ListActions, SearchInput } = app.sharedActions;
 
   // 活动类型：后续新玩法在这里扩展选项即可。
   const TYPE_OPTIONS = [
@@ -431,31 +432,36 @@
     return e("section", { className: "page-surface wheel-page" }, [
       e("div", { className: "toolbar", key: "toolbar" }, [
         e(Space, { key: "filters", wrap: true, size: 8 }, [
-          e(Input, {
+          e(SearchInput, {
             value: draft.keyword,
             onChange: event => setDraft({ ...draft, keyword: event.target.value }),
-            onPressEnter: search,
+            onSearch: search,
             placeholder: "抽奖名称",
             allowClear: true,
             className: "keyword-input"
           }),
           e(Select, {
             value: draft.status,
-            onChange: value => setDraft({ ...draft, status: value }),
+            onChange: value => {
+              setDraft({ ...draft, status: value });
+              setApplied({ ...draft, status: value });
+            },
             placeholder: "状态",
             allowClear: true,
             className: "select-input",
             options: STATUS_FILTER_OPTIONS
           }),
-          e(Button, { key: "search", type: "primary", onClick: search }, "查 询"),
-          e(Button, { key: "reset", onClick: reset }, "重 置")
-        ]),
-        e(Space, { key: "actions" }, [
-          e(Button, {
-            key: "add",
-            type: "primary",
-            onClick: () => setDrawerState({ open: true, mode: "add", activity: null })
-          }, "新增")
+          e(ListActions, {
+            key: "actions-core",
+            onReset: reset,
+            trailing: [
+              e(Button, {
+                key: "add",
+                type: "primary",
+                onClick: () => setDrawerState({ open: true, mode: "add", activity: null })
+              }, "新增")
+            ]
+          })
         ])
       ]),
       e(Table, {

@@ -19,6 +19,7 @@
   const { Text } = Typography;
   const { TextArea } = Input;
   const e = React.createElement;
+  const { ListActions } = app.sharedActions;
 
   const TARGET_TYPE_OPTIONS = [
     { value: 1, label: "App 内原生路由" },
@@ -539,7 +540,8 @@
         form,
         layout: "inline",
         className: "toolbar",
-        onFinish: applyFilters
+        onFinish: applyFilters,
+        onValuesChange: () => applyFilters(form.getFieldsValue())
       }, [
         e(Form.Item, { key: "identifier", label: "条目标识" },
           e(Select, {
@@ -555,13 +557,13 @@
         e(Form.Item, { key: "status", label: "状态" },
           e(Select, { placeholder: "请选择状态", options: statusOptions.map(item => ({ label: item.label, value: item.code })), allowClear: true, style: { width: 160 } })),
         e(Form.Item, { key: "actions" },
-          e(Space, null, [
-            e(Button, { key: "search", type: "primary", htmlType: "submit" }, "查询"),
-            e(Button, { key: "reset", onClick: () => { form.resetFields(); setApplied({ identifier: undefined, platform: undefined, status: undefined }); } }, "重置")
-          ]))
+          e(ListActions, {
+            onReset: () => { form.resetFields(); setApplied({ identifier: undefined, platform: undefined, status: undefined }); },
+            trailing: [
+              e(Button, { key: "create", type: "primary", onClick: openCreate }, "新建广告")
+            ]
+          }))
       ]),
-      e("div", { key: "toolbar", style: { marginBottom: 12 } },
-        e(Button, { type: "primary", onClick: openCreate }, "新建广告")),
       e(Table, {
         key: "table",
         rowKey: "id",

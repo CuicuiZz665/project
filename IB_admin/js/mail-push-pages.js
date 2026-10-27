@@ -17,6 +17,7 @@
   const { Text, Title, Paragraph } = Typography;
   const { TextArea } = Input;
   const e = React.createElement;
+  const { ListActions, SearchInput } = app.sharedActions;
 
   function textOrDash(value) {
     return value === undefined || value === null || value === "" ? "-" : String(value);
@@ -170,21 +171,30 @@
     );
 
     return e("section", { key: "notice-shell", className: "page-surface" }, [
-      e(Form, { key: "filters", layout: "inline", className: "toolbar", form, onFinish: values => setApplied(values) }, [
+      e(Form, {
+        key: "filters",
+        layout: "inline",
+        className: "toolbar",
+        form,
+        onFinish: values => setApplied(values),
+        onValuesChange: changed => {
+          if (["event_key", "lang"].some(key => key in changed)) setApplied(form.getFieldsValue());
+        }
+      }, [
         e(Form.Item, { key: "event", label: "触发事件", name: "event_key" },
           e(Select, { allowClear: true, placeholder: "触发事件", style: { minWidth: 220 }, options: eventOptions })),
         e(Form.Item, { key: "lang", label: "语言", name: "lang" },
           e(Select, { allowClear: true, placeholder: "语言", style: { minWidth: 160 }, options: langSelectOptions })),
         e(Form.Item, { key: "title", label: "标题", name: "title" },
-          e(Input, { allowClear: true, placeholder: "标题", style: { minWidth: 220, width: 220 } })),
+          e(SearchInput, { allowClear: true, placeholder: "标题", style: { minWidth: 220, width: 220 }, onSearch: () => form.submit() })),
         e(Form.Item, { key: "actions" },
-          e(Space, null, [
-            e(Button, { key: "search", type: "primary", htmlType: "submit" }, "查询"),
-            e(Button, { key: "reset", onClick: () => { form.resetFields(); setApplied({}); } }, "重置")
-          ]))
+          e(ListActions, {
+            onReset: () => { form.resetFields(); setApplied({}); },
+            trailing: [
+              e(Button, { key: "create", type: "primary", onClick: onCreate }, "创建")
+            ]
+          }))
       ]),
-      e("div", { key: "toolbar", style: { marginBottom: 12 } },
-        e(Button, { type: "primary", onClick: onCreate }, "创建")),
       e(Table, {
         key: "table",
         rowKey: "id",

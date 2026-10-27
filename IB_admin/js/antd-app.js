@@ -38,6 +38,10 @@
   const {
     Text
   } = Typography;
+  const {
+    ColumnSettingsTrigger,
+    SearchInput
+  } = app.sharedActions;
   const statusColor = {
     "启用": "success",
     "禁用": "default",
@@ -818,6 +822,7 @@
     setLessons
   }) {
     const [keyword, setKeyword] = React.useState("");
+    const [appliedKeyword, setAppliedKeyword] = React.useState("");
     const [status, setStatus] = React.useState();
     const [page, setPage] = React.useState(1);
     const [sorter, setSorter] = React.useState({});
@@ -830,7 +835,7 @@
     const [detailRule, setDetailRule] = React.useState(null);
     const [pageSize, setPageSize] = React.useState(20);
     const filteredRules = React.useMemo(() => {
-      const term = keyword.trim().toLowerCase();
+      const term = appliedKeyword.trim().toLowerCase();
       let list = rules.filter(rule => {
         const matchedKeyword = !term || `${rule.internalName}${rule.externalName}${rule.triggerEvent}`.toLowerCase().includes(term);
         const matchedStatus = !status || rule.status === status;
@@ -841,7 +846,7 @@
         if (sorter.order === "descend") list.reverse();
       }
       return list;
-    }, [rules, keyword, status, sorter]);
+    }, [rules, appliedKeyword, status, sorter]);
     const ruleTypeText = record => {
       if (record.ruleType === "课程任务") return "课程任务";
       if (record.taskType === "新手任务") return "普通任务-新手";
@@ -1018,12 +1023,12 @@
       className: "toolbar"
     }, /*#__PURE__*/React.createElement(Space, {
       wrap: true
-    }, /*#__PURE__*/React.createElement(Input, {
+    }, /*#__PURE__*/React.createElement(SearchInput, {
       value: keyword,
       onChange: event => setKeyword(event.target.value),
-      onPressEnter: () => {
+      onSearch: () => {
+        setAppliedKeyword(keyword);
         setPage(1);
-        message.success(`查询到 ${filteredRules.length} 条规则`);
       },
       placeholder: "内部/外部名称",
       allowClear: true,
@@ -1042,14 +1047,9 @@
         label: value
       }))
     }), /*#__PURE__*/React.createElement(Button, {
-      type: "primary",
-      onClick: () => {
-        setPage(1);
-        message.success(`查询到 ${filteredRules.length} 条规则`);
-      }
-    }, "查询"), /*#__PURE__*/React.createElement(Button, {
       onClick: () => {
         setKeyword("");
+        setAppliedKeyword("");
         setStatus(undefined);
         setPage(1);
         message.success("筛选已重置");
@@ -1066,7 +1066,7 @@
       dropdownRender: () => /*#__PURE__*/React.createElement("div", {
         className: "dropdown-panel"
       }, columnMenu)
-    }, /*#__PURE__*/React.createElement(Button, null, "列设置")))), /*#__PURE__*/React.createElement(Table, {
+    }, /*#__PURE__*/React.createElement(ColumnSettingsTrigger)))), /*#__PURE__*/React.createElement(Table, {
       rowKey: "id",
       columns: columns,
       dataSource: filteredRules,
@@ -1320,6 +1320,7 @@
     coupons
   }) {
     const [keyword, setKeyword] = React.useState("");
+    const [appliedKeyword, setAppliedKeyword] = React.useState("");
     const [objectFilter, setObjectFilter] = React.useState();
     const [statusFilter, setStatusFilter] = React.useState();
     const [page, setPage] = React.useState(1);
@@ -1331,14 +1332,14 @@
     });
     const [detail, setDetail] = React.useState(null);
     const filteredDeliveries = React.useMemo(() => {
-      const term = keyword.trim().toLowerCase();
+      const term = appliedKeyword.trim().toLowerCase();
       return deliveries.filter(item => {
         const keywordMatched = !term || `${item.name}${item.object}${item.method}`.toLowerCase().includes(term);
         const objectMatched = !objectFilter || item.object.includes(objectFilter);
         const statusMatched = !statusFilter || item.status === statusFilter;
         return keywordMatched && objectMatched && statusMatched;
       });
-    }, [deliveries, keyword, objectFilter, statusFilter]);
+    }, [deliveries, appliedKeyword, objectFilter, statusFilter]);
     function saveDelivery(data) {
       if (modalState.mode === "edit") {
         setDeliveries(deliveries.map(item => item.id === modalState.item.id ? {
@@ -1452,9 +1453,13 @@
       className: "toolbar"
     }, /*#__PURE__*/React.createElement(Space, {
       wrap: true
-    }, /*#__PURE__*/React.createElement(Input, {
+    }, /*#__PURE__*/React.createElement(SearchInput, {
       value: keyword,
       onChange: event => setKeyword(event.target.value),
+      onSearch: () => {
+        setAppliedKeyword(keyword);
+        setPage(1);
+      },
       placeholder: "任务名",
       allowClear: true,
       className: "keyword-input"
@@ -1487,14 +1492,9 @@
     }), /*#__PURE__*/React.createElement(Button, {
       onClick: () => message.info("更多筛选面板已模拟展开")
     }, "更多筛选"), /*#__PURE__*/React.createElement(Button, {
-      type: "primary",
-      onClick: () => {
-        setPage(1);
-        message.success("投递列表已查询");
-      }
-    }, "查询"), /*#__PURE__*/React.createElement(Button, {
       onClick: () => {
         setKeyword("");
+        setAppliedKeyword("");
         setObjectFilter(undefined);
         setStatusFilter(undefined);
         setPage(1);
@@ -1571,6 +1571,18 @@
       type: "secondary"
     }, "操作人"), /*#__PURE__*/React.createElement("span", null, detail.operator)))));
   }
+  // 返回目标页面在侧边栏中的祖先分组 key 链（跳转后自动展开对应分组用）
+  function collectMenuAncestors(items, targetKey, parents = []) {
+    for (const item of items || []) {
+      const chain = parents.concat(item.key);
+      if (item.key === targetKey) return parents;
+      if (item.children) {
+        const found = collectMenuAncestors(item.children, targetKey, chain);
+        if (found) return found;
+      }
+    }
+    return null;
+  }
   function AdminApp() {
     const [currentPage, setCurrentPage] = React.useState("overview");
     const [rules, setRules] = React.useState(() => cloneData(app.mockData.rules));
@@ -1598,6 +1610,7 @@
     const [networkConfigs, setNetworkConfigs] = React.useState(() => cloneData(app.mockData.networkConfigs));
     const [signupActivityId, setSignupActivityId] = React.useState(null);
     const [openTabs, setOpenTabs] = React.useState(["overview"]);
+    const [siderOpenKeys, setSiderOpenKeys] = React.useState([]);
     const menuItems = [{
       key: "overview",
       label: "数据概览"
@@ -1655,6 +1668,22 @@
         }]
       }]
     }, {
+      key: "agentGroup",
+      label: "代理管理",
+      children: [{
+        key: "agentApplications",
+        label: "代理申请列表"
+      }, {
+        key: "agent",
+        label: "代理商列表"
+      }, {
+        key: "agentLevel",
+        label: "代理等级配置"
+      }, {
+        key: "commission",
+        label: "佣金管理"
+      }]
+    }, {
       key: "marketingGroup",
       label: "市场活动",
       children: [{
@@ -1676,22 +1705,6 @@
       }, {
         key: "badge",
         label: "徽章列表"
-      }]
-    }, {
-      key: "agentGroup",
-      label: "代理管理",
-      children: [{
-        key: "agentApplications",
-        label: "代理申请列表"
-      }, {
-        key: "agent",
-        label: "代理商列表"
-      }, {
-        key: "agentLevel",
-        label: "代理等级配置"
-      }, {
-        key: "commission",
-        label: "佣金管理"
       }]
     }, {
       key: "grantGroup",
@@ -1774,6 +1787,12 @@
     }];
     const tabPages = navPages.concat(hiddenNavPages);
     const navKeys = navPages.map(page => page.key);
+    // 无论从菜单、页签、全局搜索还是概览卡跳转进入页面，都自动展开其所在分组链；手动折叠仍生效
+    React.useEffect(() => {
+      const chain = collectMenuAncestors(menuItems, currentPage) || [];
+      if (!chain.length) return;
+      setSiderOpenKeys(prev => (chain.every(key => prev.includes(key)) ? prev : Array.from(new Set(prev.concat(chain)))));
+    }, [currentPage]);
     React.useEffect(() => {
       setOpenTabs(tabs => tabs.includes(currentPage) ? tabs : [...tabs, currentPage]);
     }, [currentPage]);
@@ -1813,7 +1832,8 @@
     }), /*#__PURE__*/React.createElement("span", null, "Cui")), /*#__PURE__*/React.createElement(Menu, {
       mode: "inline",
       selectedKeys: [currentPage],
-      defaultOpenKeys: ["customerGroup", "orderGroup", "contentGroup", "marketingGroup", "incentiveGroup", "grantGroup", "fundsGroup", "agentGroup", "systemGroup", "adSlotGroup", "messageGroup", "mailPushGroup", "fundFlowGroup", "depositWithdraw"],
+      openKeys: siderOpenKeys,
+      onOpenChange: setSiderOpenKeys,
       items: menuItems,
       onClick: ({
         key
@@ -1888,7 +1908,7 @@
       className: "admin-content"
     }, currentPage === "overview" ? /*#__PURE__*/React.createElement(app.DashboardPage, {
       data: app.mockData.dashboard,
-      customers: app.mockData.customers
+      onNavigate: setCurrentPage
     }) : currentPage === "customer" ? /*#__PURE__*/React.createElement(app.CustomerPage, {
       customers: app.mockData.customers,
       services: app.mockData.customerServices

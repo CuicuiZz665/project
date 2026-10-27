@@ -14,6 +14,7 @@
   const { RangePicker } = DatePicker;
   const e = React.createElement;
   const { textOrDash, ProgressiveFilters, ExportModal, CustomerMiniDrawer } = app.financeShared;
+  const { ColumnSettingsTrigger, ExportTrigger, SearchInput } = app.sharedActions;
 
   // 列设置分组与默认显隐，与参考系统一致
   const COLUMN_GROUPS = [
@@ -147,9 +148,10 @@
         activeSecondaryCount: secondaryActive,
         onSubmit: values => setApplied(values),
         onReset: () => { form.resetFields(); setApplied({}); },
+        instantFields: ["status", "deposit_status", "deposit_type", "channel", "received_time"],
         primary: [
           e(Form.Item, { key: "user", label: "User ID", name: "user_code" },
-            e(Input, { allowClear: true, placeholder: "User ID", style: { width: 200 } })),
+            e(SearchInput, { allowClear: true, placeholder: "User ID", style: { width: 200 }, onSearch: () => form.submit() })),
           e(Form.Item, { key: "status", label: "状态", name: "status" },
             e(Select, { allowClear: true, placeholder: "状态", options: statusOptions, style: { width: 160 } })),
           e(Form.Item, { key: "deposit-status", label: "充值状态", name: "deposit_status" },
@@ -162,13 +164,14 @@
             e(Select, { allowClear: true, placeholder: "支付通道", options: channelOptions, style: { minWidth: 180 } })),
           e(Form.Item, { key: "time", label: "充值时间", name: "received_time" },
             e(RangePicker, { showTime: true, style: { width: 320 } }))
+        ],
+        // 导出/列设置钉在筛选表单右上角，面板锚到表单层（须挂 Form 层，见 ProgressiveFilters aside 说明）
+        aside: [
+          e(ExportTrigger, { key: "export-pin", onClick: () => { exportForm.setFieldsValue({ format: "xlsx", filename: "" }); setExportOpen(true); } }),
+          e(ColumnSettingsTrigger, { key: "columns-pin", onClick: () => { setColumnDraft(visibleKeys); setColumnPanelOpen(!columnPanelOpen); } }),
+          columnPanelOpen ? e("div", { key: "panel", style: { position: "absolute", top: 44, right: 0, zIndex: 20 } }, columnPanel) : null
         ]
       }),
-      e("div", { key: "toolbar", style: { marginBottom: 12, display: "flex", justifyContent: "flex-end", gap: 8, position: "relative" } }, [
-        e(Button, { key: "export", onClick: () => { exportForm.setFieldsValue({ format: "xlsx", filename: "" }); setExportOpen(true); } }, "导出"),
-        e(Button, { key: "columns", onClick: () => { setColumnDraft(visibleKeys); setColumnPanelOpen(!columnPanelOpen); } }, "列设置"),
-        columnPanelOpen ? e("div", { key: "panel", style: { position: "absolute", top: 40, right: 0, zIndex: 20 } }, columnPanel) : null
-      ]),
       e(Table, {
         key: "table",
         rowKey: "id",

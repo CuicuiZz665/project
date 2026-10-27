@@ -12,6 +12,7 @@
     Typography
   } = antd;
   const e = React.createElement;
+  const { ListActions } = app.sharedActions;
 
   function textOrDash(value) {
     return value === undefined || value === null || value === "" ? "-" : String(value);
@@ -33,10 +34,23 @@
     return e(Tag, { color: meta.color }, meta.label);
   }
 
-  // 渐进筛选：主筛选行 + 更多筛选/收起筛选（带已选计数）+ 查询/重置
-  function ProgressiveFilters({ form, primary, secondary, activeSecondaryCount = 0, loading, onSubmit, onReset }) {
+  // 渐进筛选：主筛选行 + 更多筛选/收起筛选（带已选计数）；
+  // 全局"回车即查/点选即查"交互：文本字段由 SearchInput 回车提交（走 onFinish），
+  // instantFields 列出的点选类字段（下拉/日期等）改动即通过 onValuesChange 立即应用；
+  // actions 传随重置组排的页面级操作；aside 传钉在表单右上角的元素（导出/列设置/面板）
+  function ProgressiveFilters({ form, primary, secondary, activeSecondaryCount = 0, loading, onSubmit, onReset, actions, aside, instantFields }) {
     const [expanded, setExpanded] = React.useState(false);
-    return e(Form, { form, layout: "inline", onFinish: onSubmit, style: { rowGap: 16 } }, [
+    const instant = instantFields || [];
+    return e(Form, {
+      form,
+      layout: "inline",
+      className: "progressive-filter-form",
+      onFinish: onSubmit,
+      onValuesChange: changed => {
+        if (Object.keys(changed).some(key => instant.includes(key))) onSubmit(form.getFieldsValue());
+      },
+      style: { rowGap: 16 }
+    }, [
       e("div", { key: "primary", style: { display: "flex", gap: 16, flexWrap: "wrap", width: "100%" } }, [
         ...primary,
         secondary ? e(Form.Item, { key: "toggle" },
@@ -50,16 +64,14 @@
             activeSecondaryCount > 0 ? e("span", { key: "count", style: { marginLeft: 4, color: "#1677ff" } }, activeSecondaryCount) : null
           ])) : null,
         e(Form.Item, { key: "actions" },
-          e(Space, null, [
-            e(Button, { key: "search", type: "primary", htmlType: "submit", loading }, "查询"),
-            e(Button, { key: "reset", onClick: onReset }, "重置")
-          ]))
+          e(ListActions, { onReset, trailing: actions }))
       ]),
       secondary ? e("div", {
         key: "secondary",
         hidden: !expanded,
         style: { display: expanded ? "flex" : "none", gap: 16, flexWrap: "wrap", width: "100%" }
-      }, secondary) : null
+      }, secondary) : null,
+      ...(aside || [])
     ]);
   }
 

@@ -8,6 +8,7 @@
   const appScripts = [
     "js/namespace.js",
     "js/mock-data.js",
+    "js/shared-actions.js",
     "js/customer-page.js",
     "js/login-log-page.js",
     "js/blacklist-page.js",
@@ -41,7 +42,7 @@
     "js/global-nav.js",
     "js/antd-app.js"
   ];
-  const appVersion = "20261027-finance-cash-pages";
+  const appVersion = "20261027-tb6";
   const scriptTimeout = 12000;
 
   function showDependencyError(detail) {

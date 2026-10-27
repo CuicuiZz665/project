@@ -2,6 +2,7 @@
   const { Button, Checkbox, Form, Input, Modal, Popover, Space, Table, Typography, message } = antd;
   const { Text } = Typography;
   const e = React.createElement;
+  const { ColumnSettingsTrigger, SearchInput } = app.sharedActions;
 
   const permissionTree = [
     {
@@ -219,16 +220,15 @@
       e("div", { className: "toolbar", key: "toolbar" },
         e(Space, { wrap: true }, [
           e("span", { key: "label", className: "toolbar-label" }, "角色名称 :"),
-          e(Input, {
+          e(SearchInput, {
             key: "input",
             value: keyword,
             placeholder: "请输入角色名称",
             allowClear: true,
             className: "keyword-input",
             onChange: event => setKeyword(event.target.value),
-            onPressEnter: () => setAppliedKeyword(keyword)
-          }),
-          e(Button, { key: "submit", type: "primary", onClick: () => setAppliedKeyword(keyword) }, "查询")
+            onSearch: () => setAppliedKeyword(keyword)
+          })
         ]),
         e(Space, null, [
           e(Button, { key: "add", type: "primary", onClick: () => openForm(null) }, "添加角色"),
@@ -242,7 +242,7 @@
               setColumnsOpen(open);
             },
             content: columnPanel
-          }, e(Button, null, "列设置"))
+          }, e(ColumnSettingsTrigger))
         ])),
       e(Table, {
         key: "table",

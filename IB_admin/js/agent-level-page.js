@@ -9,12 +9,14 @@
     Select,
     Space,
     Table,
+    Tabs,
     Tag,
     Typography,
     message
   } = antd;
   const { Text } = Typography;
   const e = React.createElement;
+  const { ListActions } = app.sharedActions;
 
   const LANGUAGE_OPTIONS = ["简体中文", "English", "繁體中文", "日本語", "한국어", "Tiếng Việt"];
 
@@ -335,12 +337,14 @@
               options: sortedLevels.map(level => ({ value: level.name, label: level.name }))
             })
           ]),
-          e(Space, { key: "buttons", size: 8 }, [
-            e(Button, { type: "primary", key: "search", onClick: () => setKeyword(keyword) }, "查询"),
-            e(Button, { key: "reset", onClick: resetFilters }, "重置")
-          ])
-        ]),
-        e(Button, { key: "add", type: "primary", onClick: openCreate }, "新增等级")
+          e(ListActions, {
+            key: "buttons",
+            onReset: resetFilters,
+            trailing: [
+              e(Button, { key: "add", type: "primary", onClick: openCreate }, "新增等级")
+            ]
+          })
+        ])
       ]),
       e(Table, {
         key: "table",
@@ -368,25 +372,23 @@
           e("span", { key: "req", style: { color: "#ff4d4f", marginRight: 4 } }, "*"),
           "语言配置"
         ]),
-        e("div", { className: "tabs", key: "lang-tabs" }, [
-          ...langTabs.map(lang => e("span", {
+        e(Tabs, {
+          key: "lang-tabs",
+          activeKey: activeLang,
+          items: langTabs.map(lang => ({
             key: lang,
-            className: `tab${lang === activeLang ? " active" : ""}`,
-            onClick: () => switchLang(lang)
-          }, [
-            lang,
-            lang !== langTabs[0] ? e("button", {
+            label: e(Space, { size: 4 }, lang, lang !== langTabs[0] && e(Button, {
               key: "rm",
-              type: "button",
-              title: "移除该语言",
+              type: "text",
+              size: "small",
               onClick: event => {
                 event.stopPropagation();
                 removeLang(lang);
               }
-            }, "×") : null
-          ])),
-          e("span", { key: "add", className: "tab", onClick: addLang }, "+ 添加语言")
-        ]),
+            }, "x"))
+          })).concat({ key: "__add", label: "+ 添加语言" }),
+          onChange: key => key === "__add" ? addLang() : switchLang(key)
+        }),
         e(Form.Item, { key: "name", label: "等级名称", required: true }, e(Input, {
           maxLength: 20,
           placeholder: "请输入等级名称",
