@@ -71,7 +71,7 @@ const tabButtons = document.querySelectorAll("[data-tab]");
     // 徽章 state: worn=佩戴中 unlocked=可佩戴 claim=待领取 locked=未解锁
     const badges = [
       { id: "starter",   name: "新手启程", cond: "完善个人资料", state: "worn", icon: "rocket" },
-      { id: "community", name: "社区之星", cond: "加入 GinX 官方社区", state: "unlocked", icon: "shield" },
+      { id: "community", name: "社区之星", cond: "加入 Cui 官方社区", state: "unlocked", icon: "shield" },
       { id: "academy",   name: "学院首课", cond: "完成第一节新手课程", state: "unlocked", icon: "book" },
       { id: "demo",      name: "模拟首单", cond: "完成一笔模拟交易", state: "claim", icon: "chart" },
       { id: "risk",      name: "风险守卫", cond: "完成风险意识检查", state: "locked", icon: "alert" },

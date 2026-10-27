@@ -1,48 +1,59 @@
 # AGENTS.md
 
-GinX 官网静态站（WebTrade）：**根目录 13 个页面 = 12 个自解压离线包 + 1 个拆分页 `rewards.html`（奖励中心）**（2026-10-04 删除 404 页、account-offline 页、article-gold-xauusd-demo-offline 页）。与同级目录的 `IB_console`（合伙控制台）、`IB_admin`（管理后台）同在一个 git 仓库（仓库根在上一级 `amyZ_project/`）。
+Cui 官网静态站（WebTrade，2026-10-13 全站换标 Gin→Cui，见下文「品牌换标口径」）：**根目录 14 个页面 = 12 个自解压离线包 + 2 个拆分页（`rewards.html` 奖励中心、`fee.html` 费率总览）**（2026-10-04 删除 404 页、account-offline 页、article-gold-xauusd-demo-offline 页）。与同级目录的 `IB_console`（合伙控制台）、`IB_admin`（管理后台）同在一个 git 仓库（仓库根在上一级 `amyZ_project/`）。
 
 本地预览：`python3 -m http.server 8643 --bind 0.0.0.0` → http://127.0.0.1:8643/index.html。不使用 Node、npm、打包器。**必须 http 访问**：i18n 的 fetch 不支持 file://，直接双击 html 能看页面但语言切换不工作。
 
-局域网分享（同 IB_admin 的 http://172.1.1.8:8080/ 用法）：本机 IP 为 172.1.1.8，分享链接 **http://172.1.1.8:8643/**。服务由 pm2 托管：名称 `WebTrade`，命令 `/usr/bin/python3 -m http.server 8643 --bind 0.0.0.0`，工作目录即本项目，与 IB_admin/IB_console 同列在 `pm2 status`；pm2 位于 nvm node v24.20.0（`~/.nvm/versions/node/v24.20.0/bin/pm2`）。已执行 `pm2 save`，但本机未配置 pm2 开机自启（无 LaunchAgent），Mac 重启后需手动 `pm2 resurrect`。
+局域网分享（同 IB_admin 的 http://172.1.1.8:8080/ 用法）：本机 IP 为 172.1.1.8，分享链接 **http://172.1.1.8:8643/**。~~pm2 托管~~ **（2026-10-13 实测：本机 nvm/pm2 已被移除，pm2 路径失效）**，现用裸命令后台起服务：`cd 本项目 && nohup /usr/bin/python3 -m http.server 8643 --bind 0.0.0.0 > /tmp/webtrade-http-8643.log 2>&1 &`，Mac 重启后需手动重跑（如需恢复 pm2 托管要先重装 node/pm2）。
 
 ## 现行结构（2026-09-24 重构后）
 
 ```text
 WebTrade/
-|-- 13 个页面 html          # 见下表：12 个离线包 + rewards.html
-|-- css/  (9 个)            # 只有 rewards.html 引用
+|-- 14 个页面 html          # 见下表：12 个离线包 + rewards.html + fee.html
+|-- css/  (10 个)           # rewards.html / fee.html 引用
 |   |-- base.css            # 基础变量与站点底样式
 |   |-- site.css            # 主站通用样式（导航/页脚等，最大的一块）
 |   |-- subpage-theme.css   # 子页橙黑主题覆写
 |   |-- nav-sync.css        # 导航与首页对齐（mega-menu 中性化）
 |   |-- fonts.css           # Manrope @font-face（woff2 为抓包残留 GUID，本地 404 → 回退 Inter/Helvetica）
 |   |-- rewards.css         # ★ 奖励页主样式（hero/任务卡/福利中心/徽章墙/弹窗）
+|   |-- fee.css             # 费率总览页样式（fee.html 专用）
 |   `-- footer-colors.css / footer-social.css / fsc-footer.css
-|-- js/  (9 个)             # rewards.html 用 7 个 + i18n.js / academy-demo-flow.js 离线包外壳注入
-|   |-- rewards-page.js     # ★ 主 tab 切换 + 福利中心（优惠券/积分商城/徽章 三子面板、计数、佩戴、使用弹窗、toast）
+|-- js/  (10 个)            # rewards.html / fee.html 用 8 个 + i18n.js / academy-demo-flow.js 离线包外壳注入
+|   |-- rewards-page.js     # ★ 主 tab 切换 + 福利中心（优惠券/积分商城/徽章 三子面板、计数、佩戴、使用弹窗、toast）（当前 ?v=20261013a）
 |   |-- checkin-points.js   # ★ 积分记录逻辑：任务卡光环、每周签到、积分余额、补签（消耗 10 积分）、新手礼包状态机
+|   |-- fee-page.js         # fee.html 费率表渲染（当前 ?v=20261008b）
 |   |-- i18n.js             # 全站共用多语言引擎（见下文 i18n 体系）
 |   |-- academy-demo-flow.js # academy.html 外壳注入：全页「开设模拟账户」入口（hero ghost/课程弹窗，不注入任何可见元素）统一接弹窗（版本B文案）→ localStorage 记状态；点击恒弹窗不跳转、不改按钮文案；注入节点后须调 I18N.reapply() 补翻（observer 随解包失效）（当前 ?v=20261005f，改后 bump academy.html 外壳引用；文案词条在 i18n/*/academy.json）
 |   `-- reveal-motion.js / hero-confetti.js / nav-height.js / footer-social-dd.js / footer-risk.js
-|-- assets/  (23 个, 15MB)  # rewards.html 的图片 + 离线包外链的页面级资源（three.min.js / site-motion.js / orange-black-subpages.css / ginfx 系列图等）
+|-- assets/  (24 个, 16MB)  # rewards.html / fee.html 的图片 + 离线包外链的页面级资源（three.min.js / site-motion.js / orange-black-subpages.css / ginfx 系列图等）
 |-- i18n/                   # en/ zh/ 词条，文件名与现存页面对应（详见下文 i18n 体系）
 `-- GIT.md
 ```
 
 ★ = 积分记录逻辑与福利内容所在文件，改这两处需求时动 `rewards.css` / `rewards-page.js` / `checkin-points.js`。
 
-### 13 个页面
+### 14 个页面
 
 | 页面 | 类型 | 说明 |
 | --- | --- | --- |
 | index.html | 离线包（31MB） | 官网首页（英文为主） |
 | rewards.html | 拆分页（47KB，中文） | 奖励中心，样式/逻辑在 css/ js/ 直改 |
+| fee.html | 拆分页（71KB，中文） | 费率总览（2026-10-08 新增），样式/逻辑在 css/fee.css、js/fee-page.js 直改，无 i18n 词条 |
 | academy / articles | 离线包 | 学院、文章列表 |
 | activities / activity-detail / competition-offline | 离线包 | 活动列表、活动详情、比赛 |
 | login | 离线包 | 登录 |
 | invite-friends-new / refer-friends / refer-IB-friends-standalone / refer-IB-friends-standalone-ginx-style | 离线包 | 邀请与推荐（后三个未登录只显示 Login 界面） |
 | partner-ib-new-offline | 离线包 | IB 合伙页 |
+
+## 品牌换标口径（2026-10-13 全站 Gin→Cui）
+
+- **文字替换规则**（大小写敏感）：`GinX.io → Cui`、`GinX → Cui`、`GinFX → CuiFX`、独词 `Gin → Cui`（词边界）；产品名随之变为 Cui Mini APP / Cui MiniFX。与 IB_admin 的换标口径一致。
+- **实施方式**：离线包是"内嵌模板文本 + base64 资源表"结构，本次直接对包内模板文本做替换 + 换掉内嵌品牌图，效果等同"重新导出整包"（i18n JSON 只影响切换语言后的视图，改不了默认视图）。同步把 25 个 i18n JSON 的**键和值**按同一规则变换（键必须与换标后的 DOM 一致，否则 EN/中文切换失配）。
+- **保护项（不改）**：`href/src/srcset/poster` 属性值——社交外链仍指向原 GinX 账号（x.com/GinX_global 等）；小写标识符（`.impact-gin-logo`、`ginfx-mega-nav`、`ginx_i18n_lang` 等）；css/js 内注释里的 GinX 未动（避免无谓 bump）。
+- **图片级换标**：`assets/brand-lockup.png`（=footer-baseline-logo.png，导航/页脚字标 C+Cui）、`assets/favicon.png` 已用 PIL 重制；12 个包内嵌的同一批字标/favicon（按 md5 匹配）已替换；index/login/refer-* 首屏 3D 粒子 logo 的取样源图（包内 JS `ginfxLogoSourceDataUri`）已换为斑点 "C"。**照片/奖杯/手机截图等实拍图里如出现旧 G 标属图片素材，未重制。**
+- **已知不一致**：`refer-IB-friends-standalone-ginx-style` 页在本次换标前就已局部使用 "CuiX" 字样（欢迎语/JS 文案），与其他页的 "Cui" 不统一，待定夺是否拉齐。
 
 ## 两类页面，两种改法（口径）
 
