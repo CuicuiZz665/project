@@ -1,16 +1,13 @@
 (function registerDashboardPage(app) {
   const {
-    Button,
     Card,
-    Checkbox,
     Col,
     DatePicker,
-    Drawer,
     Row,
     Segmented,
+    Table,
     Tooltip,
-    Typography,
-    message
+    Typography
   } = antd;
   const { RangePicker } = DatePicker;
   const { Text, Title } = Typography;
@@ -33,51 +30,23 @@
       ["line", { x1: 20, y1: 8, x2: 20, y2: 14 }],
       ["line", { x1: 23, y1: 11, x2: 17, y2: 11 }]
     ],
-    barChart: [
-      ["line", { x1: 6, y1: 20, x2: 6, y2: 16 }],
-      ["line", { x1: 12, y1: 20, x2: 12, y2: 10 }],
-      ["line", { x1: 18, y1: 20, x2: 18, y2: 4 }]
-    ],
-    download: [
-      ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" }],
-      ["polyline", { points: "7 10 12 15 17 10" }],
-      ["line", { x1: 12, y1: 3, x2: 12, y2: 15 }]
-    ],
-    upload: [
-      ["path", { d: "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" }],
-      ["polyline", { points: "17 8 12 3 7 8" }],
-      ["line", { x1: 12, y1: 3, x2: 12, y2: 15 }]
-    ],
-    trendingUp: [
-      ["polyline", { points: "23 6 13.5 15.5 8.5 10.5 1 18" }],
-      ["polyline", { points: "17 6 23 6 23 12" }]
-    ],
     userCheck: [
       ["path", { d: "M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" }],
       ["circle", { cx: 8.5, cy: 7, r: 4 }],
       ["polyline", { points: "17 11 19 13 23 9" }]
     ],
-    award: [
-      ["circle", { cx: 12, cy: 8, r: 7 }],
-      ["polyline", { points: "8.21 13.89 7 23 12 20 17 23 15.79 13.88" }]
+    barChart: [
+      ["line", { x1: 6, y1: 20, x2: 6, y2: 16 }],
+      ["line", { x1: 12, y1: 20, x2: 12, y2: 10 }],
+      ["line", { x1: 18, y1: 20, x2: 18, y2: 4 }]
     ],
-    send: [
-      ["line", { x1: 22, y1: 2, x2: 11, y2: 13 }],
-      ["polygon", { points: "22 2 15 22 11 13 2 9 22 2" }]
+    trendingUp: [
+      ["polyline", { points: "23 6 13.5 15.5 8.5 10.5 1 18" }],
+      ["polyline", { points: "17 6 23 6 23 12" }]
     ],
     dollar: [
       ["line", { x1: 12, y1: 1, x2: 12, y2: 23 }],
       ["path", { d: "M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" }]
-    ],
-    arrowDown: [
-      ["circle", { cx: 12, cy: 12, r: 10 }],
-      ["polyline", { points: "8 12 12 16 16 12" }],
-      ["line", { x1: 12, y1: 8, x2: 12, y2: 16 }]
-    ],
-    arrowUp: [
-      ["circle", { cx: 12, cy: 12, r: 10 }],
-      ["polyline", { points: "16 12 12 8 8 12" }],
-      ["line", { x1: 12, y1: 16, x2: 12, y2: 8 }]
     ],
     activity: [
       ["polyline", { points: "22 12 18 12 15 21 9 3 6 12 2 12" }]
@@ -98,7 +67,7 @@
     }, (metricIconPaths[name] || []).map(([tag, attrs], index) => e(tag, Object.assign({ key: index }, attrs))));
   }
 
-  // 统计时间联动：解析「1,234」「128.0万」这类展示值，按周期系数折算后还原展示格式
+  // 解析「1,234」「128.0万」这类展示值；自定义区间按周期系数折算后还原展示格式
   function parseStatNumber(text) {
     const match = String(text).match(/^(-?[\d,]+(?:\.\d+)?)\s*(万)?$/);
     if (!match) return null;
@@ -119,182 +88,247 @@
     return Math.round(scaled).toLocaleString("en-US");
   }
 
-  function DashboardPage({ data, customers = [] }) {
+  function statValue(text) {
+    const parsed = parseStatNumber(text);
+    if (parsed) return parsed.value;
+    const num = Number(String(text).replace(/[^\d.-]/g, ""));
+    return Number.isFinite(num) ? num : 0;
+  }
+
+  function changePct(text) {
+    const match = String(text || "").match(/^([+-]?\d+(?:\.\d+)?)%/);
+    return match ? Number(match[1]) / 100 : 0;
+  }
+
+  function formatAxisValue(value) {
+    if (value >= 10000) {
+      const wan = value / 10000;
+      return `${wan >= 100 ? Math.round(wan) : +wan.toFixed(1)}万`;
+    }
+    return Math.round(value).toLocaleString("zh-CN");
+  }
+
+  // 主趋势指标（单选切换）；净充值由 deposits - withdrawals 派生
+  const mainTrendMetrics = [
+    { id: "net", name: "净充值", unit: "元", pick: point => point.deposits - point.withdrawals },
+    { id: "customers", name: "交易客户", unit: "人", pick: point => point.customers },
+    { id: "registered", name: "新增注册", unit: "人", pick: point => point.registered },
+    { id: "firstDepositCustomers", name: "新增首充", unit: "人", pick: point => point.firstDepositCustomers },
+    { id: "lots", name: "订单数", unit: "笔", pick: point => point.lots },
+    { id: "amount", name: "交易金额", unit: "元", pick: point => point.amount },
+    { id: "deposits", name: "充值金额", unit: "元", pick: point => point.deposits },
+    { id: "withdrawals", name: "提现金额", unit: "元", pick: point => point.withdrawals }
+  ];
+
+  // 迷你走势取值（首充转化率按日派生）
+  function sparkValue(key, point) {
+    if (key === "net") return point.deposits - point.withdrawals;
+    if (key === "firstDepositRate") {
+      return point.registered ? (point.firstDepositCustomers / point.registered) * 100 : 0;
+    }
+    return point[key];
+  }
+
+  function renderSparkline(values) {
+    const nums = values.map(Number).filter(num => Number.isFinite(num));
+    if (nums.length < 2) return null;
+    const max = Math.max(...nums);
+    const min = Math.min(...nums);
+    const span = max - min || 1;
+    const height = 26;
+    const step = 100 / (nums.length - 1);
+    const points = nums.map((num, index) => {
+      const x = (index * step).toFixed(2);
+      const y = (height - 3 - ((num - min) / span) * (height - 6)).toFixed(2);
+      return `${x},${y}`;
+    });
+    return e("svg", {
+      className: "dashboard-metric-spark",
+      viewBox: `0 0 100 ${height}`,
+      preserveAspectRatio: "none",
+      "aria-hidden": true
+    }, [
+      e("polyline", { points: `${points[0]},${height} ${points.join(" ")} ${points[points.length - 1]},${height}`, className: "dashboard-spark-area", key: "area" }),
+      e("polyline", { points: points.join(" "), className: "dashboard-spark-line", key: "line" })
+    ]);
+  }
+
+  function DashboardPage({ data, onNavigate }) {
     const [dateMode, setDateMode] = React.useState("week");
     const [customRange, setCustomRange] = React.useState(() => [dayjs("2026-08-12"), dayjs("2026-09-11")]);
-    const [chartCount, setChartCount] = React.useState(3);
-    const [visibleTrendIds, setVisibleTrendIds] = React.useState(["tradingLots", "tradingAmount", "tradingCustomers"]);
-    const [isChartConfigOpen, setChartConfigOpen] = React.useState(false);
-    const [draggingTrendId, setDraggingTrendId] = React.useState(null);
-    const [trendPeriods, setTrendPeriods] = React.useState({});
+    const [mainMetric, setMainMetric] = React.useState("net");
     const [rankMetric, setRankMetric] = React.useState("lots");
+    // 今日为实时数据，进入页面时记录「截至」时刻
+    const [liveAt] = React.useState(() => dayjs());
 
-    // 顶部指标卡：2 行 × 4 卡分组展示。人数类指标并入对应金额卡的副标题；
-    // 交易订单数/交易金额独立成卡：净充值金额整卡移至「资金与分成」首位，交易金额补原提现金额卡位，
-    // 交易订单数补原净充值金额卡位，充值/提现金额不再单独成卡（数值保留在净充值金额卡副标题）
-    const metricRows = [
+    const customDays = customRange && customRange[0] && customRange[1]
+      ? customRange[1].diff(customRange[0], "day") + 1
+      : 7;
+    const customFactor = Math.min(8, Math.max(0.15, customDays / 7));
+
+    // 指标卡 2 组 × 4 张：page 为整卡点击跳转的页面 key；spark 为迷你走势取值键（近七日日序列）
+    const metricGroups = [
       {
-        label: "客户与结果",
+        label: "客户增长",
         metrics: [
-          { key: "registered", label: "注册客户数", unit: "人", icon: "user", tone: "blue" },
-          { key: "tradingCustomers", label: "交易客户数", unit: "人", icon: "users", tone: "violet" },
-          { key: "firstDepositCustomers", label: "首次充值客户数", unit: "人", icon: "userPlus", tone: "cyan" },
-          { key: "tradingLots", label: "交易订单数", unit: "单", icon: "barChart", tone: "green" }
+          { key: "registered", label: "新增注册客户", unit: "人", icon: "user", tone: "blue", page: "customer", spark: "registered" },
+          { key: "firstDepositCustomers", label: "新增首充客户", unit: "人", icon: "userPlus", tone: "cyan", page: "depositManage", spark: "firstDepositCustomers" },
+          { key: "firstDepositRate", label: "首充转化率", icon: "userCheck", tone: "violet", spark: "firstDepositRate" },
+          { key: "tradingCustomers", label: "交易客户数", unit: "人", icon: "users", tone: "green", page: "customer", spark: "customers" }
         ]
       },
       {
-        label: "资金与分成",
+        label: "交易与资金",
         metrics: [
+          { key: "tradingLots", label: "订单数", unit: "笔", icon: "barChart", tone: "orange", page: "orderList", spark: "lots" },
+          { key: "tradingAmount", label: "交易金额", unit: "元", icon: "activity", tone: "teal", page: "orderList", spark: "amount" },
           {
-            key: "netDeposits", label: "净充值金额", unit: "元", icon: "trendingUp", tone: "teal",
+            key: "netDeposits", label: "净充值", unit: "元", icon: "trendingUp", tone: "indigo", page: "fundFlow", spark: "net",
             subtitle: m => `充值 ${m.deposits.value} · 提现 ${m.withdrawals.value}`
           },
-          { key: "tradingAmount", label: "交易金额", unit: "元", icon: "activity", tone: "orange" },
           {
-            key: "ibRebateAmount", label: "代理返佣金额", unit: "元", icon: "dollar", tone: "indigo",
+            key: "ibRebateAmount", label: "代理返佣", unit: "元", icon: "dollar", tone: "rose", page: "commission",
             subtitle: m => `返佣客户 ${m.ibRebateCustomers.value} 人`
           }
         ]
       }
     ];
-    // 趋势模块使用独立清单：顶部卡片改为客户/资金/返佣口径后，交易订单数、交易金额等历史曲线仍保留在趋势图里
-    const trendOptions = [
-      { id: "tradingLots", name: "交易订单数", metric: "lots" },
-      { id: "tradingAmount", name: "交易金额", metric: "amount" },
-      { id: "tradingCustomers", name: "交易客户数", metric: "customers" },
-      { id: "registered", name: "注册客户数", metric: "registered" },
-      { id: "firstDepositCustomers", name: "首次充值客户数", metric: "firstDepositCustomers" },
-      { id: "deposits", name: "充值金额", metric: "deposits" },
-      { id: "withdrawals", name: "提现金额", metric: "withdrawals" },
-      { id: "pnl", name: "交易量", metric: "volume" }
-    ].map(item => Object.assign({}, item, { title: `${item.name}趋势` }));
-    const chartCountOptions = [3, 4, 5, 6, 7, 8].map(value => ({ label: `${value} 张`, value }));
-    const visibleTrends = visibleTrendIds.slice(0, chartCount)
-      .map(id => trendOptions.find(item => item.id === id))
-      .filter(Boolean);
 
-    function setTrendDisplayCount(value) {
-      const nextCount = Number(value);
-      setChartCount(nextCount);
-      setVisibleTrendIds(current => {
-        if (current.length >= nextCount) return current.slice(0, nextCount);
-        const additions = trendOptions.map(item => item.id).filter(id => !current.includes(id));
-        return current.concat(additions).slice(0, nextCount);
-      });
-    }
+    // 周期指标集：今日/近七天/近三十天各有独立数据，自定义按天数系数折算（原型 mock）
+    const metricSource = dateMode === "today" ? data.metricsToday : dateMode === "month" ? data.metricsMonth : data.metrics;
+    const periodMetrics = dateMode === "custom"
+      ? Object.keys(data.metrics).reduce((result, key) => {
+        result[key] = Object.assign({}, data.metrics[key], { value: scaleStatText(data.metrics[key].value, customFactor) });
+        return result;
+      }, {})
+      : metricSource;
 
-    function toggleTrendSelection(id, checked) {
-      if (!checked && visibleTrendIds.length <= 3) {
-        message.warning("趋势图至少保留 3 项");
-        return;
+    // 首充转化率派生：当前值 = 首充/注册；环比按两项各自 change 反推上期后作差（pt）
+    const registeredNum = statValue(periodMetrics.registered.value);
+    const firstDepositNum = statValue(periodMetrics.firstDepositCustomers.value);
+    const rateNow = registeredNum ? firstDepositNum / registeredNum : 0;
+    const prevRegistered = registeredNum / (1 + changePct(periodMetrics.registered.change));
+    const prevFirstDeposit = firstDepositNum / (1 + changePct(periodMetrics.firstDepositCustomers.change));
+    const ratePrev = prevRegistered ? prevFirstDeposit / prevRegistered : 0;
+    const rateDelta = (rateNow - ratePrev) * 100;
+    const derivedMetrics = Object.assign({}, periodMetrics, {
+      firstDepositRate: {
+        value: registeredNum ? `${Math.round(rateNow * 100)}%` : "-",
+        change: `${rateDelta >= 0 ? "+" : ""}${rateDelta.toFixed(1)}pt`,
+        note: periodMetrics.registered.note
       }
-      const nextIds = checked ? visibleTrendIds.concat(id) : visibleTrendIds.filter(item => item !== id);
-      setVisibleTrendIds(nextIds);
-      setChartCount(nextIds.length);
+    });
+
+    // 品种排行的周期折算
+    const symbolFactor = dateMode === "today" ? 0.17 : dateMode === "week" ? 1 : dateMode === "month" ? 4.3 : customFactor;
+    const periodSymbols = symbolFactor === 1 ? data.symbols : data.symbols.map(item => Object.assign({}, item, {
+      lots: scaleStatText(item.lots, symbolFactor),
+      amount: scaleStatText(item.amount, symbolFactor),
+      orders: scaleStatText(item.orders, symbolFactor)
+    }));
+
+    // 主趋势序列粒度自动跟随统计时间：今日按小时，七天/三十天/短自定义按日，长自定义按月
+    function resolveTrendBundle() {
+      if (dateMode === "today") return { current: data.trendToday, prev: data.trendTodayPrev, granularity: "按小时" };
+      if (dateMode === "week") return { current: data.trendWeek, prev: data.trendWeekPrev, granularity: "按日" };
+      if (dateMode === "month" || customDays <= 31) return { current: data.trendDay, prev: data.trendDayPrev, granularity: "按日" };
+      return { current: data.trendMonth, prev: data.trendMonthPrev, granularity: "按月" };
     }
 
-    function moveTrend(droppedId) {
-      if (!draggingTrendId || draggingTrendId === droppedId) return;
-      setVisibleTrendIds(current => {
-        const next = current.filter(id => id !== draggingTrendId);
-        next.splice(next.indexOf(droppedId), 0, draggingTrendId);
-        return next;
-      });
-      setDraggingTrendId(null);
-    }
-    // 统计时间是标题行的筛选按钮：切换后下方指标卡、排行、分布直接联动，无需单独查询
-    function handleDateModeChange(value) {
-      setDateMode(value);
-      setTrendPeriods({});
-    }
-
-    const customDays = customRange && customRange[0] && customRange[1]
-      ? customRange[1].diff(customRange[0], "day") + 1
-      : 7;
-    const periodFactor = dateMode === "today" ? 0.17
-      : dateMode === "custom" ? Math.min(8, Math.max(0.15, customDays / 7))
-        : 1;
-    const periodMetrics = dateMode === "today" ? data.metricsToday
-      : periodFactor === 1 ? data.metrics
-        : Object.keys(data.metrics).reduce((result, key) => {
-          result[key] = Object.assign({}, data.metrics[key], { value: scaleStatText(data.metrics[key].value, periodFactor) });
-          return result;
-        }, {});
-    const periodSymbols = dateMode === "week" ? data.symbols
-      : data.symbols.map(item => Object.assign({}, item, {
-        lots: scaleStatText(item.lots, periodFactor),
-        amount: scaleStatText(item.amount, periodFactor),
-        volume: scaleStatText(item.volume, periodFactor),
-        orders: scaleStatText(item.orders, periodFactor)
-      }));
-    const trendDefaultPeriod = dateMode === "today" ? "day" : "week";
-
-    function setTrendPeriod(id, period) {
-      setTrendPeriods(current => Object.assign({}, current, { [id]: period }));
+    function renderMetricCard(metric) {
+      const item = derivedMetrics[metric.key];
+      if (!item) return null;
+      const changeText = String(item.change || "");
+      const changeDir = changeText.startsWith("+") ? "up" : changeText.startsWith("-") ? "down" : "flat";
+      const changeArrow = changeDir === "up" ? "↑" : changeDir === "down" ? "↓" : "";
+      const cardProps = {
+        className: `dashboard-metric-card${metric.page ? " is-clickable" : ""}`,
+        key: metric.key
+      };
+      if (metric.page && onNavigate) cardProps.onClick = () => onNavigate(metric.page);
+      return e(Card, cardProps, [
+        e("div", { className: "dashboard-metric-label", key: "label" }, [
+          e(Text, { type: "secondary", key: "text" }, metric.label),
+          item.change ? e("span", {
+            className: `dashboard-metric-change is-${changeDir}`,
+            title: item.note || "",
+            key: "change"
+          }, `${changeArrow} ${changeText}`) : null
+        ]),
+        e("strong", { key: "value" }, [
+          item.value,
+          metric.unit ? e("span", { className: "dashboard-metric-unit", key: "unit" }, metric.unit) : null
+        ]),
+        metric.subtitle ? e("div", { className: "dashboard-metric-sub", key: "sub" }, metric.subtitle(derivedMetrics)) : null,
+        metric.spark ? renderSparkline((data.trendWeek || []).map(point => sparkValue(metric.spark, point))) : null,
+        metric.icon ? e("span", { className: `dashboard-metric-icon tone-${metric.tone}`, key: "icon" }, renderMetricIcon(metric.icon)) : null
+      ]);
     }
 
-    function renderTrendCard(trendItem, formatter) {
-      const { title, metric, id } = trendItem;
-      const period = trendPeriods[id] || trendDefaultPeriod;
-      const trendData = period === "month" ? data.trendMonth : (period === "day" ? data.trendDay : data.trend);
-      const maxValue = Math.max(...trendData.map(item => item[metric]));
-      const periodSwitch = e(Segmented, {
-        size: "small",
-        value: period,
-        onChange: value => setTrendPeriod(id, value),
-        options: [{ value: "day", label: "日" }, { value: "week", label: "周" }, { value: "month", label: "月" }]
-      });
-      if (!trendData.length || !(maxValue > 0)) {
-        return e(Card, { title, className: "dashboard-analysis-card", key: metric, extra: periodSwitch }, [
-          e("div", { className: "dashboard-trend-empty", key: "empty" }, [
-            e("svg", {
-              viewBox: "0 0 24 24", width: 28, height: 28, fill: "none", stroke: "currentColor",
-              strokeWidth: 1.5, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": true, key: "icon"
-            }, [
-              e("polyline", { points: "3 17 9 11 13 15 21 7", key: "line" }),
-              e("polyline", { points: "15 7 21 7 21 13", key: "arrow" })
-            ]),
-            e("span", { key: "text" }, "暂无数据")
-          ])
+    function renderMainTrendCard() {
+      const { current, prev, granularity } = resolveTrendBundle();
+      const metricDef = mainTrendMetrics.find(item => item.id === mainMetric) || mainTrendMetrics[0];
+      const currentValues = current.map(metricDef.pick);
+      const prevValues = prev.map(metricDef.pick);
+      const maxValue = Math.max(...currentValues, ...prevValues, 0);
+
+      const chips = e("div", { className: "dashboard-main-chips", key: "chips" },
+        mainTrendMetrics.map(item => e("button", {
+          type: "button",
+          key: item.id,
+          className: `dashboard-chip${item.id === mainMetric ? " is-active" : ""}`,
+          onClick: () => setMainMetric(item.id)
+        }, item.name)));
+
+      const legend = e("div", { className: "dashboard-chart-legend", key: "legend" }, [
+        e("span", { className: "dashboard-legend-item", key: "cur" }, [
+          e("span", { className: "dashboard-legend-dot", key: "dot" }),
+          "当前周期"
+        ]),
+        e("span", { className: "dashboard-legend-item", key: "prev" }, [
+          e("span", { className: "dashboard-legend-dot is-prev", key: "dot" }),
+          "上期对比"
+        ]),
+        e("span", { className: "dashboard-legend-note", key: "note" }, `粒度 ${granularity}`)
+      ]);
+
+      if (!currentValues.length || !(maxValue > 0)) {
+        return e(Card, { title: "趋势分析", className: "dashboard-analysis-card dashboard-main-card", key: "main" }, [
+          chips,
+          legend,
+          e("div", { className: "dashboard-trend-empty", key: "empty" }, "暂无数据")
         ]);
       }
-      const metricLabel = {
-        registered: "注册客户数",
-        customers: "交易客户数",
-        firstDepositCustomers: "首次充值客户数",
-        lots: "交易订单数",
-        amount: "交易金额（元）",
-        deposits: "充值金额（元）",
-        withdrawals: "提现金额（元）",
-        volume: "交易量"
-      }[metric];
+
       const axisTicks = [maxValue, maxValue * 0.75, maxValue * 0.5, maxValue * 0.25, 0]
         .map(value => Math.round(value));
       const padX = 2;
-      const xFor = index => padX + (100 - padX * 2) * index / (trendData.length - 1);
+      const xFor = index => padX + (100 - padX * 2) * index / (current.length - 1);
       const yFor = value => (maxValue ? 100 - (value / maxValue) * 96 : 100);
-      const points = trendData.map((item, index) => ({
+      const points = current.map((item, index) => ({
         x: xFor(index),
-        y: yFor(item[metric]),
+        y: yFor(currentValues[index]),
         label: item.label,
-        value: item[metric]
+        value: currentValues[index]
       }));
+      const prevPoints = prev.map((item, index) => ({ x: xFor(index), y: yFor(prevValues[index]) }));
       const linePath = points.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x.toFixed(2)} ${point.y.toFixed(2)}`).join(" ");
       const areaPath = `${linePath} L ${points[points.length - 1].x.toFixed(2)} 100 L ${points[0].x.toFixed(2)} 100 Z`;
-      const labelStep = period === "month" ? 2 : (period === "day" ? 5 : 3);
+      const prevPath = prevPoints.map((point, index) => `${index === 0 ? "M" : "L"} ${point.x.toFixed(2)} ${point.y.toFixed(2)}`).join(" ");
+      const labelStep = Math.max(1, Math.ceil(current.length / 7));
+      const unitSuffix = metricDef.unit ? metricDef.unit : "";
+
       return e(Card, {
-        title,
-        className: "dashboard-analysis-card",
-        key: metric,
-        extra: periodSwitch
+        title: "趋势分析",
+        className: "dashboard-analysis-card dashboard-main-card",
+        key: "main",
+        extra: e(Text, { type: "secondary" }, "切换指标查看不同口径")
       }, [
-        e("div", { className: "dashboard-chart-legend", key: "legend" }, [
-          e("span", { className: "dashboard-legend-dot" }),
-          e(Text, { type: "secondary" }, "当前周期")
-        ]),
-        e("div", { className: "dashboard-trend-chart", key: "chart" }, [
+        chips,
+        legend,
+        e("div", { className: "dashboard-trend-chart is-main", key: "chart" }, [
           e("div", { className: "dashboard-y-axis", key: "axis" }, axisTicks.map((value, index) =>
-            e("span", { key: index }, formatter(value))
+            e("span", { key: index }, formatAxisValue(value))
           )),
           e("div", { className: "dashboard-chart-plot", key: "plot" }, [
             e("div", { className: "dashboard-chart-grid", key: "grid" }, axisTicks.map((_, index) => e("span", { key: index }))),
@@ -302,18 +336,18 @@
               e("div", { className: "dashboard-line-canvas", key: "canvas" }, [
                 e("svg", { className: "dashboard-line-svg", viewBox: "0 0 100 100", preserveAspectRatio: "none", key: "svg" }, [
                   e("path", { d: areaPath, className: "dashboard-line-area", key: "area" }),
+                  e("path", { d: prevPath, className: "dashboard-line-path-prev", key: "prev" }),
                   e("path", { d: linePath, className: "dashboard-line-path", key: "path" })
                 ]),
-                points.map(point => e(Tooltip, { title: `${point.label} · ${metricLabel}：${formatter(point.value)}`, key: point.label },
+                points.map(point => e(Tooltip, { title: `${point.label} · ${metricDef.name}：${formatAxisValue(point.value)}${unitSuffix}`, key: point.label },
                   e("span", { className: "dashboard-line-dot", style: { left: `${point.x}%`, top: `${point.y}%` } })
                 ))
               ]),
               e("div", { className: "dashboard-line-labels", key: "labels" },
-                trendData.map((item, index) => e("span", {
+                current.map((item, index) => e("span", {
                   key: item.label,
-                  className: index % labelStep === 0 || index === trendData.length - 1 ? "is-visible" : ""
-                }, item.label))
-              )
+                  className: index % labelStep === 0 || index === current.length - 1 ? "is-visible" : ""
+                }, item.label)))
             ])
           ])
         ])
@@ -333,7 +367,7 @@
 
     function renderRankingCard() {
       const totalLabels = { lots: "总订单数", amount: "总金额", orders: "总订单笔数" };
-      const totalUnits = { lots: "单", amount: "元" };
+      const totalUnits = { lots: "笔", amount: "元" };
       const ranked = periodSymbols
         .map(item => ({ item, value: parseRankValue(item[rankMetric]) }))
         .sort((a, b) => b.value - a.value);
@@ -342,7 +376,7 @@
       const totalUnit = totalUnits[rankMetric] ? ` ${totalUnits[rankMetric]}` : "";
       return e(Card, {
         title: e("span", { key: "title" }, [
-          "交易品种排行",
+          "品种排行",
           e("span", { className: "dashboard-ranking-total", key: "total" },
             ` ${totalLabels[rankMetric]} ${formatRankTotal(rankMetric, totalValue)}${totalUnit}`)
         ]),
@@ -352,173 +386,131 @@
           size: "small",
           value: rankMetric,
           onChange: setRankMetric,
-          options: [{ value: "lots", label: "订单数" }, { value: "amount", label: "交易金额" }, { value: "orders", label: "订单笔数" }]
+          options: [{ value: "lots", label: "订单数" }, { value: "amount", label: "金额" }, { value: "orders", label: "笔数" }]
         })
       }, [
         e("div", { className: "dashboard-ranking-list", key: "list" },
           ranked.map(({ item, value }, index) => e("div", { className: "dashboard-ranking-row", key: item.name }, [
-            e("span", { className: "dashboard-rank-number", key: "index" }, `0${index + 1}`),
+            e("span", { className: "dashboard-rank-number", key: "index" }, String(index + 1).padStart(2, "0")),
             e("div", { className: "dashboard-rank-main", key: "main" }, [
               e("strong", { key: "name" }, item.name),
               e("div", { className: "dashboard-rank-progress", key: "progress" }, e("span", { style: { width: `${maxValue ? value / maxValue * 100 : 0}%` } }))
             ]),
             e("strong", { className: "dashboard-rank-value", key: "value" }, item[rankMetric])
-          ]))
-        )
+          ])))
       ]);
     }
 
-    const distributionColors = ["#1677ff", "#36b3f9", "#8b5cf6", "#c3cad6", "#13c2c2", "#faad14", "#f5780a", "#eb2f96"];
-
-    function renderDistributionCard() {
-      // 按品种类型聚合订单数，不展示具体品种
-      const typeOrders = new Map();
-      periodSymbols.forEach(item => {
-        const type = item.type || "其他";
-        typeOrders.set(type, (typeOrders.get(type) || 0) + parseRankValue(item.orders));
-      });
-      const slices = Array.from(typeOrders.entries())
-        .map(([name, orders]) => ({ name, orders }))
-        .sort((a, b) => b.orders - a.orders)
-        .map((entry, index) => Object.assign({}, entry, { color: distributionColors[index % distributionColors.length] }));
-      const total = slices.reduce((sum, entry) => sum + entry.orders, 0);
-      // 环形图用周长=100 的圆模拟扇区，相邻扇区留 0.8 的缝隙便于区分
-      let cumulative = 0;
-      const segments = slices.map(slice => {
-        const pct = total ? slice.orders / total * 100 : 0;
-        const segment = {
-          key: slice.name,
-          color: slice.color,
-          dash: Math.max(pct - 0.8, 0.4),
-          offset: 25 - cumulative
-        };
-        cumulative += pct;
-        return segment;
+    // 转化漏斗：注册 → 首充 → 交易（口径：首充/交易不超过上一阶段，mock 已保证单调）
+    function renderFunnelCard() {
+      const stages = [
+        { key: "registered", label: "注册客户" },
+        { key: "firstDepositCustomers", label: "首次充值" },
+        { key: "tradingCustomers", label: "交易客户" }
+      ].map(stage => Object.assign({}, stage, {
+        value: Math.round(statValue(periodMetrics[stage.key].value))
+      }));
+      const maxValue = Math.max(stages[0].value, 1);
+      const rows = [];
+      stages.forEach((stage, index) => {
+        rows.push(e("div", { className: "dashboard-funnel-stage", key: stage.key }, [
+          e("div", { className: "dashboard-funnel-meta", key: "meta" }, [
+            e("span", { key: "label" }, stage.label),
+            e("strong", { key: "value" }, `${stage.value.toLocaleString("zh-CN")} 人`)
+          ]),
+          e("div", { className: "dashboard-funnel-track", key: "track" },
+            e("span", {
+              className: `dashboard-funnel-fill tone-${index}`,
+              style: { width: `${Math.min(100, stage.value / maxValue * 100)}%` }
+            }))
+        ]));
+        const prevStage = stages[index - 1];
+        if (prevStage && prevStage.value > 0) {
+          const rate = Math.round(stage.value / prevStage.value * 100);
+          rows.push(e("div", { className: "dashboard-funnel-rate", key: `${stage.key}-rate` }, [
+            e("span", { className: "dashboard-funnel-arrow", key: "arrow" }, "↓"),
+            `${index === 1 ? "首充率" : "交易率"} ${rate}%`
+          ]));
+        }
       });
       return e(Card, {
-        title: "订单分布",
-        className: "dashboard-analysis-card dashboard-distribution-card",
-        key: "distribution"
-      }, [
-        e("div", { className: "dashboard-donut-wrap", key: "donut" }, [
-          e("svg", { className: "dashboard-donut-svg", viewBox: "0 0 42 42", key: "svg" }, [
-            e("circle", { cx: 21, cy: 21, r: 15.9155, fill: "none", className: "dashboard-donut-track", key: "track" }),
-            segments.map(segment => e("circle", {
-              key: segment.key,
-              cx: 21,
-              cy: 21,
-              r: 15.9155,
-              fill: "none",
-              stroke: segment.color,
-              strokeWidth: 6.5,
-              strokeDasharray: `${segment.dash} ${100 - segment.dash}`,
-              strokeDashoffset: segment.offset
-            }))
-          ]),
-          e("div", { className: "dashboard-donut-center", key: "center" }, [
-            e("strong", { key: "total" }, total.toLocaleString("zh-CN")),
-            e("span", { key: "label" }, "订单总数")
-          ])
-        ]),
-        e("div", { className: "dashboard-donut-legend", key: "legend" }, slices.map(slice =>
-          e("div", { className: "dashboard-donut-legend-item", key: slice.name }, [
-            e("span", { className: "dashboard-donut-dot", style: { background: slice.color }, key: "dot" }),
-            e("span", { className: "dashboard-donut-name", key: "name" }, slice.name),
-            e("strong", { className: "dashboard-donut-pct", key: "pct" },
-              `${total ? (slice.orders / total * 100).toFixed(1) : "0.0"}%`)
-          ])
-        )),
-        e("div", { className: "dashboard-donut-footer", key: "footer" },
-          `当前展示类型: 共 ${slices.length} 类`)
-      ]);
+        title: "客户转化漏斗",
+        extra: e(Text, { type: "secondary" }, "注册 → 首充 → 交易"),
+        className: "dashboard-analysis-card dashboard-funnel-card",
+        key: "funnel"
+      }, e("div", { className: "dashboard-funnel" }, rows));
     }
 
-    function renderMetricCard(metric) {
-      const item = periodMetrics[metric.key];
-      const rawValue = item && item.value != null ? String(item.value) : "";
-      const numericValue = Number(rawValue.replace(/[^\d.-]/g, ""));
-      const isEmpty = !rawValue || !Number.isFinite(numericValue) || numericValue === 0;
-      return e(Card, { className: "dashboard-metric-card", key: metric.key }, [
-        e("div", { className: "dashboard-metric-label", key: "label" },
-          e(Text, { type: "secondary", key: "text" }, metric.label)
-        ),
-        e("strong", { key: "value" }, isEmpty ? "-" : [
-          rawValue,
-          metric.unit ? e("span", { className: "dashboard-metric-unit", key: "unit" }, metric.unit) : null
-        ]),
-        metric.subtitle ? e("div", { className: "dashboard-metric-sub", key: "sub" }, metric.subtitle(periodMetrics)) : null,
-        metric.icon ? e("span", { className: `dashboard-metric-icon tone-${metric.tone}`, key: "icon" }, renderMetricIcon(metric.icon)) : null
-      ]);
+    function renderTop5Card() {
+      const rows = data.customersSummary || [];
+      const pnlClass = text => (String(text).trim().startsWith("+") ? "is-profit" : "is-loss");
+      const columns = [
+        {
+          title: "客户", key: "name",
+          render: (_, row) => e("div", { className: "dashboard-customer-cell" }, [
+            e("strong", { key: "name" }, row.name),
+            e("span", { key: "account" }, row.account)
+          ])
+        },
+        { title: "所属代理", dataIndex: "agent", key: "agent" },
+        { title: "订单数", dataIndex: "lots", key: "lots" },
+        { title: "净充值", dataIndex: "deposit", key: "deposit" },
+        {
+          title: "盈亏", dataIndex: "pnl", key: "pnl",
+          render: text => e("span", { className: `dashboard-pnl ${pnlClass(text)}` }, text)
+        },
+        { title: "最近交易", dataIndex: "lastTrade", key: "lastTrade" }
+      ];
+      return e(Card, {
+        title: "客户概览 Top 5",
+        extra: e(Text, { type: "secondary" }, "按订单数 · 近七天"),
+        className: "dashboard-analysis-card dashboard-summary-card dashboard-top-card",
+        key: "top5"
+      }, e(Table, {
+        columns,
+        dataSource: rows,
+        rowKey: "id",
+        size: "small",
+        pagination: false,
+        onRow: () => ({ onClick: () => onNavigate && onNavigate("customer") })
+      }));
     }
 
     return e("div", { className: "dashboard-page" }, [
       e("div", { className: "dashboard-heading", key: "heading" }, [
-        e("div", { key: "title" }, [
-          e(Title, { level: 3, key: "h" }, "数据概览")
+        e("div", { className: "dashboard-heading-title", key: "title" }, [
+          e(Title, { level: 3, key: "h" }, "数据概览"),
+          dateMode === "today" ? e("span", { className: "dashboard-live-badge", key: "live" }, `实时 · 截至 ${liveAt.format("HH:mm")}`) : null
         ]),
         e("div", { className: "dashboard-time-filter", key: "time" }, [
           e("span", { className: "dashboard-time-filter-label", key: "label" }, "统计时间"),
           e(Segmented, {
             key: "mode",
             value: dateMode,
-            onChange: handleDateModeChange,
-            options: [{ value: "today", label: "今日" }, { value: "week", label: "近七天" }, { value: "custom", label: "自定义" }]
+            onChange: setDateMode,
+            options: [
+              { value: "today", label: "今日" },
+              { value: "week", label: "近七天" },
+              { value: "month", label: "近三十天" },
+              { value: "custom", label: "自定义" }
+            ]
           }),
           dateMode === "custom" ? e(RangePicker, { key: "range", value: customRange, onChange: setCustomRange, format: "YYYY-MM-DD", allowClear: false }) : null
         ])
       ]),
-      e("div", { className: "dashboard-metric-rows", key: "metrics" }, metricRows.map(row =>
+      e("div", { className: "dashboard-metric-rows", key: "metrics" }, metricGroups.map(row =>
         e("section", { className: "dashboard-metric-row", key: row.label }, [
           e("div", { className: "dashboard-metric-group", key: "label" }, row.label),
           e("div", { className: "dashboard-metric-grid", key: "grid" }, row.metrics.map(renderMetricCard))
         ])
       )),
-      e("div", { className: "dashboard-trend-header", key: "trend-header" }, [
-        e("div", { key: "title" }, [
-          e("strong", null, "趋势分析")
-        ]),
-        e(Button, { key: "config", onClick: () => setChartConfigOpen(true) }, "图表配置")
+      e(Row, { gutter: [12, 12], className: "dashboard-main-grid", key: "main" }, [
+        e(Col, { xs: 24, xl: 16, key: "trend" }, renderMainTrendCard()),
+        e(Col, { xs: 24, xl: 8, key: "ranking" }, renderRankingCard())
       ]),
-      e(Row, { gutter: [12, 12], className: "dashboard-main-grid dashboard-trend-grid", key: "trends" },
-        visibleTrends.map(item => e(Col, { xs: 24, md: 12, xl: visibleTrends.length >= 4 ? 6 : 8, key: item.id },
-          renderTrendCard(item, value => value.toLocaleString("zh-CN"))
-        ))
-      ),
-      e(Row, { gutter: [12, 12], className: "dashboard-main-grid dashboard-ranking-grid", key: "rankings" }, [
-        e(Col, { xs: 24, xl: 16, key: "symbol-ranking" }, renderRankingCard()),
-        e(Col, { xs: 24, xl: 8, key: "order-distribution" }, renderDistributionCard())
-      ]),
-      e(Drawer, {
-        key: "chart-config",
-        title: "图表配置",
-        open: isChartConfigOpen,
-        onClose: () => setChartConfigOpen(false),
-        width: 400,
-        destroyOnClose: true
-      }, [
-        e("section", { className: "dashboard-config-section drawer-form-card", key: "count" }, [
-          e("div", { className: "dashboard-config-label", key: "label" }, "展示数量"),
-          e(Segmented, { value: chartCount, onChange: setTrendDisplayCount, options: chartCountOptions, key: "segmented" })
-        ]),
-        e("section", { className: "dashboard-config-section drawer-form-card", key: "metrics" }, [
-          e("div", { className: "dashboard-config-label", key: "label" }, "展示指标"),
-          e("p", { className: "dashboard-config-hint", key: "hint" }, "勾选指标后，可拖动已选项调整图表展示顺序。"),
-          e("div", { className: "dashboard-config-list", key: "list" }, trendOptions.map(item => {
-            const isSelected = visibleTrendIds.includes(item.id);
-            return e("div", {
-              className: `dashboard-config-item${isSelected ? " is-selected" : ""}`,
-              draggable: isSelected,
-              key: item.id,
-              onDragStart: () => setDraggingTrendId(item.id),
-              onDragEnd: () => setDraggingTrendId(null),
-              onDragOver: event => event.preventDefault(),
-              onDrop: () => moveTrend(item.id)
-            }, [
-              e(Checkbox, { checked: isSelected, onChange: event => toggleTrendSelection(item.id, event.target.checked), key: "checkbox" }, item.name),
-              isSelected && e("span", { className: "dashboard-drag-handle", key: "handle", title: "拖动排序" }, "⋮⋮")
-            ]);
-          }))
-        ])
+      e(Row, { gutter: [12, 12], className: "dashboard-main-grid", key: "secondary" }, [
+        e(Col, { xs: 24, lg: 12, xl: 8, key: "funnel" }, renderFunnelCard()),
+        e(Col, { xs: 24, lg: 12, xl: 16, key: "top5" }, renderTop5Card())
       ])
     ]);
   }

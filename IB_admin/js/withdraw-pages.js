@@ -21,7 +21,7 @@
   const e = React.createElement;
   const { textOrDash, auditTag, ProgressiveFilters, ExportModal, CustomerMiniDrawer } = app.financeShared;
 
-  // 出金去向单元格：银行卡/链上信息悬浮展示
+  // 提现去向单元格：银行卡/链上信息悬浮展示
   function WithdrawToCell({ record }) {
     const dialog = record.dialog || {};
     const isBank = record.dialog_style === 1;

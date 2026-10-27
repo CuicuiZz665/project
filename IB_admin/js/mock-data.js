@@ -1,4 +1,78 @@
 (function registerMockData(app) {
+  // 数据概览主趋势序列（基础序列定义为常量，便于生成配套的上期对比序列）
+  const TREND_WEEK = [
+    { label: "09/05", lots: 96, amount: 1290, customers: 20, registered: 5, firstDepositCustomers: 3 },
+    { label: "09/06", lots: 88, amount: 1180, customers: 18, registered: 4, firstDepositCustomers: 2 },
+    { label: "09/07", lots: 118, amount: 1580, customers: 24, registered: 6, firstDepositCustomers: 3 },
+    { label: "09/08", lots: 94, amount: 1240, customers: 19, registered: 5, firstDepositCustomers: 2 },
+    { label: "09/09", lots: 106, amount: 1410, customers: 22, registered: 6, firstDepositCustomers: 3 },
+    { label: "09/10", lots: 102, amount: 1360, customers: 21, registered: 4, firstDepositCustomers: 2 },
+    { label: "09/11", lots: 112, amount: 1610, customers: 26, registered: 6, firstDepositCustomers: 3 }
+  ].map(item => Object.assign(item, {
+    deposits: Math.round(item.amount * 132),
+    withdrawals: Math.round(item.amount * 45)
+  }));
+  const TREND_TODAY = Array.from({ length: 14 }, (_, index) => {
+    const lots = Math.round(2.4 + Math.abs(Math.sin(index * 0.75)) * 4.2 + index * 0.36);
+    const amount = Math.round(lots * 12 + index * 6);
+    return {
+      label: `${String(index).padStart(2, "0")}:00`,
+      lots,
+      amount,
+      customers: index % 5 === 2 ? 1 : 0,
+      registered: index % 4 === 1 ? 1 : 0,
+      firstDepositCustomers: index === 4 || index === 9 ? 1 : 0,
+      deposits: Math.round(amount * 132),
+      withdrawals: Math.round(amount * 45)
+    };
+  });
+  const TREND_DAY = Array.from({ length: 30 }, (_, index) => {
+    const day = new Date(2026, 7, 13 + index);
+    const label = `${String(day.getMonth() + 1).padStart(2, "0")}/${String(day.getDate()).padStart(2, "0")}`;
+    const lots = 14 + Math.round(Math.abs(Math.sin(index * 0.7)) * 52 + index * 1.6);
+    const amount = Math.round(lots * (11 + (index % 5)) + Math.abs(Math.cos(index * 0.9)) * 180);
+    const customers = Math.max(3, Math.round(lots / 5.4 + (index % 3)));
+    return {
+      label,
+      lots,
+      amount,
+      customers,
+      registered: Math.max(1, Math.round(customers * 0.25)),
+      firstDepositCustomers: Math.max(0, Math.round(customers * 0.15)),
+      deposits: Math.round(amount * 132),
+      withdrawals: Math.round(amount * 45)
+    };
+  });
+  const TREND_MONTH = [
+    { label: "10月", lots: 386, amount: 5240, customers: 74 },
+    { label: "11月", lots: 452, amount: 6110, customers: 85 },
+    { label: "12月", lots: 508, amount: 7020, customers: 96 },
+    { label: "1月", lots: 476, amount: 6540, customers: 91 },
+    { label: "2月", lots: 541, amount: 7480, customers: 103 },
+    { label: "3月", lots: 602, amount: 8360, customers: 115 },
+    { label: "4月", lots: 568, amount: 7890, customers: 108 },
+    { label: "5月", lots: 645, amount: 9020, customers: 124 },
+    { label: "6月", lots: 712, amount: 9950, customers: 136 },
+    { label: "7月", lots: 678, amount: 9410, customers: 129 },
+    { label: "8月", lots: 756, amount: 10680, customers: 142 },
+    { label: "9月", lots: 823, amount: 11740, customers: 155 }
+  ].map(item => Object.assign(item, {
+    registered: Math.round(item.customers * 1.1),
+    firstDepositCustomers: Math.round(item.customers * 0.53),
+    deposits: Math.round(item.amount * 132),
+    withdrawals: Math.round(item.amount * 45)
+  }));
+  // 上期对比序列：当前序列乘确定性波动系数（原型演示用），净充值由 deposits - withdrawals 派生
+  function derivePrevSeries(points) {
+    return points.map((point, index) => {
+      const factor = 0.76 + 0.24 * Math.abs(Math.sin(index * 1.7 + 0.6));
+      const prev = { label: point.label };
+      ["lots", "amount", "customers", "registered", "firstDepositCustomers", "deposits", "withdrawals"].forEach(key => {
+        if (typeof point[key] === "number") prev[key] = Math.max(0, Math.round(point[key] * factor));
+      });
+      return prev;
+    });
+  }
   app.mockData = {
     breadcrumbs: {
       rules: "激励中心 &gt; <strong>积分配置</strong>",
@@ -410,7 +484,7 @@
     dashboard: {
       metrics: {
         registered: { value: "36", change: "+12.5%", note: "较上周期" },
-        tradingCustomers: { value: "21", change: "+5.0%", note: "较上周期" },
+        tradingCustomers: { value: "16", change: "+5.0%", note: "较上周期" },
         tradingLots: { value: "716", change: "+9.8%", note: "较上周期" },
         tradingAmount: { value: "9,670", change: "+11.6%", note: "较上周期" },
         firstDepositCustomers: { value: "18", change: "+12.5%", note: "较上周期" },
@@ -422,7 +496,7 @@
       },
       metricsToday: {
         registered: { value: "6", change: "+20.0%", note: "较昨日" },
-        tradingCustomers: { value: "4", change: "+8.1%", note: "较昨日" },
+        tradingCustomers: { value: "2", change: "+8.1%", note: "较昨日" },
         tradingLots: { value: "93", change: "+10.4%", note: "较昨日" },
         tradingAmount: { value: "1,260", change: "+12.9%", note: "较昨日" },
         firstDepositCustomers: { value: "3", change: "+9.6%", note: "较昨日" },
@@ -432,68 +506,28 @@
         ibRebateCustomers: { value: "3", change: "+6.7%", note: "较昨日" },
         ibRebateAmount: { value: "0.42万", change: "+11.3%", note: "较昨日" }
       },
-      trend: [
-        { label: "08/12", lots: 42, amount: 520, customers: 8 },
-        { label: "08/14", lots: 58, amount: 690, customers: 11 },
-        { label: "08/16", lots: 46, amount: 610, customers: 9 },
-        { label: "08/18", lots: 73, amount: 980, customers: 14 },
-        { label: "08/20", lots: 65, amount: 820, customers: 13 },
-        { label: "08/22", lots: 88, amount: 1120, customers: 17 },
-        { label: "08/24", lots: 76, amount: 930, customers: 15 },
-        { label: "08/26", lots: 96, amount: 1360, customers: 19 },
-        { label: "08/28", lots: 84, amount: 1180, customers: 16 },
-        { label: "08/30", lots: 108, amount: 1490, customers: 20 },
-        { label: "09/01", lots: 92, amount: 1280, customers: 18 },
-        { label: "09/03", lots: 124, amount: 1660, customers: 22 },
-        { label: "09/05", lots: 108, amount: 1450, customers: 20 },
-        { label: "09/07", lots: 132, amount: 1780, customers: 24 },
-        { label: "09/09", lots: 118, amount: 1580, customers: 22 },
-        { label: "09/11", lots: 142, amount: 1920, customers: 26 }
-      ].map((item, index) => Object.assign(item, {
-        registered: Math.round(item.customers * 1.6 + 7 + index % 3),
-        firstDepositCustomers: Math.max(1, Math.round(item.customers * 0.8 + index % 2)),
-        deposits: item.amount * 720,
-        withdrawals: item.amount * 260,
-        volume: Math.round(item.lots * 2.4 + (index % 4) * 8)
-      })),
-      trendDay: Array.from({ length: 30 }, (_, index) => {
-        const day = new Date(2026, 7, 13 + index);
-        const label = `${String(day.getMonth() + 1).padStart(2, "0")}/${String(day.getDate()).padStart(2, "0")}`;
-        const lots = 14 + Math.round(Math.abs(Math.sin(index * 0.7)) * 52 + index * 1.6);
-        const amount = Math.round(lots * (11 + (index % 5)) + Math.abs(Math.cos(index * 0.9)) * 180);
-        const customers = Math.max(3, Math.round(lots / 5.4 + (index % 3)));
-        return {
-          label,
-          lots,
-          amount,
-          customers,
-          registered: Math.round(customers * 1.6 + 7 + index % 3),
-          firstDepositCustomers: Math.max(1, Math.round(customers * 0.8 + index % 2)),
-          deposits: amount * 720,
-          withdrawals: amount * 260,
-          volume: Math.round(lots * 2.4 + (index % 4) * 8)
-        };
-      }),
-      trendMonth: [
-        { label: "10月", lots: 386, amount: 5240, customers: 74 },
-        { label: "11月", lots: 452, amount: 6110, customers: 85 },
-        { label: "12月", lots: 508, amount: 7020, customers: 96 },
-        { label: "1月", lots: 476, amount: 6540, customers: 91 },
-        { label: "2月", lots: 541, amount: 7480, customers: 103 },
-        { label: "3月", lots: 602, amount: 8360, customers: 115 },
-        { label: "4月", lots: 568, amount: 7890, customers: 108 },
-        { label: "5月", lots: 645, amount: 9020, customers: 124 },
-        { label: "6月", lots: 712, amount: 9950, customers: 136 },
-        { label: "7月", lots: 678, amount: 9410, customers: 129 },
-        { label: "8月", lots: 756, amount: 10680, customers: 142 },
-        { label: "9月", lots: 823, amount: 11740, customers: 155 }
-      ].map((item, index) => Object.assign(item, {
-        registered: Math.round(item.customers * 1.6 + 7 + index % 3),
-        firstDepositCustomers: Math.max(1, Math.round(item.customers * 0.8 + index % 2)),
-        deposits: item.amount * 720,
-        withdrawals: item.amount * 260,
-        volume: Math.round(item.lots * 2.4 + (index % 4) * 8)
-      })),
+      metricsMonth: {
+        registered: { value: "154", change: "+9.6%", note: "较上周期" },
+        tradingCustomers: { value: "64", change: "+7.4%", note: "较上周期" },
+        tradingLots: { value: "2,986", change: "+10.2%", note: "较上周期" },
+        tradingAmount: { value: "41,200", change: "+12.8%", note: "较上周期" },
+        firstDepositCustomers: { value: "76", change: "+10.9%", note: "较上周期" },
+        deposits: { value: "542.0万", change: "+9.1%", note: "充值金额" },
+        withdrawals: { value: "185.6万", change: "-3.8%", note: "提现金额" },
+        netDeposits: { value: "356.4万", change: "+12.3%", note: "净充值" },
+        ibRebateCustomers: { value: "47", change: "+8.8%", note: "较上周期" },
+        ibRebateAmount: { value: "11.2万", change: "+14.6%", note: "较上周期" }
+      },
+      // 主趋势序列按粒度分档：今日按小时 / 近七天·近三十天·自定义(≤31天)按日 / 长自定义按月，
+      // 每档配一份 *Prev 上期对比序列（主图虚线），净充值由 deposits - withdrawals 派生
+      trendToday: TREND_TODAY,
+      trendWeek: TREND_WEEK,
+      trendDay: TREND_DAY,
+      trendMonth: TREND_MONTH,
+      trendTodayPrev: derivePrevSeries(TREND_TODAY),
+      trendWeekPrev: derivePrevSeries(TREND_WEEK),
+      trendDayPrev: derivePrevSeries(TREND_DAY),
+      trendMonthPrev: derivePrevSeries(TREND_MONTH),
       symbols: [
         { name: "Au99.99", type: "黄金", lots: "292.78", amount: "4,216,900", volume: "3,512", orders: "1,846" },
         { name: "Au(T+D)", type: "黄金", lots: "46.20", amount: "728,500", volume: "1,204", orders: "486" },
