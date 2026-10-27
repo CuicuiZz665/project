@@ -20,6 +20,7 @@
     "js/commission-page.js",
     "js/commission-record-page.js",
     "js/dashboard-page.js",
+    "js/workbench-page.js",
     "js/activity-page.js",
     "js/activity-application-page.js",
     "js/point-details-page.js",
@@ -44,7 +45,7 @@
     "js/notification-bell.js",
     "js/antd-app.js"
   ];
-  const appVersion = "20261027-tc1";
+  const appVersion = "20261027-tc2";
   const scriptTimeout = 12000;
 
   function showDependencyError(detail) {

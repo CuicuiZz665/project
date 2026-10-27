@@ -1610,8 +1610,37 @@
       return next;
     });
   }
+  // 侧边栏一级菜单图标：feather 风格线性 SVG（vendor antd 不带 @ant-design/icons）
+  const MENU_ICON_PATHS = {
+    workbench: [["path", { d: "M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" }], ["path", { d: "M9 22V12h6v10" }]],
+    overview: [["line", { x1: 18, y1: 20, x2: 18, y2: 10 }], ["line", { x1: 12, y1: 20, x2: 12, y2: 4 }], ["line", { x1: 6, y1: 20, x2: 6, y2: 14 }]],
+    customerGroup: [["path", { d: "M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" }], ["circle", { cx: 9, cy: 7, r: 4 }], ["path", { d: "M23 21v-2a4 4 0 0 0-3-3.87" }], ["path", { d: "M16 3.13a4 4 0 0 1 0 7.75" }]],
+    tradeGroup: [["polyline", { points: "22 12 18 12 15 21 9 3 6 12 2 12" }]],
+    fundsGroup: [["line", { x1: 12, y1: 1, x2: 12, y2: 23 }], ["path", { d: "M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" }]],
+    agentGroup: [["circle", { cx: 18, cy: 5, r: 3 }], ["circle", { cx: 6, cy: 12, r: 3 }], ["circle", { cx: 18, cy: 19, r: 3 }], ["line", { x1: 8.59, y1: 13.51, x2: 15.42, y2: 17.49 }], ["line", { x1: 15.41, y1: 6.51, x2: 8.59, y2: 10.49 }]],
+    marketingGroup: [["polyline", { points: "20 12 20 22 4 22 4 12" }], ["rect", { x: 2, y: 7, width: 20, height: 5 }], ["line", { x1: 12, y1: 22, x2: 12, y2: 7 }], ["path", { d: "M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z" }], ["path", { d: "M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z" }]],
+    incentiveGroup: [["circle", { cx: 12, cy: 8, r: 7 }], ["polyline", { points: "8.21 13.89 7 23 12 20 17 23 15.79 13.88" }]],
+    grantGroup: [["line", { x1: 22, y1: 2, x2: 11, y2: 13 }], ["polygon", { points: "22 2 15 22 11 13 2 9 22 2" }]],
+    contentGroup: [["rect", { x: 3, y: 3, width: 18, height: 18, rx: 2, ry: 2 }], ["circle", { cx: 8.5, cy: 8.5, r: 1.5 }], ["polyline", { points: "21 15 16 10 5 21" }]],
+    systemGroup: [["line", { x1: 4, y1: 21, x2: 4, y2: 14 }], ["line", { x1: 4, y1: 10, x2: 4, y2: 3 }], ["line", { x1: 12, y1: 21, x2: 12, y2: 12 }], ["line", { x1: 12, y1: 8, x2: 12, y2: 3 }], ["line", { x1: 20, y1: 21, x2: 20, y2: 16 }], ["line", { x1: 20, y1: 12, x2: 20, y2: 3 }], ["line", { x1: 1, y1: 14, x2: 7, y2: 14 }], ["line", { x1: 9, y1: 8, x2: 15, y2: 8 }], ["line", { x1: 17, y1: 16, x2: 23, y2: 16 }]]
+  };
+  function renderMenuIcon(name) {
+    const paths = MENU_ICON_PATHS[name];
+    if (!paths) return undefined;
+    return React.createElement("svg", {
+      viewBox: "0 0 24 24",
+      width: 14,
+      height: 14,
+      fill: "none",
+      stroke: "currentColor",
+      strokeWidth: 2,
+      strokeLinecap: "round",
+      strokeLinejoin: "round",
+      "aria-hidden": true
+    }, paths.map(([tag, attrs], index) => React.createElement(tag, Object.assign({ key: index }, attrs))));
+  }
   function AdminApp() {
-    const [currentPage, setCurrentPage] = React.useState("overview");
+    const [currentPage, setCurrentPage] = React.useState("workbench");
     // 当前登录角色（原型演示用顶栏切换）：驱动侧边栏权限过滤，会话级记忆
     const [currentRole, setCurrentRole] = React.useState(() => {
       try {
@@ -1644,7 +1673,7 @@
     const [withdrawals, setWithdrawals] = React.useState(() => cloneData(app.mockData.withdrawals));
     const [networkConfigs, setNetworkConfigs] = React.useState(() => cloneData(app.mockData.networkConfigs));
     const [signupActivityId, setSignupActivityId] = React.useState(null);
-    const [openTabs, setOpenTabs] = React.useState(["overview"]);
+    const [openTabs, setOpenTabs] = React.useState(["workbench"]);
     const [siderOpenKeys, setSiderOpenKeys] = React.useState([]);
     // 待办角标与待办中心共用的口径：待风控审核 / 待财务打款 / 待审核代理申请 / 进行中活动的报名
     const withdrawRiskPending = withdrawals.filter(item => item.status && item.status.risk_status === "pending").length;
@@ -1653,13 +1682,20 @@
     const activeActivityIds = new Set(communityActivities.filter(item => item.status === "上线" || item.status === "待上线").map(item => item.id));
     const signupPendingCount = app.mockData.activityApplications.filter(item => activeActivityIds.has(item.activityRefId)).length;
     // 菜单为纯数据结构（label 保持字符串，badge 存数量）：导航索引/权限过滤/角标装饰分层处理
+    // 工作台是所有角色的默认落地页，不挂权限；数据概览回归纯数据看板
     const menuItems = [{
+      key: "workbench",
+      label: "工作台",
+      icon: renderMenuIcon("workbench")
+    }, {
       key: "overview",
       label: "数据概览",
+      icon: renderMenuIcon("overview"),
       permission: "数据概览"
     }, {
       key: "customerGroup",
       label: "客户管理",
+      icon: renderMenuIcon("customerGroup"),
       children: [{
         key: "customer",
         label: "客户列表",
@@ -1676,6 +1712,7 @@
     }, {
       key: "tradeGroup",
       label: "交易管理",
+      icon: renderMenuIcon("tradeGroup"),
       children: [{
         key: "orderList",
         label: "订单列表",
@@ -1689,6 +1726,7 @@
     }, {
       key: "fundsGroup",
       label: "资金管理",
+      icon: renderMenuIcon("fundsGroup"),
       children: [{
         key: "depositWithdraw",
         label: "充值提现管理",
@@ -1726,6 +1764,7 @@
     }, {
       key: "agentGroup",
       label: "代理管理",
+      icon: renderMenuIcon("agentGroup"),
       children: [{
         key: "agentApplications",
         label: "代理申请列表",
@@ -1747,6 +1786,7 @@
     }, {
       key: "marketingGroup",
       label: "市场活动",
+      icon: renderMenuIcon("marketingGroup"),
       children: [{
         key: "activity",
         label: "活动配置",
@@ -1760,6 +1800,7 @@
     }, {
       key: "incentiveGroup",
       label: "激励中心",
+      icon: renderMenuIcon("incentiveGroup"),
       children: [{
         key: "rules",
         label: "积分配置",
@@ -1780,6 +1821,7 @@
     }, {
       key: "grantGroup",
       label: "发放管理",
+      icon: renderMenuIcon("grantGroup"),
       children: [{
         key: "coupon",
         label: "优惠券管理",
@@ -1797,6 +1839,7 @@
     }, {
       key: "contentGroup",
       label: "内容管理",
+      icon: renderMenuIcon("contentGroup"),
       children: [{
         key: "adSlotGroup",
         label: "广告位管理",
@@ -1841,6 +1884,7 @@
     }, {
       key: "systemGroup",
       label: "系统管理",
+      icon: renderMenuIcon("systemGroup"),
       children: [{
         key: "roles",
         label: "角色管理设置",
@@ -1911,16 +1955,27 @@
       tone: "teal",
       page: "activityApplications"
     }].filter(item => allowedPageKeys.includes(item.page));
+    // 工作台快捷入口：预置高频处理页，按当前角色权限过滤后展示
+    const quickAccessPages = [
+      { key: "customer", label: "客户列表", icon: "users", tone: "blue" },
+      { key: "orderList", label: "订单列表", icon: "chart", tone: "teal" },
+      { key: "depositManage", label: "充值管理", icon: "wallet", tone: "indigo" },
+      { key: "withdrawRisk", label: "提现审核·风控", icon: "shield", tone: "gold" },
+      { key: "withdrawFinance", label: "提现审核·财务", icon: "wallet", tone: "cyan" },
+      { key: "agentApplications", label: "代理申请列表", icon: "share", tone: "violet" },
+      { key: "commission", label: "佣金管理", icon: "dollar", tone: "rose" },
+      { key: "coupon", label: "优惠券管理", icon: "gift", tone: "pink" }
+    ].filter(item => allowedPageKeys.includes(item.key));
     function switchRole(roleId) {
       setCurrentRole(roleId);
       try {
         window.sessionStorage.setItem("ib-admin-role", roleId);
       } catch (error) { /* 存储禁用时仅本次会话生效 */ }
     }
-    // 切换角色后：无权限的当前页与已开页签一并收起，回到数据概览
+    // 切换角色后：无权限的当前页与已开页签一并收起，回到工作台
     React.useEffect(() => {
-      if (!allowedPageKeys.includes(currentPage)) setCurrentPage("overview");
-      setOpenTabs(tabs => tabs.filter(tab => tab === "overview" || allowedPageKeys.includes(tab)));
+      if (!allowedPageKeys.includes(currentPage)) setCurrentPage("workbench");
+      setOpenTabs(tabs => tabs.filter(tab => tab === "workbench" || allowedPageKeys.includes(tab)));
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentRole]);
     // 无论从菜单、页签、全局搜索还是概览卡跳转进入页面，都自动展开其所在分组链；手动折叠仍生效
@@ -1933,7 +1988,7 @@
       setOpenTabs(tabs => tabs.includes(currentPage) ? tabs : [...tabs, currentPage]);
     }, [currentPage]);
     function closeTab(key) {
-      if (key === "overview") return;
+      if (key === "workbench") return;
       const index = openTabs.indexOf(key);
       if (index === -1) return;
       const next = openTabs.filter(tab => tab !== key);
@@ -1941,11 +1996,11 @@
       if (currentPage === key) setCurrentPage(next[index] || next[index - 1] || "overview");
     }
     function closeOtherTabs() {
-      setOpenTabs(currentPage === "overview" ? ["overview"] : ["overview", currentPage]);
+      setOpenTabs(currentPage === "workbench" ? ["workbench"] : ["workbench", currentPage]);
     }
     function closeAllTabs() {
-      setOpenTabs(["overview"]);
-      setCurrentPage("overview");
+      setOpenTabs(["workbench"]);
+      setCurrentPage("workbench");
     }
     return /*#__PURE__*/React.createElement(ConfigProvider, {
       theme: {
@@ -2067,9 +2122,14 @@
       className: "user-chip-caret"
     }, "▾"))))), /*#__PURE__*/React.createElement(Content, {
       className: "admin-content"
-    }, currentPage === "overview" ? /*#__PURE__*/React.createElement(app.DashboardPage, {
-      data: app.mockData.dashboard,
+    }, currentPage === "workbench" ? /*#__PURE__*/React.createElement(app.WorkbenchPage, {
       todos: todoItems,
+      quickPages: quickAccessPages,
+      user: currentUser.name,
+      roleName: currentRoleConfig.name,
+      onNavigate: setCurrentPage
+    }) : currentPage === "overview" ? /*#__PURE__*/React.createElement(app.DashboardPage, {
+      data: app.mockData.dashboard,
       onNavigate: setCurrentPage
     }) : currentPage === "customer" ? /*#__PURE__*/React.createElement(app.CustomerPage, {
       customers: app.mockData.customers,

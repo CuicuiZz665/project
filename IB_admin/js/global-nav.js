@@ -1,12 +1,13 @@
 (function registerGlobalNav(app) {
   const { Button, Dropdown, Select, Tabs } = antd;
 
-  // 收藏与固定页签约定：overview（数据概览）是主标签，不允许被关闭。
-  const PINNED_TAB_KEY = "overview";
+  // 收藏与固定页签约定：workbench（工作台）是主标签，不允许被关闭。
+  const PINNED_TAB_KEY = "workbench";
   const FAVORITE_STORE_KEY = "ib-admin-favorite-pages";
 
   // 每个可导航页面的搜索别名：中文别名、常见拼音缩写、英文关键词。
   const PAGE_KEYWORDS = {
+    workbench: ["work", "gongzuo", "工作台", "home", "shouye", "首页", "待办"],
     overview: ["dashboard", "kanban", "home", "shuju", "数据", "看板", "概览"],
     customer: ["customer", "kh", "客户", "列表"],
     loginLog: ["login", "log", "rizhi", "denglu", "登录", "日志"],

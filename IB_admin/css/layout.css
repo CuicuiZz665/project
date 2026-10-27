@@ -2101,3 +2101,191 @@
   color: #8b93a1;
   font-size: 10px;
 }
+
+/* ===== 工作台（默认落地页）：欢迎区 / 快捷入口 / 最新通知（2026-10-27） ===== */
+
+.workbench-page {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.workbench-welcome {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: linear-gradient(120deg, #f5f8ff 0%, #ffffff 55%, #f2fbf8 100%);
+  box-shadow: 0 1px 2px rgba(16, 24, 40, .02);
+}
+
+.workbench-welcome-mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #3a7afe, #2e5fe8);
+  color: #fff;
+  font-weight: 700;
+  font-size: 15px;
+  letter-spacing: .5px;
+  flex: none;
+}
+
+.workbench-welcome-main {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.workbench-welcome-main h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 650;
+  color: #1d2939;
+}
+
+.workbench-welcome-sub {
+  color: #667085;
+  font-size: 13px;
+}
+
+.workbench-todo-empty {
+  padding: 22px 0;
+  text-align: center;
+  color: #98a2b3;
+  font-size: 13px;
+}
+
+.workbench-main-grid { margin-top: 0 !important; }
+
+.workbench-card {
+  border-color: var(--line);
+  box-shadow: 0 1px 2px rgba(16, 24, 40, .02);
+}
+
+.workbench-quick-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+@media (max-width: 1199px) {
+  .workbench-quick-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+@media (max-width: 767px) {
+  .workbench-quick-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+.workbench-quick-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  border: 1px solid #eef1f5;
+  border-radius: 8px;
+  background: #fafbfc;
+  cursor: pointer;
+  transition: border-color .2s, background .2s, box-shadow .2s;
+}
+
+.workbench-quick-item:hover {
+  border-color: #c7d7f5;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(22, 119, 255, .08);
+}
+
+.workbench-quick-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  flex: none;
+}
+
+.workbench-quick-icon.tone-blue { background: #eef4ff; color: #2e5fe8; }
+.workbench-quick-icon.tone-teal { background: #e6f6f3; color: #0e9384; }
+.workbench-quick-icon.tone-indigo { background: #eef0ff; color: #5d5fef; }
+.workbench-quick-icon.tone-gold { background: #fff4ec; color: #f79009; }
+.workbench-quick-icon.tone-cyan { background: #e5f6fb; color: #0ba5c9; }
+.workbench-quick-icon.tone-violet { background: #f1eeff; color: #7a5af8; }
+.workbench-quick-icon.tone-rose { background: #fdf2f6; color: #dd2590; }
+.workbench-quick-icon.tone-pink { background: #fdf2f9; color: #d462ac; }
+
+.workbench-quick-label {
+  font-size: 13px;
+  color: #30343b;
+  font-weight: 500;
+}
+
+.workbench-notice-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.workbench-notice-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 8px 10px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background .15s;
+}
+
+.workbench-notice-item + .workbench-notice-item {
+  border-top: 1px solid #f2f4f7;
+  border-radius: 0 0 8px 8px;
+}
+
+.workbench-notice-item:hover { background: #f5f7fb; }
+
+.workbench-notice-item.is-unread::before {
+  content: "";
+  position: absolute;
+  left: 3px;
+  top: 50%;
+  margin-top: -3px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #f04438;
+}
+
+.workbench-notice-item .ant-tag {
+  margin-inline-end: 0;
+  flex: none;
+}
+
+.workbench-notice-title {
+  flex: 1;
+  min-width: 0;
+  font-size: 13px;
+  color: #30343b;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.workbench-notice-item.is-unread .workbench-notice-title { font-weight: 600; }
+
+.workbench-notice-time {
+  flex: none;
+  font-size: 12px;
+  color: #98a2b3;
+}
+
+/* 侧边栏一级菜单线性图标对齐 */
+.admin-sider .ant-menu-item .ant-menu-item-icon,
+.admin-sider .ant-menu-submenu-title .ant-menu-item-icon {
+  display: inline-flex;
+  line-height: 0;
+}
