@@ -98,6 +98,27 @@
     }, (metricIconPaths[name] || []).map(([tag, attrs], index) => e(tag, Object.assign({ key: index }, attrs))));
   }
 
+  // 统计时间联动：解析「1,234」「128.0万」这类展示值，按周期系数折算后还原展示格式
+  function parseStatNumber(text) {
+    const match = String(text).match(/^(-?[\d,]+(?:\.\d+)?)\s*(万)?$/);
+    if (!match) return null;
+    const base = Number(match[1].replace(/,/g, ""));
+    if (!Number.isFinite(base)) return null;
+    return { value: match[2] ? base * 10000 : base, useWan: Boolean(match[2]), decimals: (match[1].split(".")[1] || "").length };
+  }
+
+  function scaleStatText(text, factor) {
+    const parsed = parseStatNumber(text);
+    if (!parsed) return text;
+    const scaled = parsed.value * factor;
+    if (parsed.useWan || scaled >= 100000) {
+      const wan = scaled / 10000;
+      return `${wan.toFixed(wan >= 100 ? 0 : 1)}万`;
+    }
+    if (parsed.decimals > 0 && scaled < 1000) return scaled.toFixed(2);
+    return Math.round(scaled).toLocaleString("en-US");
+  }
+
   function DashboardPage({ data, customers = [] }) {
     const [dateMode, setDateMode] = React.useState("week");
     const [customRange, setCustomRange] = React.useState(() => [dayjs("2026-08-12"), dayjs("2026-09-11")]);
@@ -181,16 +202,32 @@
       });
       setDraggingTrendId(null);
     }
-    function runQuery() {
-      const rangeLabel = { today: "今日", week: "近七天", custom: "自定义时间" }[dateMode] || "近七天";
-      message.success(`已更新全部数据（${rangeLabel}）`);
+    // 统计时间是标题行的筛选按钮：切换后下方指标卡、排行、分布直接联动，无需单独查询
+    function handleDateModeChange(value) {
+      setDateMode(value);
+      setTrendPeriods({});
     }
 
-    function resetFilters() {
-      setDateMode("week");
-      setCustomRange([dayjs("2026-08-12"), dayjs("2026-09-11")]);
-      message.success("筛选已重置");
-    }
+    const customDays = customRange && customRange[0] && customRange[1]
+      ? customRange[1].diff(customRange[0], "day") + 1
+      : 7;
+    const periodFactor = dateMode === "today" ? 0.17
+      : dateMode === "custom" ? Math.min(8, Math.max(0.15, customDays / 7))
+        : 1;
+    const periodMetrics = dateMode === "today" ? data.metricsToday
+      : periodFactor === 1 ? data.metrics
+        : Object.keys(data.metrics).reduce((result, key) => {
+          result[key] = Object.assign({}, data.metrics[key], { value: scaleStatText(data.metrics[key].value, periodFactor) });
+          return result;
+        }, {});
+    const periodSymbols = dateMode === "week" ? data.symbols
+      : data.symbols.map(item => Object.assign({}, item, {
+        lots: scaleStatText(item.lots, periodFactor),
+        amount: scaleStatText(item.amount, periodFactor),
+        volume: scaleStatText(item.volume, periodFactor),
+        orders: scaleStatText(item.orders, periodFactor)
+      }));
+    const trendDefaultPeriod = dateMode === "today" ? "day" : "week";
 
     function setTrendPeriod(id, period) {
       setTrendPeriods(current => Object.assign({}, current, { [id]: period }));
@@ -198,7 +235,7 @@
 
     function renderTrendCard(trendItem, formatter) {
       const { title, metric, id } = trendItem;
-      const period = trendPeriods[id] || "week";
+      const period = trendPeriods[id] || trendDefaultPeriod;
       const trendData = period === "month" ? data.trendMonth : (period === "day" ? data.trendDay : data.trend);
       const maxValue = Math.max(...trendData.map(item => item[metric]));
       const periodSwitch = e(Segmented, {
@@ -297,7 +334,7 @@
     function renderRankingCard() {
       const totalLabels = { lots: "总订单数", amount: "总金额", orders: "总订单笔数" };
       const totalUnits = { lots: "单", amount: "元" };
-      const ranked = data.symbols
+      const ranked = periodSymbols
         .map(item => ({ item, value: parseRankValue(item[rankMetric]) }))
         .sort((a, b) => b.value - a.value);
       const maxValue = ranked.length ? ranked[0].value : 0;
@@ -336,7 +373,7 @@
     function renderDistributionCard() {
       // 按品种类型聚合订单数，不展示具体品种
       const typeOrders = new Map();
-      data.symbols.forEach(item => {
+      periodSymbols.forEach(item => {
         const type = item.type || "其他";
         typeOrders.set(type, (typeOrders.get(type) || 0) + parseRankValue(item.orders));
       });
@@ -397,7 +434,7 @@
     }
 
     function renderMetricCard(metric) {
-      const item = data.metrics[metric.key];
+      const item = periodMetrics[metric.key];
       const rawValue = item && item.value != null ? String(item.value) : "";
       const numericValue = Number(rawValue.replace(/[^\d.-]/g, ""));
       const isEmpty = !rawValue || !Number.isFinite(numericValue) || numericValue === 0;
@@ -409,7 +446,7 @@
           rawValue,
           metric.unit ? e("span", { className: "dashboard-metric-unit", key: "unit" }, metric.unit) : null
         ]),
-        metric.subtitle ? e("div", { className: "dashboard-metric-sub", key: "sub" }, metric.subtitle(data.metrics)) : null,
+        metric.subtitle ? e("div", { className: "dashboard-metric-sub", key: "sub" }, metric.subtitle(periodMetrics)) : null,
         metric.icon ? e("span", { className: `dashboard-metric-icon tone-${metric.tone}`, key: "icon" }, renderMetricIcon(metric.icon)) : null
       ]);
     }
@@ -418,24 +455,16 @@
       e("div", { className: "dashboard-heading", key: "heading" }, [
         e("div", { key: "title" }, [
           e(Title, { level: 3, key: "h" }, "数据概览")
-        ])
-      ]),
-      e(Card, { className: "dashboard-filter-card", key: "filters" }, [
-        e("div", { className: "dashboard-filter-main", key: "main" }, [
-          e("div", { className: "dashboard-filter-field dashboard-date-field", key: "date" }, [
-            e("span", null, "统计时间"),
-            e("div", { className: "dashboard-date-controls", key: "controls" }, [
-              e(Segmented, {
-                key: "mode",
-                value: dateMode,
-                onChange: setDateMode,
-                options: [{ value: "today", label: "今日" }, { value: "week", label: "近七天" }, { value: "custom", label: "自定义" }]
-              }),
-              dateMode === "custom" ? e(RangePicker, { key: "range", value: customRange, onChange: setCustomRange, format: "YYYY-MM-DD", allowClear: false }) : null
-            ])
-          ]),
-          e(Button, { type: "primary", className: "dashboard-query", onClick: runQuery, key: "query" }, "查询"),
-          e(Button, { className: "dashboard-reset", onClick: resetFilters, key: "reset" }, "重置")
+        ]),
+        e("div", { className: "dashboard-time-filter", key: "time" }, [
+          e("span", { className: "dashboard-time-filter-label", key: "label" }, "统计时间"),
+          e(Segmented, {
+            key: "mode",
+            value: dateMode,
+            onChange: handleDateModeChange,
+            options: [{ value: "today", label: "今日" }, { value: "week", label: "近七天" }, { value: "custom", label: "自定义" }]
+          }),
+          dateMode === "custom" ? e(RangePicker, { key: "range", value: customRange, onChange: setCustomRange, format: "YYYY-MM-DD", allowClear: false }) : null
         ])
       ]),
       e("div", { className: "dashboard-metric-rows", key: "metrics" }, metricRows.map(row =>

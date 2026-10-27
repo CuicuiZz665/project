@@ -420,6 +420,18 @@
         ibRebateCustomers: { value: "14", change: "+9.3%", note: "较上周期" },
         ibRebateAmount: { value: "2.65万", change: "+15.2%", note: "较上周期" }
       },
+      metricsToday: {
+        registered: { value: "6", change: "+20.0%", note: "较昨日" },
+        tradingCustomers: { value: "4", change: "+8.1%", note: "较昨日" },
+        tradingLots: { value: "93", change: "+10.4%", note: "较昨日" },
+        tradingAmount: { value: "1,260", change: "+12.9%", note: "较昨日" },
+        firstDepositCustomers: { value: "3", change: "+9.6%", note: "较昨日" },
+        deposits: { value: "18.6万", change: "+7.2%", note: "充值金额" },
+        withdrawals: { value: "6.2万", change: "-3.5%", note: "提现金额" },
+        netDeposits: { value: "12.4万", change: "+9.6%", note: "净充值" },
+        ibRebateCustomers: { value: "3", change: "+6.7%", note: "较昨日" },
+        ibRebateAmount: { value: "0.42万", change: "+11.3%", note: "较昨日" }
+      },
       trend: [
         { label: "08/12", lots: 42, amount: 520, customers: 8 },
         { label: "08/14", lots: 58, amount: 690, customers: 11 },
@@ -766,7 +778,91 @@
       { id: 3, user_code: "643448777", login: "888012", trade_account_type_name: "模拟账户", ticket: "20261011090", source: "Ag(T+D)", trade_volume: "5.00", so_type: 1, so_type_name: "限价", cmd: 0, leverage: "10", open_time: "2026-10-11 05:40:00", close_time: "2026-10-11 09:05:12", open_price: "7,842.00", close_price: "7,815.00", margin_order: "19,605.00", profit: "-135.00", fee: "-36.80", funding_fee: "-2.20", order_status: 1, close_type: 3 },
       { id: 4, user_code: "548302071", login: "900204", trade_account_type_name: "真实账户", ticket: "20261010055", source: "mAu50g", trade_volume: "1.00", so_type: 0, so_type_name: "市价", cmd: 0, leverage: "20", open_time: "2026-10-10 03:18:44", close_time: "2026-10-10 11:52:09", open_price: "30,620.00", close_price: "30,855.00", margin_order: "30,620.00", profit: "+235.00", fee: "-28.00", funding_fee: "0.00", order_status: 1, close_type: 4 },
       { id: 5, user_code: "499516984", login: "877310", trade_account_type_name: "真实账户", ticket: "20261010061", source: "Au100g", trade_volume: "0.50", so_type: 0, so_type_name: "市价", cmd: 1, leverage: "10", open_time: "2026-10-10 02:02:57", close_time: "", open_price: "61,240.00", close_price: "", margin_order: "15,310.00", profit: "-96.00", fee: "-12.20", funding_fee: "0.00", order_status: 0, close_type: -1 },
-      { id: 6, user_code: "686566723", login: "901103", trade_account_type_name: "赠金账户", ticket: "20261009012", source: "Ag(T+D)", trade_volume: "3.00", so_type: 2, so_type_name: "止损", cmd: 1, leverage: "10", open_time: "2026-10-09 08:30:15", close_time: "2026-10-09 16:44:31", open_price: "7,898.00", close_price: "7,860.00", margin_order: "11,847.00", profit: "+114.00", fee: "-22.10", funding_fee: "-1.10", order_status: 1, close_type: 5 }
+      { id: 6, user_code: "686566723", login: "901103", trade_account_type_name: "赠金账户", ticket: "20261009012", source: "Ag(T+D)", trade_volume: "3.00", so_type: 2, so_type_name: "止损", cmd: 1, leverage: "10", open_time: "2026-10-09 08:30:15", close_time: "2026-10-09 16:44:31", open_price: "7,898.00", close_price: "7,860.00", margin_order: "11,847.00", profit: "+114.00", fee: "-22.10", funding_fee: "-1.10", order_status: 1, close_type: 5 }    ],
+    // —— 充值提现管理 ——
+    depositAuditStatusOptions: [
+      { name: "待审核", code: "pending" },
+      { name: "已通过", code: "approved" },
+      { name: "已驳回", code: "rejected" }
+    ],
+    depositStatusOptions: [
+      { name: "待确认", code: "pending" },
+      { name: "已到账", code: "success" },
+      { name: "失败", code: "failed" }
+    ],
+    depositTypeOptions: [
+      { name: "银行卡充值", code: "bank" },
+      { name: "第三方支付", code: "psp" },
+      { name: "数字货币", code: "crypto" }
+    ],
+    channelOptions: [
+      { name: "银联快捷", code: "unionpay" },
+      { name: "支付宝", code: "alipay" },
+      { name: "微信支付", code: "wechat" },
+      { name: "TRC20", code: "trc20" }
+    ],
+    deposits: [
+      { id: 4, user_code: "315899879", from: "工商银行(6222****1234)", network: "银联", to: "资金账户", order_no: "CZ20261012001", received_at: "2026-10-12 02:11:45", third_no: "UP8829100293", deposit_type_text: "银行卡充值", platform_text: "银联快捷", apply_amount: "5,000.00", currency: "CNY", pay_amount: "5,000.00", pay_currency: "CNY", rate: "1.000000", tx_hash: "-", email: "jiumamuyindian@163.com", deposit_status_text: "已到账", status: { text: "已通过", code: "approved" } },
+      { id: 3, user_code: "643448777", from: "数字钱包(TJxk…9f2K)", network: "TRC20", to: "资金账户", order_no: "CZ20261011008", received_at: "2026-10-11 16:40:12", third_no: "-", deposit_type_text: "数字货币", platform_text: "TRC20", apply_amount: "3,200.00", currency: "CNY", pay_amount: "450.00", pay_currency: "USDT", rate: "7.111111", tx_hash: "0x9f3a…c8d1", email: "didi20260910@163.com", deposit_status_text: "待确认", status: { text: "待审核", code: "pending" } },
+      { id: 2, user_code: "499516984", from: "支付宝", network: "-", to: "资金账户", order_no: "CZ20261010032", received_at: "2026-10-10 09:05:33", third_no: "2026101000291", deposit_type_text: "第三方支付", platform_text: "支付宝", apply_amount: "2,000.00", currency: "CNY", pay_amount: "2,000.00", pay_currency: "CNY", rate: "1.000000", tx_hash: "-", email: "-", deposit_status_text: "已到账", status: { text: "已通过", code: "approved" } },
+      { id: 1, user_code: "686566723", from: "微信支付", network: "-", to: "资金账户", order_no: "CZ20261008015", received_at: "2026-10-08 21:37:08", third_no: "4200002401…", deposit_type_text: "第三方支付", platform_text: "微信支付", apply_amount: "800.00", currency: "CNY", pay_amount: "800.00", pay_currency: "CNY", rate: "1.000000", tx_hash: "-", email: "000@999.com", deposit_status_text: "失败", status: { text: "已驳回", code: "rejected" } }
+    ],
+    riskStatusOptions: [
+      { name: "待审核", code: "pending" },
+      { name: "已通过", code: "approved" },
+      { name: "已驳回", code: "rejected" },
+      { name: "已撤销", code: "cancelled" }
+    ],
+    financeStatusOptions: [
+      { name: "待审核", code: "pending" },
+      { name: "已通过", code: "approved" },
+      { name: "已失败", code: "failed" },
+      { name: "已驳回", code: "rejected" }
+    ],
+    withdrawals: [
+      { id: 4, user_code: "315899879", sub_account_id: "888001", type_text: "VIP3", from: "资金账户", to: "招商银行(6214****8873)", dialog_style: 1, dialog: { country: "CHN", first_name: "维", last_name: "崔", bank_card_no: "6214830299887733", bank_code: "CMB", bank_name: "招商银行", address: "上海市浦东新区", branch_code: "30829000", branch_name: "上海分行营业部" }, order_no: "TX20261012003", third_no: "-", platform_text: "银联快捷", currency: "CNY", apply_amount: "2,000.00", pay_currency: "CNY", pay_amount: "1,990.00", net_amount: "1,990.00", fee_amount: "10.00", rate: "1.000000", withdrawal_time: "2026-10-12 03:20:41", received_at: "", tx_hash: "-", network: "-", email: "jiumamuyindian@163.com", daily_withdraw_count: 2, daily_total_withdraw_amount: "3,500.00", risk_reason: "", finance_reason: "", status: { risk_status: "pending", finance_status: "pending", text: "待审核" }, operator_name: "-", can_handle_risk: 1, can_handle_finance: 1, can_fail_finance: 0, can_manual_retry: 0 },
+      { id: 3, user_code: "643448777", sub_account_id: "888012", type_text: "", from: "资金账户", to: "数字钱包(TJxk…9f2K)", dialog_style: 2, dialog: { to: "数字钱包(TJxk…9f2K)", network: "TRC20", tx_hash: "0x71bc…44ea" }, order_no: "TX20261011006", third_no: "-", platform_text: "TRC20", currency: "CNY", apply_amount: "1,500.00", pay_currency: "USDT", pay_amount: "210.90", net_amount: "210.90", fee_amount: "21.10", rate: "7.111111", withdrawal_time: "2026-10-11 14:02:55", received_at: "2026-10-11 18:44:10", tx_hash: "0x71bc…44ea", network: "TRC20", email: "didi20260910@163.com", daily_withdraw_count: 1, daily_total_withdraw_amount: "1,500.00", risk_reason: "", finance_reason: "", status: { risk_status: "approved", finance_status: "approved", text: "已通过" }, operator_name: "Rita", can_handle_risk: 0, can_handle_finance: 0, can_fail_finance: 0, can_manual_retry: 1 },
+      { id: 2, user_code: "548302071", sub_account_id: "900204", type_text: "高频风控", from: "资金账户", to: "工商银行(6222****1234)", dialog_style: 1, dialog: { country: "CHN", first_name: "晓", last_name: "林", bank_card_no: "6222020900123456", bank_code: "ICBC", bank_name: "工商银行", address: "北京市朝阳区", branch_code: "1021000", branch_name: "北京分行" }, order_no: "TX20261010009", third_no: "-", platform_text: "银联快捷", currency: "CNY", apply_amount: "5,000.00", pay_currency: "CNY", pay_amount: "4,985.00", net_amount: "4,985.00", fee_amount: "15.00", rate: "1.000000", withdrawal_time: "2026-10-10 08:20:03", received_at: "", tx_hash: "-", network: "-", email: "lolo511527@sina.com", daily_withdraw_count: 3, daily_total_withdraw_amount: "12,000.00", risk_reason: "当日提现次数超限", finance_reason: "", status: { risk_status: "rejected", finance_status: "pending", text: "已驳回" }, operator_name: "Rita", can_handle_risk: 0, can_handle_finance: 0, can_fail_finance: 0, can_manual_retry: 0 },
+      { id: 1, user_code: "499516984", sub_account_id: "877310", type_text: "", from: "资金账户", to: "支付宝(188****6621)", dialog_style: 1, dialog: { country: "CHN", first_name: "玲", last_name: "玲", bank_card_no: "18800006621", bank_code: "ALIPAY", bank_name: "支付宝", address: "-", branch_code: "-", branch_name: "-" }, order_no: "TX20261009012", third_no: "-", platform_text: "支付宝", currency: "CNY", apply_amount: "600.00", pay_currency: "CNY", pay_amount: "594.00", net_amount: "594.00", fee_amount: "6.00", rate: "1.000000", withdrawal_time: "2026-10-09 11:15:22", received_at: "2026-10-09 15:40:38", tx_hash: "-", network: "-", email: "-", daily_withdraw_count: 1, daily_total_withdraw_amount: "600.00", risk_reason: "", finance_reason: "", status: { risk_status: "approved", finance_status: "failed", text: "已失败" }, operator_name: "QQ", can_handle_risk: 0, can_handle_finance: 0, can_fail_finance: 0, can_manual_retry: 1 }
+    ],
+    withdrawalBonusByUser: {
+      "315899879": { in: "¥1,088.00", out: "¥188.00", net: "¥900.00" },
+      "643448777": { in: "¥0.00", out: "¥0.00", net: "¥0.00" },
+      "548302071": { in: "¥88.00", out: "¥0.00", net: "¥88.00" },
+      "499516984": { in: "¥500.00", out: "¥100.00", net: "¥400.00" }
+    },
+    currencySpreads: [
+      { id: 1, currency: "CNY", rate: "1.000000", spread_deposit: "0.010000", spread_withdraw: "0.020000" },
+      { id: 2, currency: "USD", rate: "7.150000", spread_deposit: "0.030000", spread_withdraw: "0.050000" },
+      { id: 3, currency: "USDT", rate: "7.111111", spread_deposit: "0.020000", spread_withdraw: "0.040000" }
+    ],
+    networkConfigOptions: {
+      config_types: [
+        { name: "充值", code: "deposit" },
+        { name: "提现", code: "withdraw" }
+      ],
+      currencies: [
+        { name: "CNY", code: "CNY" },
+        { name: "USD", code: "USD" },
+        { name: "USDT", code: "USDT" }
+      ],
+      networks: [
+        { name: "银联", code: "unionpay" },
+        { name: "支付宝", code: "alipay" },
+        { name: "微信支付", code: "wechat" },
+        { name: "TRC20", code: "trc20" }
+      ]
+    },
+    channelsByNetwork: {
+      unionpay: [{ name: "银联快捷", code: "unionpay-quick" }, { name: "银联网关", code: "unionpay-web" }],
+      alipay: [{ name: "支付宝-直连", code: "alipay-direct" }],
+      wechat: [{ name: "微信扫码", code: "wechat-scan" }, { name: "微信H5", code: "wechat-h5" }],
+      trc20: [{ name: "TRC20-主网", code: "trc20-main" }]
+    },
+    networkConfigs: [
+      { id: 3, currency: "CNY", config_type: "deposit", config_type_text: "充值", network: "unionpay", network_text: "银联", channel: "unionpay-quick", channel_text: "银联快捷", status: "enabled", status_text: "已启用", updated_at: "2026-10-09 10:20:11", operator_name: "Bella" },
+      { id: 2, currency: "USDT", config_type: "withdraw", config_type_text: "提现", network: "trc20", network_text: "TRC20", channel: "trc20-main", channel_text: "TRC20-主网", status: "enabled", status_text: "已启用", updated_at: "2026-10-05 15:41:37", operator_name: "Amy" },
+      { id: 1, currency: "CNY", config_type: "deposit", config_type_text: "充值", network: "alipay", network_text: "支付宝", channel: "alipay-direct", channel_text: "支付宝-直连", status: "disabled", status_text: "已停用", updated_at: "2026-09-28 09:12:45", operator_name: "Bella" }
     ]
   };
 })(window.AdminApp);

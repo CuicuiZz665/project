@@ -1602,6 +1602,8 @@
     const [appReleases, setAppReleases] = React.useState(() => cloneData(app.mockData.appReleases));
     const [fundRecords, setFundRecords] = React.useState(() => cloneData(app.mockData.fundRecords));
     const [fundBatchRecords, setFundBatchRecords] = React.useState(() => cloneData(app.mockData.fundBatchRecords));
+    const [withdrawals, setWithdrawals] = React.useState(() => cloneData(app.mockData.withdrawals));
+    const [networkConfigs, setNetworkConfigs] = React.useState(() => cloneData(app.mockData.networkConfigs));
     const [signupActivityId, setSignupActivityId] = React.useState(null);
     const [openTabs, setOpenTabs] = React.useState(["overview"]);
     const menuItems = [{
@@ -1638,24 +1640,16 @@
         label: "充值提现管理",
         children: [{
           key: "depositManage",
-          label: "充值管理",
-          disabled: true
+          label: "充值管理"
         }, {
           key: "withdrawRisk",
-          label: "提现审核 - 风控",
-          disabled: true
+          label: "提现审核 - 风控"
         }, {
           key: "withdrawFinance",
-          label: "提现审核 - 财务",
-          disabled: true
-        }, {
-          key: "exchangeRate",
-          label: "汇率管理",
-          disabled: true
+          label: "提现审核 - 财务"
         }, {
           key: "depositWithdrawNetwork",
-          label: "充值提现网络配置",
-          disabled: true
+          label: "充值提现网络配置"
         }]
       }, {
         key: "fundsManage",
@@ -1827,7 +1821,7 @@
     }), /*#__PURE__*/React.createElement("span", null, "Cui")), /*#__PURE__*/React.createElement(Menu, {
       mode: "inline",
       selectedKeys: [currentPage],
-      defaultOpenKeys: ["customerGroup", "orderGroup", "contentGroup", "marketingGroup", "incentiveGroup", "grantGroup", "fundsGroup", "agentGroup", "systemGroup", "adSlotGroup", "messageGroup", "mailPushGroup", "fundFlowGroup"],
+      defaultOpenKeys: ["customerGroup", "orderGroup", "contentGroup", "marketingGroup", "incentiveGroup", "grantGroup", "fundsGroup", "agentGroup", "systemGroup", "adSlotGroup", "messageGroup", "mailPushGroup", "fundFlowGroup", "depositWithdraw"],
       items: menuItems,
       onClick: ({
         key
@@ -2012,7 +2006,18 @@
       releases: appReleases,
       setReleases: setAppReleases
     }) : currentPage === "changePassword" ? React.createElement(app.ChangePasswordPage, null
-    ) : currentPage === "rules" ? /*#__PURE__*/React.createElement(RulesPage, {
+    ) : currentPage === "depositManage" ? React.createElement(app.DepositPage, {
+      deposits: app.mockData.deposits
+    }) : currentPage === "withdrawRisk" ? React.createElement(app.WithdrawRiskPage, {
+      withdrawals: withdrawals,
+      setWithdrawals: setWithdrawals
+    }) : currentPage === "withdrawFinance" ? React.createElement(app.WithdrawFinancePage, {
+      withdrawals: withdrawals,
+      setWithdrawals: setWithdrawals
+    }) : currentPage === "depositWithdrawNetwork" ? React.createElement(app.NetworkConfigPage, {
+      configs: networkConfigs,
+      setConfigs: setNetworkConfigs
+    }) : currentPage === "rules" ? /*#__PURE__*/React.createElement(RulesPage, {
       rules: rules,
       setRules: setRules,
       courses: courses,

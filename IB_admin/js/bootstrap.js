@@ -30,6 +30,10 @@
     "js/version-setting-page.js",
     "js/change-password-page.js",
     "js/funds-manage-page.js",
+    "js/finance-shared.js",
+    "js/deposit-page.js",
+    "js/withdraw-pages.js",
+    "js/network-config-page.js",
     "js/fund-flow-page.js",
     "js/order-list-page.js",
     "js/role-settings-page.js",
@@ -37,7 +41,7 @@
     "js/global-nav.js",
     "js/antd-app.js"
   ];
-  const appVersion = "20261013-blockmatrix-pages";
+  const appVersion = "20261013-finance-cash-pages";
   const scriptTimeout = 12000;
 
   function showDependencyError(detail) {
