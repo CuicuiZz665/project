@@ -943,6 +943,7 @@
                         cancelText: "取消",
                         onOk: () => {
                           ref.destroy();
+                          sessionStorage.removeItem("cui-admin-authed");
                           window.location.href = "login.html";
                         },
                         onCancel: () => ref.destroy()

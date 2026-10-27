@@ -609,6 +609,7 @@
           setSubmitting(false);
           message.success(t.signInSuccess);
           window.setTimeout(function () {
+            sessionStorage.setItem("cui-admin-authed", "1");
             window.location.href = "index.html";
           }, 650);
         }, 900);

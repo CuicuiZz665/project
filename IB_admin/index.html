@@ -4,6 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Project</title>
+  <script>
+    // 登录拦截：本次浏览器会话内没有登录标记时，先进登录页（登录成功后由 login-page.js 写入标记）
+    if (sessionStorage.getItem("cui-admin-authed") !== "1") {
+      location.replace("login.html");
+    }
+  </script>
   <link rel="stylesheet" href="vendor/antd/reset.css">
   <link rel="stylesheet" href="css/tokens.css">
   <link rel="stylesheet" href="css/layout.css">
