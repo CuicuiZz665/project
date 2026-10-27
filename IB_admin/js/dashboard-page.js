@@ -153,7 +153,7 @@
     ]);
   }
 
-  function DashboardPage({ data, onNavigate }) {
+  function DashboardPage({ data, todos, onNavigate }) {
     const [dateMode, setDateMode] = React.useState("week");
     const [customRange, setCustomRange] = React.useState(() => [dayjs("2026-08-12"), dayjs("2026-09-11")]);
     const [mainMetric, setMainMetric] = React.useState("net");
@@ -473,6 +473,34 @@
       }));
     }
 
+    // 待办中心：审核/打款/报名等流程性待处理事项，点击直达处理页面（todos 由外层按角色权限过滤后传入）
+    function renderTodoStrip() {
+      if (!todos || !todos.length) return null;
+      return e("section", { className: "dashboard-todo", key: "todos" }, [
+        e("div", { className: "dashboard-todo-head", key: "head" }, [
+          e("span", { className: "dashboard-todo-title", key: "title" }, "待办中心"),
+          e(Text, { type: "secondary", key: "hint" }, "点击待办直达处理页面")
+        ]),
+        e("div", { className: "dashboard-todo-grid", key: "grid" },
+          todos.map(item => e("div", {
+            className: `dashboard-todo-item tone-${item.tone}${item.count ? "" : " is-empty"}`,
+            key: item.key,
+            role: "button",
+            tabIndex: 0,
+            onClick: () => onNavigate && onNavigate(item.page)
+          }, [
+            e("div", { className: "dashboard-todo-count", key: "count" }, [
+              e("strong", { key: "num" }, String(item.count)),
+              e("span", { key: "unit" }, item.unit)
+            ]),
+            e("div", { className: "dashboard-todo-meta", key: "meta" }, [
+              e("span", { className: "dashboard-todo-label", key: "label" }, item.label),
+              e("span", { className: "dashboard-todo-action", key: "action" }, item.count ? "去处理 →" : "暂无待办")
+            ])
+          ])))
+      ]);
+    }
+
     return e("div", { className: "dashboard-page" }, [
       e("div", { className: "dashboard-heading", key: "heading" }, [
         e("div", { className: "dashboard-heading-title", key: "title" }, [
@@ -495,6 +523,7 @@
           dateMode === "custom" ? e(RangePicker, { key: "range", value: customRange, onChange: setCustomRange, format: "YYYY-MM-DD", allowClear: false }) : null
         ])
       ]),
+      renderTodoStrip(),
       e("div", { className: "dashboard-metric-rows", key: "metrics" }, metricGroups.map(row =>
         e("section", { className: "dashboard-metric-row", key: row.label }, [
           e("div", { className: "dashboard-metric-group", key: "label" }, row.label),

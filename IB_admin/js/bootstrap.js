@@ -11,6 +11,7 @@
     "js/shared-actions.js",
     "js/customer-page.js",
     "js/login-log-page.js",
+    "js/operation-log-page.js",
     "js/blacklist-page.js",
     "js/whitelist-page.js",
     "js/agent-page.js",
@@ -40,9 +41,10 @@
     "js/role-settings-page.js",
     "js/user-settings-page.js",
     "js/global-nav.js",
+    "js/notification-bell.js",
     "js/antd-app.js"
   ];
-  const appVersion = "20261027-tb6";
+  const appVersion = "20261027-tc1";
   const scriptTimeout = 12000;
 
   function showDependencyError(detail) {

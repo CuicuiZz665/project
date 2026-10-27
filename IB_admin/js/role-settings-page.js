@@ -16,7 +16,7 @@
       value: "客户管理", label: "客户管理", children: [
         { value: "数据看板", label: "数据看板", children: [{ value: "数据概览", label: "数据概览" }] },
         { value: "特殊客户", label: "特殊客户", children: [{ value: "黑名单", label: "黑名单" }, { value: "白名单", label: "白名单" }] },
-        { value: "客户管理", label: "客户管理", children: [{ value: "用户登录日志", label: "用户登录日志" }, { value: "客户列表", label: "客户列表" }] }
+        { value: "客户管理", label: "客户管理", children: [{ value: "客户列表", label: "客户列表" }] }
       ]
     },
     { value: "订单管理", label: "订单管理", children: [{ value: "订单列表", label: "订单列表" }] },
@@ -41,7 +41,7 @@
     },
     {
       value: "激励中心", label: "激励中心", children: [
-        { value: "积分配置", label: "积分配置" }, { value: "积分明细", label: "积分明细" }, { value: "徽章列表", label: "徽章列表" }
+        { value: "积分配置", label: "积分配置" }, { value: "积分明细", label: "积分明细" }, { value: "徽章列表", label: "徽章列表" }, { value: "抽奖配置", label: "抽奖配置" }
       ]
     },
     {
@@ -63,6 +63,7 @@
         { value: "版本控制", label: "版本控制" },
         { value: "角色管理", label: "角色管理", children: [{ value: "编辑角色", label: "编辑角色" }, { value: "创建角色", label: "创建角色" }, { value: "角色管理设置", label: "角色管理设置" }] },
         { value: "用户管理", label: "用户管理", children: [{ value: "用户设置管理", label: "用户设置管理" }] },
+        { value: "日志管理", label: "日志管理", children: [{ value: "用户登录日志", label: "用户登录日志" }, { value: "操作日志", label: "操作日志" }] },
         { value: "修改密码", label: "修改密码" }
       ]
     }

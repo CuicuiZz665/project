@@ -1,6 +1,8 @@
 (function registerAntdAdminApp(app) {
   const {
     App: AntApp,
+    Avatar,
+    Badge,
     Button,
     Cascader,
     Checkbox,
@@ -1583,8 +1585,41 @@
     }
     return null;
   }
+  // 按角色权限过滤菜单：叶子无权限即隐藏，子项全空的分组整组隐藏
+  function filterMenuByPermission(items, permissions) {
+    const allowed = new Set(permissions || []);
+    return (items || []).map(item => {
+      if (item.children) {
+        const children = filterMenuByPermission(item.children, permissions);
+        return children.length ? Object.assign({}, item, { children }) : null;
+      }
+      return !item.permission || allowed.has(item.permission) ? item : null;
+    }).filter(Boolean);
+  }
+  // 待办角标：badge 数量大于 0 时在菜单文字后追加数字角标（label 保持纯数据，供导航索引拍平使用）
+  function decorateMenuBadges(items) {
+    return (items || []).map(item => {
+      const next = Object.assign({}, item);
+      if (item.badge > 0) {
+        next.label = React.createElement("span", { className: "sider-menu-label" }, [
+          item.label,
+          React.createElement(Badge, { count: item.badge, size: "small", key: "badge" })
+        ]);
+      }
+      if (item.children) next.children = decorateMenuBadges(item.children);
+      return next;
+    });
+  }
   function AdminApp() {
     const [currentPage, setCurrentPage] = React.useState("overview");
+    // 当前登录角色（原型演示用顶栏切换）：驱动侧边栏权限过滤，会话级记忆
+    const [currentRole, setCurrentRole] = React.useState(() => {
+      try {
+        const saved = window.sessionStorage.getItem("ib-admin-role");
+        if (saved && app.mockData.roleSettings.some(role => role.id === saved)) return saved;
+      } catch (error) { /* 存储禁用时静默降级为默认角色 */ }
+      return "root";
+    });
     const [rules, setRules] = React.useState(() => cloneData(app.mockData.rules));
     const [deliveries, setDeliveries] = React.useState(() => cloneData(app.mockData.deliveries));
     const [roleSettings, setRoleSettings] = React.useState(() => cloneData(app.mockData.roleSettings));
@@ -1611,31 +1646,45 @@
     const [signupActivityId, setSignupActivityId] = React.useState(null);
     const [openTabs, setOpenTabs] = React.useState(["overview"]);
     const [siderOpenKeys, setSiderOpenKeys] = React.useState([]);
+    // 待办角标与待办中心共用的口径：待风控审核 / 待财务打款 / 待审核代理申请 / 进行中活动的报名
+    const withdrawRiskPending = withdrawals.filter(item => item.status && item.status.risk_status === "pending").length;
+    const withdrawFinancePending = withdrawals.filter(item => item.status && item.status.risk_status === "approved" && item.status.finance_status === "pending").length;
+    const agentPendingCount = app.mockData.agentApplications.filter(item => item.status === "待审核").length;
+    const activeActivityIds = new Set(communityActivities.filter(item => item.status === "上线" || item.status === "待上线").map(item => item.id));
+    const signupPendingCount = app.mockData.activityApplications.filter(item => activeActivityIds.has(item.activityRefId)).length;
+    // 菜单为纯数据结构（label 保持字符串，badge 存数量）：导航索引/权限过滤/角标装饰分层处理
     const menuItems = [{
       key: "overview",
-      label: "数据概览"
+      label: "数据概览",
+      permission: "数据概览"
     }, {
       key: "customerGroup",
       label: "客户管理",
       children: [{
         key: "customer",
-        label: "客户列表"
-      }, {
-        key: "loginLog",
-        label: "用户登录日志"
+        label: "客户列表",
+        permission: "客户列表"
       }, {
         key: "blacklist",
-        label: "黑名单"
+        label: "黑名单",
+        permission: "黑名单"
       }, {
         key: "whitelist",
-        label: "白名单"
+        label: "白名单",
+        permission: "白名单"
       }]
     }, {
-      key: "orderGroup",
-      label: "订单管理",
+      key: "tradeGroup",
+      label: "交易管理",
       children: [{
         key: "orderList",
-        label: "订单列表"
+        label: "订单列表",
+        permission: "订单列表"
+      }, {
+        key: "symbolList",
+        label: "品种列表",
+        permission: "品种类标",
+        disabled: true
       }]
     }, {
       key: "fundsGroup",
@@ -1643,28 +1692,35 @@
       children: [{
         key: "depositWithdraw",
         label: "充值提现管理",
+        badge: withdrawRiskPending + withdrawFinancePending,
         children: [{
           key: "depositManage",
-          label: "充值管理"
+          label: "充值管理",
+          permission: "充值管理"
         }, {
           key: "withdrawRisk",
-          label: "提现审核 - 风控"
+          label: "提现审核 - 风控",
+          permission: "提现管理-风控审核"
         }, {
           key: "withdrawFinance",
-          label: "提现审核 - 财务"
+          label: "提现审核 - 财务",
+          permission: "提现管理-财务操作"
         }, {
           key: "depositWithdrawNetwork",
-          label: "充值提现网络配置"
+          label: "充值提现网络配置",
+          permission: "充值提现网络配置"
         }]
       }, {
         key: "fundsManage",
-        label: "资金管理"
+        label: "资金管理",
+        permission: "资金管理"
       }, {
         key: "fundFlowGroup",
         label: "流水管理",
         children: [{
           key: "fundFlow",
-          label: "资金流水"
+          label: "资金流水",
+          permission: "资金流水"
         }]
       }]
     }, {
@@ -1672,52 +1728,70 @@
       label: "代理管理",
       children: [{
         key: "agentApplications",
-        label: "代理申请列表"
+        label: "代理申请列表",
+        permission: "代理申请列表",
+        badge: agentPendingCount
       }, {
         key: "agent",
-        label: "代理商列表"
+        label: "代理商列表",
+        permission: "代理商列表"
       }, {
         key: "agentLevel",
-        label: "代理等级配置"
+        label: "代理等级配置",
+        permission: "代理等级配置"
       }, {
         key: "commission",
-        label: "佣金管理"
+        label: "佣金管理",
+        permission: "佣金配置列表"
       }]
     }, {
       key: "marketingGroup",
       label: "市场活动",
       children: [{
         key: "activity",
-        label: "活动配置"
+        label: "活动配置",
+        permission: "活动配置"
+      }, {
+        key: "activityApplications",
+        label: "报名列表",
+        permission: "报名列表",
+        badge: signupPendingCount
       }]
     }, {
       key: "incentiveGroup",
       label: "激励中心",
       children: [{
         key: "rules",
-        label: "积分配置"
+        label: "积分配置",
+        permission: "积分配置"
       }, {
         key: "pointDetails",
-        label: "积分明细"
+        label: "积分明细",
+        permission: "积分明细"
       }, {
         key: "wheel",
-        label: "抽奖配置"
+        label: "抽奖配置",
+        permission: "抽奖配置"
       }, {
         key: "badge",
-        label: "徽章列表"
+        label: "徽章列表",
+        permission: "徽章列表"
       }]
     }, {
       key: "grantGroup",
       label: "发放管理",
       children: [{
         key: "coupon",
-        label: "优惠券管理"
+        label: "优惠券管理",
+        permission: "优惠券列表"
       }, {
         key: "delivery",
-        label: "投递列表"
+        label: "投递列表",
+        permission: "投递列表"
       }, {
         key: "records",
         label: "投递记录",
+        permission: "投递记录",
         disabled: true
       }]
     }, {
@@ -1728,68 +1802,130 @@
         label: "广告位管理",
         children: [{
           key: "adList",
-          label: "广告列表"
+          label: "广告列表",
+          permission: "广告列表"
         }, {
           key: "adEntry",
-          label: "广告位条目配置"
+          label: "广告位条目配置",
+          permission: "广告位条目配置"
         }]
       }, {
         key: "messageGroup",
         label: "消息管理",
         children: [{
           key: "messageManage",
-          label: "消息管理"
+          label: "消息管理",
+          permission: "消息管理"
         }, {
           key: "emailCode",
-          label: "查询验证码"
+          label: "查询验证码",
+          permission: "查询验证码"
         }]
       }, {
         key: "mailPushGroup",
         label: "邮件PUSH",
         children: [{
           key: "mailList",
-          label: "邮件管理"
+          label: "邮件管理",
+          permission: "邮件管理"
         }, {
           key: "siteList",
-          label: "站内信管理"
+          label: "站内信管理",
+          permission: "站内信管理"
         }, {
           key: "mailTemplates",
-          label: "Layout管理"
+          label: "Layout管理",
+          permission: "Layout管理"
         }]
       }]
     }, {
-      key: "symbolList",
-      label: "品种列表",
-      disabled: true
-    }, {
       key: "systemGroup",
-      label: "设置",
+      label: "系统管理",
       children: [{
         key: "roles",
-        label: "角色管理设置"
+        label: "角色管理设置",
+        permission: "角色管理设置"
       }, {
         key: "users",
-        label: "用户设置管理"
+        label: "用户设置管理",
+        permission: "用户设置管理"
       }, {
         key: "versionSetting",
-        label: "版本设置"
+        label: "版本设置",
+        permission: "版本控制"
       }, {
-        key: "changePassword",
-        label: "修改密码"
+        key: "logGroup",
+        label: "日志管理",
+        children: [{
+          key: "loginLog",
+          label: "用户登录日志",
+          permission: "用户登录日志"
+        }, {
+          key: "operationLog",
+          label: "操作日志",
+          permission: "操作日志"
+        }]
       }]
     }];
-    const navPages = app.buildNavIndex(menuItems);
-    // 报名列表不在侧边栏，从活动配置的行操作进入，这里补页签标题与搜索路径映射。
+    const currentRoleConfig = roleSettings.find(role => role.id === currentRole) || roleSettings[0];
+    // 按当前角色取一名启用的后台账号作为顶栏展示身份
+    const currentUser = userSettings.find(user => user.roleId === currentRoleConfig.id && user.status === "启用") || userSettings[0];
+    const allowedMenuItems = filterMenuByPermission(menuItems, currentRoleConfig.permissions);
+    const menuViewItems = decorateMenuBadges(allowedMenuItems);
+    const navPages = app.buildNavIndex(allowedMenuItems);
+    // 不在侧边栏的隐藏页：修改密码从右上角用户下拉进入，这里补页签标题与搜索路径映射。
     const hiddenNavPages = [{
-      key: "activityApplications",
-      label: "报名列表",
-      path: "市场活动 / 报名列表"
+      key: "changePassword",
+      label: "修改密码",
+      path: "个人中心 / 修改密码"
     }];
     const tabPages = navPages.concat(hiddenNavPages);
     const navKeys = navPages.map(page => page.key);
+    const allowedPageKeys = navKeys.concat(["changePassword"]);
+    const todoItems = [{
+      key: "withdrawRisk",
+      label: "提现待风控审核",
+      count: withdrawRiskPending,
+      unit: "笔",
+      tone: "gold",
+      page: "withdrawRisk"
+    }, {
+      key: "withdrawFinance",
+      label: "提现待财务打款",
+      count: withdrawFinancePending,
+      unit: "笔",
+      tone: "blue",
+      page: "withdrawFinance"
+    }, {
+      key: "agentApplications",
+      label: "代理申请待审核",
+      count: agentPendingCount,
+      unit: "条",
+      tone: "violet",
+      page: "agentApplications"
+    }, {
+      key: "activityApplications",
+      label: "活动报名待处理",
+      count: signupPendingCount,
+      unit: "条",
+      tone: "teal",
+      page: "activityApplications"
+    }].filter(item => allowedPageKeys.includes(item.page));
+    function switchRole(roleId) {
+      setCurrentRole(roleId);
+      try {
+        window.sessionStorage.setItem("ib-admin-role", roleId);
+      } catch (error) { /* 存储禁用时仅本次会话生效 */ }
+    }
+    // 切换角色后：无权限的当前页与已开页签一并收起，回到数据概览
+    React.useEffect(() => {
+      if (!allowedPageKeys.includes(currentPage)) setCurrentPage("overview");
+      setOpenTabs(tabs => tabs.filter(tab => tab === "overview" || allowedPageKeys.includes(tab)));
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [currentRole]);
     // 无论从菜单、页签、全局搜索还是概览卡跳转进入页面，都自动展开其所在分组链；手动折叠仍生效
     React.useEffect(() => {
-      const chain = collectMenuAncestors(menuItems, currentPage) || [];
+      const chain = collectMenuAncestors(allowedMenuItems, currentPage) || [];
       if (!chain.length) return;
       setSiderOpenKeys(prev => (chain.every(key => prev.includes(key)) ? prev : Array.from(new Set(prev.concat(chain)))));
     }, [currentPage]);
@@ -1834,7 +1970,7 @@
       selectedKeys: [currentPage],
       openKeys: siderOpenKeys,
       onOpenChange: setSiderOpenKeys,
-      items: menuItems,
+      items: menuViewItems,
       onClick: ({
         key
       }) => {
@@ -1853,67 +1989,95 @@
       onCloseOthers: closeOtherTabs,
       onCloseAll: closeAllTabs
     })), /*#__PURE__*/React.createElement(Space, null, /*#__PURE__*/React.createElement(app.GlobalSearch, {
-      menuItems: menuItems,
+      menuItems: allowedMenuItems,
       extraPages: hiddenNavPages,
       onNavigate: setCurrentPage
-    }), /*#__PURE__*/React.createElement(Button, {
-      shape: "circle"
-    }, "?"), /*#__PURE__*/React.createElement(Button, {
-      shape: "circle",
-      title: "退出登录",
-      "aria-label": "退出登录",
-      onClick: () => {
-        const ref = Modal.confirm({
-          title: "退出登录",
-          content: "确定退出当前账号并返回登录页吗?",
-          okText: "退出",
-          cancelText: "取消",
-          onOk: () => {
-            ref.destroy();
-            sessionStorage.removeItem("cui-admin-authed");
-            window.location.href = "login.html";
-          },
-          onCancel: () => ref.destroy()
-        });
+    }), /*#__PURE__*/React.createElement(app.NotificationBell, {
+      onNavigate: setCurrentPage
+    }), /*#__PURE__*/React.createElement(Dropdown, {
+      trigger: ["click"],
+      menu: {
+        selectable: true,
+        selectedKeys: [`role:${currentRole}`],
+        items: [{
+          key: "role-switch-header",
+          type: "group",
+          label: "切换角色（演示权限过滤）"
+        }].concat(roleSettings.map(role => ({
+          key: `role:${role.id}`,
+          label: role.name
+        })), [{
+          type: "divider",
+          key: "divider-role"
+        }, {
+          key: "changePassword",
+          label: "修改密码"
+        }, {
+          type: "divider",
+          key: "divider-logout"
+        }, {
+          key: "logout",
+          label: "退出登录",
+          danger: true
+        }]),
+        onClick: ({
+          key
+        }) => {
+          if (key.indexOf("role:") === 0) {
+            switchRole(key.slice(5));
+            return;
+          }
+          if (key === "changePassword") {
+            setCurrentPage("changePassword");
+            return;
+          }
+          if (key === "logout") {
+            const ref = Modal.confirm({
+              title: "退出登录",
+              content: "确定退出当前账号并返回登录页吗?",
+              okText: "退出",
+              cancelText: "取消",
+              onOk: () => {
+                ref.destroy();
+                try {
+                  window.sessionStorage.removeItem("ib-admin-role");
+                } catch (error) { /* 存储禁用时忽略 */ }
+                sessionStorage.removeItem("cui-admin-authed");
+                window.location.href = "login.html";
+              },
+              onCancel: () => ref.destroy()
+            });
+          }
+        }
       }
+    }, /*#__PURE__*/React.createElement("button", {
+      className: "user-chip",
+      type: "button",
+      title: `${currentUser.name} · ${currentRoleConfig.name}`
+    }, /*#__PURE__*/React.createElement(Avatar, {
+      size: 26,
+      className: "user-chip-avatar"
+    }, (currentUser.name || "A").slice(0, 1).toUpperCase()), /*#__PURE__*/React.createElement("span", {
+      className: "user-chip-main"
     }, /*#__PURE__*/React.createElement("span", {
-      role: "img",
-      "aria-label": "logout",
-      className: "anticon anticon-logout",
-      style: {
-        display: "inline-flex",
-        lineHeight: 0,
-        fontSize: 14
-      }
-    }, /*#__PURE__*/React.createElement("svg", {
-      viewBox: "0 0 24 24",
-      width: "1em",
-      height: "1em",
-      fill: "none",
-      stroke: "currentColor",
-      strokeWidth: 2,
-      strokeLinecap: "round",
-      strokeLinejoin: "round",
-      "aria-hidden": "true"
-    }, /*#__PURE__*/React.createElement("path", {
-      d: "M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"
-    }), /*#__PURE__*/React.createElement("polyline", {
-      points: "16 17 21 12 16 7"
-    }), /*#__PURE__*/React.createElement("line", {
-      x1: 21,
-      y1: 12,
-      x2: 9,
-      y2: 12
-    })))))), /*#__PURE__*/React.createElement(Content, {
+      className: "user-chip-name"
+    }, currentUser.name), /*#__PURE__*/React.createElement("span", {
+      className: "user-chip-role"
+    }, currentRoleConfig.name)), /*#__PURE__*/React.createElement("span", {
+      className: "user-chip-caret"
+    }, "▾"))))), /*#__PURE__*/React.createElement(Content, {
       className: "admin-content"
     }, currentPage === "overview" ? /*#__PURE__*/React.createElement(app.DashboardPage, {
       data: app.mockData.dashboard,
+      todos: todoItems,
       onNavigate: setCurrentPage
     }) : currentPage === "customer" ? /*#__PURE__*/React.createElement(app.CustomerPage, {
       customers: app.mockData.customers,
       services: app.mockData.customerServices
     }) : currentPage === "loginLog" ? /*#__PURE__*/React.createElement(app.LoginLogPage, {
       logs: app.mockData.loginLogs
+    }) : currentPage === "operationLog" ? /*#__PURE__*/React.createElement(app.OperationLogPage, {
+      logs: app.mockData.operationLogs
     }) : currentPage === "blacklist" ? /*#__PURE__*/React.createElement(app.BlacklistPage, {
       list: app.mockData.blacklist
     }) : currentPage === "whitelist" ? /*#__PURE__*/React.createElement(app.WhitelistPage, {

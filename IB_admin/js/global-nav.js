@@ -10,6 +10,7 @@
     overview: ["dashboard", "kanban", "home", "shuju", "数据", "看板", "概览"],
     customer: ["customer", "kh", "客户", "列表"],
     loginLog: ["login", "log", "rizhi", "denglu", "登录", "日志"],
+    operationLog: ["operation", "caozuo", "audit", "shenji", "操作", "日志", "审计", "留痕"],
     blacklist: ["blacklist", "hei", "黑名单", "拉黑"],
     wheel: ["wheel", "lottery", "zuanpan", "choujiang", "互动", "抽奖配置", "转盘", "大转盘", "抽奖", "奖池"],
     badge: ["badge", "huizhang", "徽章", "徽章列表"],
