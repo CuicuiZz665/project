@@ -15,21 +15,20 @@
   const e = React.createElement;
 
   const SETTLE_STATUS_OPTIONS = ["未结算", "已结算", "已驳回"];
-  const EXPORT_HEADERS = ["订单号", "品种", "持仓量", "佣金金额", "订单平仓时间", "结算时间", "结算状态"];
-  const EXPORT_FIELDS = ["orderId", "symbol", "holdings", "commission", "closedAt", "settledAt", "settleStatus"];
+  const EXPORT_HEADERS = ["订单号", "品种", "持仓量", "佣金金额", "结算时间", "结算状态"];
+  const EXPORT_FIELDS = ["orderId", "symbol", "holdings", "commission", "settledAt", "settleStatus"];
   const SETTLE_TAG_COLOR = { "已结算": "success", "已驳回": "error" };
 
   const columnOptions = [
     { key: "symbol", label: "品种" },
     { key: "holdings", label: "持仓量" },
     { key: "commission", label: "佣金金额" },
-    { key: "closedAt", label: "订单平仓时间" },
     { key: "settledAt", label: "结算时间" },
     { key: "settleStatus", label: "结算状态" }
   ];
   const defaultColumnKeys = columnOptions.map(item => item.key);
 
-  const emptyFilters = () => ({ orderId: null, symbol: null, settleStatus: null, closedRange: null, settledRange: null });
+  const emptyFilters = () => ({ orderId: null, symbol: null, settleStatus: null, settledRange: null });
 
   function normalizeRange(range) {
     if (!range || !range[0] || !range[1]) return null;
@@ -143,13 +142,10 @@
         const matchedOrder = !applied.orderId || item.orderId === applied.orderId;
         const matchedSymbol = !applied.symbol || item.symbol === applied.symbol;
         const matchedStatus = !applied.settleStatus || item.settleStatus === applied.settleStatus;
-        const closedDate = item.closedAt.slice(0, 10);
         const settledDate = item.settledAt.slice(0, 10);
-        const matchedClosed = !applied.closedRange
-          || (closedDate >= applied.closedRange[0] && closedDate <= applied.closedRange[1]);
         const matchedSettled = !applied.settledRange
           || (settledDate >= applied.settledRange[0] && settledDate <= applied.settledRange[1]);
-        return matchedOrder && matchedSymbol && matchedStatus && matchedClosed && matchedSettled;
+        return matchedOrder && matchedSymbol && matchedStatus && matchedSettled;
       });
     }, [records, applied]);
 
@@ -167,7 +163,6 @@
         orderId: draft.orderId,
         symbol: draft.symbol,
         settleStatus: draft.settleStatus,
-        closedRange: normalizeRange(draft.closedRange),
         settledRange: normalizeRange(draft.settledRange)
       });
       setPage(1);
@@ -207,7 +202,6 @@
           onClick: () => setDetailRecord(record)
         }, value)
       },
-      closedAt: { title: "订单平仓时间", dataIndex: "closedAt", width: 130 },
       settledAt: { title: "结算时间", dataIndex: "settledAt", width: 130 },
       settleStatus: {
         title: "结算状态",
@@ -295,12 +289,6 @@
                     className: "select-input",
                     options: SETTLE_STATUS_OPTIONS.map(value => ({ value, label: value }))
                   }), "settleStatus"),
-                  filterItem("订单平仓时间 :", e(RangePicker, {
-                    value: draft.closedRange,
-                    onChange: range => updateDraft({ closedRange: range }),
-                    format: "YYYY-MM-DD",
-                    className: "login-log-range"
-                  }), "closedRange"),
                   filterItem("结算时间 :", e(RangePicker, {
                     value: draft.settledRange,
                     onChange: range => updateDraft({ settledRange: range }),

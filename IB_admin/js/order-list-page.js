@@ -2,7 +2,6 @@
   const {
     Button,
     Checkbox,
-    DatePicker,
     Descriptions,
     Drawer,
     Dropdown,
@@ -15,19 +14,8 @@
     Tag,
     message
   } = antd;
-  const { RangePicker } = DatePicker;
   const e = React.createElement;
 
-  const CMD_MAP = { 0: { label: "买", color: "green" }, 1: { label: "卖", color: "red" } };
-  const CLOSE_TYPE_MAP = {
-    [-1]: "-",
-    1: "手动平仓",
-    2: "后台平仓",
-    3: "止损平仓",
-    4: "止盈平仓",
-    5: "强制平仓",
-    9: "跟随平仓"
-  };
   const SO_TYPE_COLORS = { 0: "blue", 1: "geekblue", 2: "cyan", 3: "purple" };
 
   // 列设置分组，与参考系统一致
@@ -35,9 +23,7 @@
     { key: "customer", label: "客户与账号" },
     { key: "order", label: "订单信息" },
     { key: "trade", label: "交易信息" },
-    { key: "time", label: "时间" },
-    { key: "amount", label: "价格与金额" },
-    { key: "status", label: "状态" }
+    { key: "amount", label: "价格与金额" }
   ];
 
   const COLUMN_META = [
@@ -48,18 +34,10 @@
     { key: "source", group: "trade", defaultVisible: true },
     { key: "trade_volume", group: "trade", defaultVisible: true },
     { key: "so_type_name", group: "trade", defaultVisible: false },
-    { key: "cmd", group: "trade", defaultVisible: true },
     { key: "leverage", group: "trade", defaultVisible: false },
-    { key: "open_time", group: "time", defaultVisible: true },
-    { key: "close_time", group: "time", defaultVisible: false },
-    { key: "open_price", group: "amount", defaultVisible: false },
-    { key: "close_price", group: "amount", defaultVisible: false },
     { key: "margin_order", group: "amount", defaultVisible: false },
     { key: "profit", group: "amount", defaultVisible: true },
-    { key: "fee", group: "amount", defaultVisible: false },
-    { key: "funding_fee", group: "amount", defaultVisible: false },
-    { key: "order_status", group: "status", defaultVisible: true },
-    { key: "close_type", group: "status", defaultVisible: true }
+    { key: "funding_fee", group: "amount", defaultVisible: false }
   ];
 
   const DEFAULT_VISIBLE_KEYS = COLUMN_META.filter(item => item.defaultVisible).map(item => item.key);
@@ -118,7 +96,6 @@
 
   function OrderDetailDrawer({ open, record, onClose }) {
     if (!record) return null;
-    const cmd = CMD_MAP[record.cmd];
     return e(Drawer, {
       open,
       onClose,
@@ -136,25 +113,17 @@
         { key: "ticket", label: "订单号", children: textOrDash(record.ticket) },
         { key: "source", label: "品种", children: textOrDash(record.source) },
         { key: "soType", label: "交易模式", children: textOrDash(record.so_type_name) },
-        { key: "cmd", label: "方向", children: cmd ? e(Tag, { color: cmd.color }, cmd.label) : textOrDash(record.cmd) },
         { key: "leverage", label: "杠杆", children: textOrDash(record.leverage) },
-        { key: "openPrice", label: "开仓价格", children: textOrDash(record.open_price) },
-        { key: "closePrice", label: "平仓价格", children: textOrDash(record.close_price) },
         { key: "margin", label: "保证金", children: `¥${textOrDash(record.margin_order)}` },
         { key: "profit", label: "盈亏", children: e("span", { style: { color: signedColor(record.profit) } }, textOrDash(record.profit)) },
-        { key: "fee", label: "开平仓费用", children: textOrDash(record.fee) },
-        { key: "funding", label: "Funding Fee", children: textOrDash(record.funding_fee) },
-        { key: "openTime", label: "开仓时间", children: textOrDash(record.open_time) },
-        { key: "closeTime", label: "平仓时间", children: textOrDash(record.close_time) },
-        { key: "closed", label: "是否平仓", children: e(Tag, { color: Number(record.order_status) === 1 ? "success" : "default" }, Number(record.order_status) === 1 ? "是" : "否") },
-        { key: "closeType", label: "平仓类型", children: textOrDash(CLOSE_TYPE_MAP[record.close_type]) }
+        { key: "funding", label: "Funding Fee", children: textOrDash(record.funding_fee) }
       ]
     }));
   }
 
   function OrderListPage({ orders }) {
     const [form] = Form.useForm();
-    const [applied, setApplied] = React.useState({ is_closed: 0 });
+    const [applied, setApplied] = React.useState({});
     const [expanded, setExpanded] = React.useState(false);
     const [detailOpen, setDetailOpen] = React.useState(false);
     const [detailRecord, setDetailRecord] = React.useState(null);
@@ -167,18 +136,13 @@
     const [columnDraft, setColumnDraft] = React.useState(DEFAULT_VISIBLE_KEYS);
 
     const accountTypes = app.mockData.orderAccountTypes || [];
-    const closedTypes = app.mockData.orderClosedTypes || [];
     const accountOptions = [{ label: "全部", value: -1 }, ...accountTypes.map(item => ({ label: item.name, value: item.code }))];
-    const isClosedOptions = [{ label: "全部", value: "all" }, ...closedTypes.map(item => ({ label: item.name, value: item.code }))];
 
     const filtered = (orders || []).filter(order =>
       (!applied.user_code || String(order.user_code).includes(applied.user_code.trim()))
       && (!applied.login || String(order.login).includes(applied.login.trim()))
       && (!applied.ticket || String(order.ticket).includes(applied.ticket.trim()))
-      && (applied.is_closed === undefined || applied.is_closed === null || applied.is_closed === "all" || Number(order.order_status) === Number(applied.is_closed))
       && (applied.account_type === undefined || applied.account_type === null || applied.account_type === -1 || order.trade_account_type_name === (accountTypes.find(item => item.code === applied.account_type) || {}).name)
-      && (!applied.open_time || (order.open_time >= applied.open_time[0].format("YYYY-MM-DD HH:mm:ss") && order.open_time <= applied.open_time[1].format("YYYY-MM-DD HH:mm:ss")))
-      && (!applied.close_time || !order.close_time || (order.close_time >= applied.close_time[0].format("YYYY-MM-DD HH:mm:ss") && order.close_time <= applied.close_time[1].format("YYYY-MM-DD HH:mm:ss")))
     );
 
     function openCustomer(code) {
@@ -222,20 +186,7 @@
         width: 120,
         render: (value, record) => value ? e(Tag, { color: SO_TYPE_COLORS[record.so_type] || "default" }, value) : "-"
       },
-      cmd: {
-        title: "方向",
-        dataIndex: "cmd",
-        width: 100,
-        render: value => {
-          const cmd = CMD_MAP[value];
-          return cmd ? e(Tag, { color: cmd.color }, cmd.label) : "-";
-        }
-      },
       leverage: { title: "杠杆", dataIndex: "leverage", width: 120 },
-      open_time: { title: "开仓时间", dataIndex: "open_time", width: 180 },
-      close_time: { title: "平仓时间", dataIndex: "close_time", width: 180 },
-      open_price: { title: "开仓价格", dataIndex: "open_price", width: 120 },
-      close_price: { title: "平仓价格", dataIndex: "close_price", width: 120 },
       margin_order: { title: "保证金", dataIndex: "margin_order", width: 120 },
       profit: {
         title: "盈亏",
@@ -243,31 +194,14 @@
         width: 120,
         render: value => e("span", { style: { color: signedColor(value) } }, textOrDash(value))
       },
-      fee: { title: "开平仓费用", dataIndex: "fee", width: 120 },
-      funding_fee: { title: "Funding Fee", dataIndex: "funding_fee", width: 120 },
-      order_status: {
-        title: "是否平仓",
-        dataIndex: "order_status",
-        fixed: "right",
-        width: 100,
-        render: value => e(Tag, { color: Number(value) === 1 ? "success" : "default" }, Number(value) === 1 ? "是" : "否")
-      },
-      close_type: {
-        title: "平仓类型",
-        dataIndex: "close_type",
-        fixed: "right",
-        width: 120,
-        render: value => textOrDash(CLOSE_TYPE_MAP[value])
-      }
+      funding_fee: { title: "Funding Fee", dataIndex: "funding_fee", width: 120 }
     };
 
     // 列顺序固定按元数据定义，勾选只控制显隐
     const columns = COLUMN_META.filter(item => visibleKeys.includes(item.key)).map(item => allColumns[item.key]).filter(Boolean);
 
     const secondaryActive =
-      (applied.account_type !== undefined && applied.account_type !== null && applied.account_type !== -1 ? 1 : 0)
-      + (applied.open_time ? 1 : 0)
-      + (applied.close_time ? 1 : 0);
+      (applied.account_type !== undefined && applied.account_type !== null && applied.account_type !== -1 ? 1 : 0);
 
     const columnPanel = e("div", { style: { maxWidth: 560 } }, [
       e("div", {
@@ -317,8 +251,6 @@
             e(Input, { allowClear: true, placeholder: "请输入子账号", style: { width: 160 } })),
           e(Form.Item, { key: "ticket", label: "订单号", name: "ticket" },
             e(Input, { allowClear: true, placeholder: "请输入订单号", style: { width: 190 } })),
-          e(Form.Item, { key: "closed", label: "是否平仓", name: "is_closed", initialValue: 0 },
-            e(Select, { options: isClosedOptions, style: { width: 150 } })),
           e(Form.Item, { key: "toggle" },
             e(Button, { type: "text", htmlType: "button", "aria-expanded": expanded, onClick: () => setExpanded(!expanded) }, [
               expanded ? "收起筛选" : "更多筛选",
@@ -327,16 +259,12 @@
           e(Form.Item, { key: "actions" },
             e(Space, null, [
               e(Button, { key: "search", type: "primary", htmlType: "submit" }, "查询"),
-              e(Button, { key: "reset", onClick: () => { form.resetFields(); form.setFieldsValue({ is_closed: 0 }); setApplied({ is_closed: 0 }); } }, "重置")
+              e(Button, { key: "reset", onClick: () => { form.resetFields(); setApplied({}); } }, "重置")
             ]))
         ]),
         e("div", { key: "secondary", hidden: !expanded, style: { display: expanded ? "flex" : "none", gap: 16, flexWrap: "wrap", width: "100%" } }, [
           e(Form.Item, { key: "account-type", label: "账号类型", name: "account_type", initialValue: -1 },
-            e(Select, { options: accountOptions, style: { width: 150 } })),
-          e(Form.Item, { key: "open-time", label: "开仓时间(GMT+0)", name: "open_time" },
-            e(RangePicker, { showTime: true, style: { width: 300 } })),
-          e(Form.Item, { key: "close-time", label: "平仓时间(GMT+0)", name: "close_time" },
-            e(RangePicker, { showTime: true, style: { width: 300 } }))
+            e(Select, { options: accountOptions, style: { width: 150 } }))
         ])
       ]),
       e("div", { key: "toolbar", style: { marginBottom: 12, display: "flex", justifyContent: "flex-end", gap: 8, position: "relative" } }, [
@@ -353,7 +281,7 @@
         columns,
         dataSource: filtered,
         pagination: { showSizeChanger: true, showTotal: total => `共 ${total} 条` },
-        scroll: { x: 1700 },
+        scroll: { x: 1300 },
         locale: { emptyText: "暂无数据" },
         onRow: record => ({
           onClick: () => { setDetailRecord(record); setDetailOpen(true); },

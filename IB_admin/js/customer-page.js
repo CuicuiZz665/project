@@ -703,22 +703,13 @@
     return renderRecordTable({
       filters: [
         { label: "子账号", type: "select", placeholder: "请选择子账号", options: (extra.accounts || []).map(account => account.accountNo) },
-        { label: "订单号", placeholder: "请输入订单号" },
-        { label: "是否平仓", type: "select", options: ["全部", "是", "否"] },
-        { label: "开仓时间(GMT+8)", type: "range", wide: true },
-        { label: "平仓时间(GMT+8)", type: "range", wide: true }
+        { label: "订单号", placeholder: "请输入订单号" }
       ],
       columns: [
-        { title: "订单号", dataIndex: "orderNo", width: 140 },
-        { title: "开仓价", dataIndex: "openPrice", width: 100 },
-        { title: "平仓价", dataIndex: "closePrice", width: 100 },
-        { title: "保证金", dataIndex: "margin", width: 110 },
-        { title: "盈亏", dataIndex: "pnl", width: 100 },
-        { title: "开平仓费用", dataIndex: "fee", width: 120 },
-        { title: "开仓时间(GMT+8)", dataIndex: "openedAt", width: 150 },
-        { title: "平仓时间(GMT+8)", dataIndex: "closedAt", width: 150 },
-        { title: "是否平仓", dataIndex: "closed", width: 90, render: value => e(Tag, { color: value === "是" ? "green" : "default" }, value) },
-        { title: "平仓类型", dataIndex: "closeType", width: 110, render: value => e(Tag, null, value) }
+        { title: "订单号", dataIndex: "orderNo", width: 180 },
+        { title: "保证金", dataIndex: "margin", width: 130 },
+        { title: "盈亏", dataIndex: "pnl", width: 130 },
+        { title: "资金费", dataIndex: "fundingFee", width: 120 }
       ],
       data: extra.tradeRecords,
       total: extra.tradeRecords?.length

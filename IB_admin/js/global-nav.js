@@ -39,7 +39,7 @@
     changePassword: ["password", "mima", "密码", "修改"],
     fundsManage: ["fund", "zijin", "资金", "发放", "扣除", "批量"],
     fundFlow: ["flow", "liushui", "流水", "transactions"],
-    orderList: ["order", "dingdan", "订单", "交易", "持仓", "平仓"],
+    orderList: ["order", "dingdan", "订单", "交易"],
     depositManage: ["deposit", "chongzhi", "recharge", "充值", "入金"],
     withdrawRisk: ["withdraw", "tixian", "risk", "提现", "出金", "风控", "审核"],
     withdrawFinance: ["withdraw", "tixian", "finance", "caiwu", "提现", "出金", "财务"],

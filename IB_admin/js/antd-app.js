@@ -79,16 +79,12 @@
     }, "-");
   }
   const conditionParamMap = {
-    "开仓": ["订单数", "交易金额", "订单笔数"],
     "手续费": ["手续费金额"],
     "跟单": ["跟单金额", "跟单笔数"],
     "连续签到": ["签到天数"],
     "手动触发": []
   };
   const conditionDefaults = {
-    "订单数": 5,
-    "交易金额": 1000,
-    "订单笔数": 1,
     "手续费金额": 100,
     "跟单金额": 100,
     "跟单笔数": 1,
@@ -232,7 +228,7 @@
         cycleRange: rule && rule.ruleType !== "课程任务" && rule.timeRange && rule.timeRange.includes(" 至 ") ? [dayjs(rule.timeRange.split(" 至 ")[0]), dayjs(rule.timeRange.split(" 至 ")[1])] : undefined,
         rewardValue: Number(rule?.rewardXp || rule?.rewardDrop || 0),
         rewardType: Number(rule?.rewardDrop || 0) > 0 && Number(rule?.rewardXp || 0) <= 0 ? "金币" : "XP",
-        triggerEvent: rule && rule.ruleType !== "课程任务" ? rule?.triggerEvent === "首次连续签到" ? "连续签到" : rule?.triggerEvent || "开仓" : "开仓",
+        triggerEvent: rule && rule.ruleType !== "课程任务" ? rule?.triggerEvent === "首次连续签到" ? "连续签到" : rule?.triggerEvent || "手续费" : "手续费",
         accountScope: "all",
         conditions: [],
         relation: "all",
@@ -258,11 +254,7 @@
         value: conditionDefaults[params[0]]
       }] : []);
       const rewardValue = form.getFieldValue("rewardValue");
-      if (triggerEvent === "开仓" && !rewardValue) {
-        form.setFieldValue("rewardType", "金币");
-        form.setFieldValue("rewardValue", 100);
-      }
-      if (triggerEvent !== "开仓" && !rewardValue) {
+      if (!rewardValue) {
         form.setFieldValue("rewardType", "XP");
         form.setFieldValue("rewardValue", triggerEvent === "连续签到" ? 33 : 150);
       }
@@ -458,7 +450,7 @@
         required: true
       }]
     }, /*#__PURE__*/React.createElement(Select, {
-      options: ["开仓", "手续费", "跟单", "连续签到", "手动触发"].map(value => ({
+      options: ["手续费", "跟单", "连续签到", "手动触发"].map(value => ({
         value,
         label: value
       }))
@@ -690,7 +682,7 @@
         message: "请选择触发事件"
       }]
     }, /*#__PURE__*/React.createElement(Select, {
-      options: ["课程", "开仓", "手续费", "跟单", "连续签到", "手动触发"].map(value => ({
+      options: ["课程", "手续费", "跟单", "连续签到", "手动触发"].map(value => ({
         value,
         label: value
       }))
@@ -1146,7 +1138,7 @@
         bonusCount: item?.key === "bonus" ? Number(item.count || 25) : 25,
         pointAmount: 100,
         pointCount: item?.key === "points" ? Number(item.count || 1) : 1,
-        event: item?.event || "开仓",
+        event: item?.event || "连续签到",
         manualUserIds: "870206426, 983850083"
       });
     }, [open, item, form]);
@@ -1293,7 +1285,7 @@
       name: "event",
       label: "触发事件"
     }, /*#__PURE__*/React.createElement(Select, {
-      options: ["开仓", "连续签到", "手动触发"].map(value => ({
+      options: ["连续签到", "手动触发"].map(value => ({
         value,
         label: value
       }))

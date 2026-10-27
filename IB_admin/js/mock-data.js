@@ -6,10 +6,10 @@
     },
     rules: [
       { id: 9, ruleType: "课程任务", internalName: "完成新手村课程", externalName: "英语: Complete Newbie Village", triggerEvent: "", cyclePeriod: "不限", rewardXp: 200, rewardDrop: 0, taskType: "新手任务", timeRange: "-", status: "启用", canEdit: true, courseId: 1, courseName: "新手村", operator: "Bella" },
-      { id: 10, internalName: "模拟盘交易激励", externalName: "英语: Demo trade incentive", triggerEvent: "开仓", cyclePeriod: "按天", rewardXp: 0, rewardDrop: 100, taskType: "新手任务", timeRange: "2026-10-06 00:00:00 至 2026-10-31 23:59:59", status: "启用", canEdit: true, operator: "Bella", conditions: [{ param: "订单数", value: 5 }], relation: "all" },
+      { id: 10, internalName: "模拟盘交易激励", externalName: "英语: Demo trade incentive", triggerEvent: "手续费", cyclePeriod: "按天", rewardXp: 0, rewardDrop: 100, taskType: "新手任务", timeRange: "2026-10-06 00:00:00 至 2026-10-31 23:59:59", status: "启用", canEdit: true, operator: "Bella", conditions: [{ param: "订单数", value: 5 }], relation: "all" },
       { id: 1, internalName: "首次签到连续5天", externalName: "英语: 首次签到连续5天", triggerEvent: "首次连续签到", cyclePeriod: "不限", rewardXp: 33, rewardDrop: 0, taskType: "全部", timeRange: "-", status: "启用", canEdit: false, operator: "Bella" },
       { id: 2, internalName: "连续签到5天", externalName: "英语: 连续签到5天", triggerEvent: "连续签到", cyclePeriod: "不限", rewardXp: 555, rewardDrop: 0, taskType: "全部", timeRange: "-", status: "启用", canEdit: false, operator: "Bella" },
-      { id: 3, internalName: "真实账号交易奖励", externalName: "英语: First trade reward", triggerEvent: "开仓", cyclePeriod: "按天", rewardXp: 0, rewardDrop: 100, taskType: "新手任务", timeRange: "-", status: "启用", canEdit: true, operator: "Bella" },
+      { id: 3, internalName: "真实账号交易奖励", externalName: "英语: First trade reward", triggerEvent: "手续费", cyclePeriod: "按天", rewardXp: 0, rewardDrop: 100, taskType: "新手任务", timeRange: "-", status: "启用", canEdit: true, operator: "Bella" },
       { id: 4, internalName: "学习K线图", externalName: "英语: Learn candlestick", triggerEvent: "手动触发", cyclePeriod: "不限", rewardXp: 150, rewardDrop: 100, taskType: "新手任务", timeRange: "-", status: "待启用", canEdit: true, operator: "Bella" },
       { id: 5, internalName: "交易手续费奖励", externalName: "英语: Trading fee reward", triggerEvent: "手续费", cyclePeriod: "按天", rewardXp: 0, rewardDrop: 300, taskType: "全部", timeRange: "-", status: "禁用", canEdit: true, operator: "Bella" },
       { id: 6, internalName: "邀请好友注册", externalName: "英语: Invite friends", triggerEvent: "手动触发", cyclePeriod: "不限", rewardXp: 80, rewardDrop: 0, taskType: "全部", timeRange: "-", status: "启用", canEdit: true, operator: "Bella" },
@@ -28,11 +28,11 @@
     pointDetails: [
       { ruleType: "普通任务", taskType: "新手任务", userId: "60231745", id: 1, user: "林晓雅", email: "xiaoya.lin@example.com", change: "+150", balance: 3120, source: "手动触发", refName: "学习K线图", time: "2026-09-28 10:24" },
       { ruleType: "普通任务", taskType: "全部", userId: "71849260", id: 2, user: "陈志远", email: "zhiyuan.chen@example.com", change: "+555", balance: 8640, source: "连续签到", refName: "连续签到5天", time: "2026-09-27 21:02" },
-      { ruleType: "普通任务", taskType: "新手任务", userId: "35620917", id: 3, user: "王海峰", email: "haifeng.wang@example.com", change: "+100", balance: 1450, source: "开仓", refName: "真实账号交易奖励", time: "2026-09-27 09:41" },
+      { ruleType: "普通任务", taskType: "新手任务", userId: "35620917", id: 3, user: "王海峰", email: "haifeng.wang@example.com", change: "+100", balance: 1450, source: "手续费", refName: "真实账号交易奖励", time: "2026-09-27 09:41" },
       { ruleType: "普通任务", taskType: "全部", userId: "89413572", id: 4, user: "刘思彤", email: "sitong.liu@example.com", change: "-200", balance: 980, source: "活动兑换", refName: "新人礼包兑换", time: "2026-09-26 16:15" },
       { ruleType: "普通任务", taskType: "全部", userId: "64092835", id: 5, user: "赵铭轩", email: "mingxuan.zhao@example.com", change: "+33", balance: 2210, source: "首次连续签到", refName: "首次签到连续5天", time: "2026-09-26 08:33" },
-      { ruleType: "普通任务", taskType: "新手任务", userId: "60231745", id: 6, user: "林晓雅", email: "xiaoya.lin@example.com", change: "+100", balance: 2970, source: "开仓", refName: "真实账号交易奖励", time: "2026-09-25 14:08" },
-      { ruleType: "普通任务", taskType: "新手任务", userId: "23784915", id: 7, user: "孙嘉禾", email: "jiahe.sun@example.com", change: "+100", balance: 1265, source: "开仓", refName: "真实账号交易奖励", time: "2026-09-24 19:57" },
+      { ruleType: "普通任务", taskType: "新手任务", userId: "60231745", id: 6, user: "林晓雅", email: "xiaoya.lin@example.com", change: "+100", balance: 2970, source: "手续费", refName: "真实账号交易奖励", time: "2026-09-25 14:08" },
+      { ruleType: "普通任务", taskType: "新手任务", userId: "23784915", id: 7, user: "孙嘉禾", email: "jiahe.sun@example.com", change: "+100", balance: 1265, source: "手续费", refName: "真实账号交易奖励", time: "2026-09-24 19:57" },
       { ruleType: "普通任务", taskType: "全部", userId: "71849260", id: 8, user: "陈志远", email: "zhiyuan.chen@example.com", change: "-100", balance: 8085, source: "活动兑换", refName: "手续费减免券兑换", time: "2026-09-23 11:46" },
       { ruleType: "课程任务", taskType: "新手任务", courseName: "新手村", userId: "60231745", id: 9, user: "林晓雅", email: "xiaoya.lin@example.com", change: "+200", balance: 3320, source: "完课", refName: "完成新手村课程", time: "2026-10-01 20:15" }
     ],
@@ -82,23 +82,23 @@
       { id: "6", name: "V6", levelId: "level-v6", levelName: "V6 VIP", status: "启用", floorRate: 70, auditStatus: "已通过", approvedAt: "2026-08-11 09:05", createdAt: "2026-08-10 13:25", rates: { contract: 95, contractTrader: 85, contractApi: 10, contractTraderApi: 10, spot: 15, spotTrader: 0, spotApi: 0, spotTraderApi: 0 }, marketingRate: 30, selfCommission: true, settleCycle: "月结", settleCoin: "CNY", effectiveType: "立即生效", effectiveAt: "-", updatedAt: "2026-09-06 14:47", operator: "Amy", remark: "VIP 专属规则。" }
     ],
     commissionSymbols: [
-      { code: "Ag(T+D)", name: "白银延期", margin: 1000, listed: true, openRate: 0.0061, closeRate: 0.0061 },
-      { code: "Ag99.99", name: "白银99.99", margin: 1000, listed: true, openRate: 0.007, closeRate: 0.007 },
-      { code: "Au(T+D)", name: "黄金延期", margin: 1000, listed: true, openRate: 0.0035, closeRate: 0.0035 },
-      { code: "Au10g", name: "10克金条", margin: 1000, listed: false, openRate: 0.008, closeRate: 0.008 },
-      { code: "Au100g", name: "100克金条", margin: 1000, listed: true, openRate: 0.0042, closeRate: 0.0042 },
-      { code: "Au50g", name: "50克金条", margin: 1000, listed: false, openRate: 0.006, closeRate: 0.006 },
-      { code: "Au99.95", name: "黄金99.95", margin: 1000, listed: false, openRate: 0.005, closeRate: 0.005 },
-      { code: "Au99.99", name: "上海金主力", margin: 1000, listed: true, openRate: 0.005, closeRate: 0.005 },
-      { code: "iAu100g", name: "国际板100克金", margin: 1000, listed: false, openRate: 0.007, closeRate: 0.007 },
-      { code: "iAu99.99", name: "国际板黄金", margin: 1000, listed: false, openRate: 0.0075, closeRate: 0.0075 },
-      { code: "mAu(T+D)", name: "迷你黄金延期", margin: 1000, listed: true, openRate: 0.0045, closeRate: 0.0045 },
-      { code: "Pt99.95", name: "铂金99.95", margin: 1000, listed: false, openRate: 0.012, closeRate: 0.012 },
-      { code: "积存金", name: "银行积存金", margin: 1000, listed: true, openRate: 0, closeRate: 0 },
-      { code: "沪金2506", name: "沪金2506", margin: 1000, listed: true, openRate: 0.005, closeRate: 0.005 },
-      { code: "沪金2512", name: "沪金2512", margin: 1000, listed: false, openRate: 0.0055, closeRate: 0.0055 },
-      { code: "沪银2506", name: "沪银2506", margin: 1000, listed: true, openRate: 0.0061, closeRate: 0.0061 },
-      { code: "沪银2512", name: "沪银2512", margin: 1000, listed: false, openRate: 0.0065, closeRate: 0.0065 }
+      { code: "Ag(T+D)", name: "白银延期", margin: 1000, listed: true, feeRate: 0.0061 },
+      { code: "Ag99.99", name: "白银99.99", margin: 1000, listed: true, feeRate: 0.007 },
+      { code: "Au(T+D)", name: "黄金延期", margin: 1000, listed: true, feeRate: 0.0035 },
+      { code: "Au10g", name: "10克金条", margin: 1000, listed: false, feeRate: 0.008 },
+      { code: "Au100g", name: "100克金条", margin: 1000, listed: true, feeRate: 0.0042 },
+      { code: "Au50g", name: "50克金条", margin: 1000, listed: false, feeRate: 0.006 },
+      { code: "Au99.95", name: "黄金99.95", margin: 1000, listed: false, feeRate: 0.005 },
+      { code: "Au99.99", name: "上海金主力", margin: 1000, listed: true, feeRate: 0.005 },
+      { code: "iAu100g", name: "国际板100克金", margin: 1000, listed: false, feeRate: 0.007 },
+      { code: "iAu99.99", name: "国际板黄金", margin: 1000, listed: false, feeRate: 0.0075 },
+      { code: "mAu(T+D)", name: "迷你黄金延期", margin: 1000, listed: true, feeRate: 0.0045 },
+      { code: "Pt99.95", name: "铂金99.95", margin: 1000, listed: false, feeRate: 0.012 },
+      { code: "积存金", name: "银行积存金", margin: 1000, listed: true, feeRate: 0 },
+      { code: "沪金2506", name: "沪金2506", margin: 1000, listed: true, feeRate: 0.005 },
+      { code: "沪金2512", name: "沪金2512", margin: 1000, listed: false, feeRate: 0.0055 },
+      { code: "沪银2506", name: "沪银2506", margin: 1000, listed: true, feeRate: 0.0061 },
+      { code: "沪银2512", name: "沪银2512", margin: 1000, listed: false, feeRate: 0.0065 }
     ],
     customerServices: [
       { id: "svc-qq", uid: "700001", name: "QQ", nickname: "QQ" },
@@ -177,10 +177,10 @@
         ],
         totalAssets: "0",
         tradeRecords: [
-          { id: "trade-1", orderNo: "PT117891170449842100001", openPrice: "0.99254", closePrice: "0.99243", margin: "53.760259", pnl: "-2.383178", fee: "-3.010374", fundingFee: "0", openedAt: "2026-09-11 08:57:24", closedAt: "2026-09-11 08:58:30", closed: "是", closeType: "手动平仓" },
-          { id: "trade-2", orderNo: "PT117891169674552100001", openPrice: "0.99249", closePrice: "0.99251", margin: "89.600136", pnl: "0.722222", fee: "-5.017648", fundingFee: "0", openedAt: "2026-09-11 08:56:07", closedAt: "2026-09-11 08:56:51", closed: "是", closeType: "手动平仓" },
-          { id: "trade-3", orderNo: "PT117891167122262100001", openPrice: "0.99247", closePrice: "0.99253", margin: "35.841268", pnl: "0.86668", fee: "-2.007128", fundingFee: "0", openedAt: "2026-09-11 08:51:52", closedAt: "2026-09-11 08:54:18", closed: "是", closeType: "手动平仓" },
-          { id: "trade-4", orderNo: "PT117891139157292100001", openPrice: "0.99193", closePrice: "0.99255", margin: "17.922662", pnl: "-4.477776", fee: "-1.003624", fundingFee: "0", openedAt: "2026-09-11 08:05:15", closedAt: "2026-09-11 08:52:44", closed: "是", closeType: "手动平仓" }
+          { id: "trade-1", orderNo: "PT117891170449842100001", margin: "53.760259", pnl: "-2.383178", fundingFee: "0" },
+          { id: "trade-2", orderNo: "PT117891169674552100001", margin: "89.600136", pnl: "0.722222", fundingFee: "0" },
+          { id: "trade-3", orderNo: "PT117891167122262100001", margin: "35.841268", pnl: "0.86668", fundingFee: "0" },
+          { id: "trade-4", orderNo: "PT117891139157292100001", margin: "17.922662", pnl: "-4.477776", fundingFee: "0" }
         ],
         fundRecords: [
           { id: "fund-1", userId: "315899879", fundType: "资金划转", createdAt: "2026-09-11 09:03:33", source: "Funding", target: "UTA", amount: "-40", balanceAfter: "0", orderNo: "—" },
@@ -540,13 +540,13 @@
       { id: 8, userId: "222076544", contact: "qwe@01.com", proofs: [{ label: "图片1", url: "https://qwe@01.com" }], platform: "期货公司", holdings: "1111111.000000", promoMode: "11111", appliedAt: "2026-06-06 08:03:29", status: "已驳回", operator: "Bella", rejectReason: "资料填写不完整" }
     ],
     commissionRecords: [
-      { id: 1, orderId: "PT117907848769930400001", symbol: "Au(T+D)", holdings: "843.229", commission: "0.9189", closedAt: "2026-09-30 16:14:56", settledAt: "2026-10-01 10:00:01", settleStatus: "部分结算" },
-      { id: 2, orderId: "PT117907839106770500001", symbol: "Au(T+D)", holdings: "843.247", commission: "0.9177", closedAt: "2026-09-30 16:09:15", settledAt: "2026-10-01 10:00:01", settleStatus: "部分结算" },
-      { id: 3, orderId: "PT117903368658700500001", symbol: "沪金2506", holdings: "1318.02", commission: "0.0831", closedAt: "2026-09-27 21:00:12", settledAt: "2026-09-28 10:00:01", settleStatus: "部分结算" },
-      { id: 4, orderId: "PT217903260769560500001", symbol: "Au99.99", holdings: "4308.64", commission: "0.1537", closedAt: "2026-09-25 10:22:48", settledAt: "2026-09-26 10:00:02", settleStatus: "已结算" },
-      { id: 5, orderId: "PT117903259890020500001", symbol: "Au99.99", holdings: "4295.04", commission: "0.1533", closedAt: "2026-09-25 08:47:06", settledAt: "2026-09-26 10:00:02", settleStatus: "已结算" },
-      { id: 6, orderId: "PT117901151517750500001", symbol: "Ag(T+D)", holdings: "1137.48", commission: "0.066", closedAt: "2026-09-24 09:35:04", settledAt: "2026-09-25 10:00:01", settleStatus: "部分结算" },
-      { id: 7, orderId: "PT117900155987330500001", symbol: "Ag(T+D)", holdings: "1144.11", commission: "0.0662", closedAt: "2026-09-22 08:05:31", settledAt: "2026-09-23 10:00:01", settleStatus: "部分结算" }
+      { id: 1, orderId: "PT117907848769930400001", symbol: "Au(T+D)", holdings: "843.229", commission: "0.9189", settledAt: "2026-10-01 10:00:01", settleStatus: "部分结算" },
+      { id: 2, orderId: "PT117907839106770500001", symbol: "Au(T+D)", holdings: "843.247", commission: "0.9177", settledAt: "2026-10-01 10:00:01", settleStatus: "部分结算" },
+      { id: 3, orderId: "PT117903368658700500001", symbol: "沪金2506", holdings: "1318.02", commission: "0.0831", settledAt: "2026-09-28 10:00:01", settleStatus: "部分结算" },
+      { id: 4, orderId: "PT217903260769560500001", symbol: "Au99.99", holdings: "4308.64", commission: "0.1537", settledAt: "2026-09-26 10:00:02", settleStatus: "已结算" },
+      { id: 5, orderId: "PT117903259890020500001", symbol: "Au99.99", holdings: "4295.04", commission: "0.1533", settledAt: "2026-09-26 10:00:02", settleStatus: "已结算" },
+      { id: 6, orderId: "PT117901151517750500001", symbol: "Ag(T+D)", holdings: "1137.48", commission: "0.066", settledAt: "2026-09-25 10:00:01", settleStatus: "部分结算" },
+      { id: 7, orderId: "PT117900155987330500001", symbol: "Ag(T+D)", holdings: "1144.11", commission: "0.0662", settledAt: "2026-09-23 10:00:01", settleStatus: "部分结算" }
     ],
     commissionDistributions: [
       { orderId: "PT117907848769930400001", pid: "661210254", level: "V1", amount: "0" },
@@ -598,10 +598,6 @@
       { id: 4, icon: "https://ginfx-prod.s3.ap-southeast-1.amazonaws.com/badge/20260812/24850501274.png", conditionType: "总充值", conditionText: "总充值：金额 >= 100", status: "启用", createdAt: "2026-08-12 08:10:00", updatedAt: "2026-08-25 18:44:26", languages: [
         { lang: "英语", name: "Vip Badge", desc: "Deposit over ¥100 in total to earn a badge." },
         { lang: "简体中文", name: "Vip徽章", desc: "累计充值>100元可获得徽章" }
-      ] },
-      { id: 5, icon: "https://ginfx-prod.s3.ap-southeast-1.amazonaws.com/badge/20260812/59307705266.png", conditionType: "平仓", conditionText: "统一交易帐户： 盈利金额 >= 100", status: "启用", createdAt: "2026-08-12 08:08:03", updatedAt: "2026-08-12 08:08:03", languages: [
-        { lang: "英语", name: "Cumulative_Profit", desc: "Earn the badge when your cumulative profit reaches 100." },
-        { lang: "简体中文", name: "盈利徽章", desc: "统一交易帐户累计盈利达到 100 可获得徽章" }
       ] }
     ],
     cascaderOptions: {
@@ -722,7 +718,7 @@
         { lang: "英语", title: "Beta 2.5.0", description: "Copy trading beta. Feedback welcome." }
       ] },
       { id: 4, platform: "miniapp", version: "1.8.0", build_number: 0, is_forced_update: 0, download_url: "", created_at: "2026-09-12 08:00:00", updated_at: "2026-09-12 08:00:00", locale_configs: [
-        { lang: "简体中文", title: "小程序 1.8.0", description: "支持微信登录与模拟盘快捷开仓。" }
+        { lang: "简体中文", title: "小程序 1.8.0", description: "支持微信登录与模拟盘快捷交易。" }
       ] }
     ],
     // —— 资金管理 / 资金管理（单条 + 批量） ——
@@ -768,17 +764,13 @@
       { name: "模拟账户", code: 1 },
       { name: "赠金账户", code: 2 }
     ],
-    orderClosedTypes: [
-      { name: "未平仓", code: 0 },
-      { name: "已平仓", code: 1 }
-    ],
     orders: [
-      { id: 1, user_code: "315899879", login: "888001", trade_account_type_name: "真实账户", ticket: "20261012001", source: "Au99.99", trade_volume: "1.00", so_type: 0, so_type_name: "市价", cmd: 0, leverage: "20", open_time: "2026-10-12 02:15:33", close_time: "", open_price: "612.40", close_price: "", margin_order: "3,062.00", profit: "+226.00", fee: "-24.50", funding_fee: "0.00", order_status: 0, close_type: -1 },
-      { id: 2, user_code: "315899879", login: "888001", trade_account_type_name: "真实账户", ticket: "20261011088", source: "Au(T+D)", trade_volume: "2.00", so_type: 0, so_type_name: "市价", cmd: 1, leverage: "10", open_time: "2026-10-11 07:22:10", close_time: "2026-10-11 14:36:20", open_price: "610.85", close_price: "614.25", margin_order: "6,108.50", profit: "+682.50", fee: "-49.00", funding_fee: "-8.60", order_status: 1, close_type: 1 },
-      { id: 3, user_code: "643448777", login: "888012", trade_account_type_name: "模拟账户", ticket: "20261011090", source: "Ag(T+D)", trade_volume: "5.00", so_type: 1, so_type_name: "限价", cmd: 0, leverage: "10", open_time: "2026-10-11 05:40:00", close_time: "2026-10-11 09:05:12", open_price: "7,842.00", close_price: "7,815.00", margin_order: "19,605.00", profit: "-135.00", fee: "-36.80", funding_fee: "-2.20", order_status: 1, close_type: 3 },
-      { id: 4, user_code: "548302071", login: "900204", trade_account_type_name: "真实账户", ticket: "20261010055", source: "mAu50g", trade_volume: "1.00", so_type: 0, so_type_name: "市价", cmd: 0, leverage: "20", open_time: "2026-10-10 03:18:44", close_time: "2026-10-10 11:52:09", open_price: "30,620.00", close_price: "30,855.00", margin_order: "30,620.00", profit: "+235.00", fee: "-28.00", funding_fee: "0.00", order_status: 1, close_type: 4 },
-      { id: 5, user_code: "499516984", login: "877310", trade_account_type_name: "真实账户", ticket: "20261010061", source: "Au100g", trade_volume: "0.50", so_type: 0, so_type_name: "市价", cmd: 1, leverage: "10", open_time: "2026-10-10 02:02:57", close_time: "", open_price: "61,240.00", close_price: "", margin_order: "15,310.00", profit: "-96.00", fee: "-12.20", funding_fee: "0.00", order_status: 0, close_type: -1 },
-      { id: 6, user_code: "686566723", login: "901103", trade_account_type_name: "赠金账户", ticket: "20261009012", source: "Ag(T+D)", trade_volume: "3.00", so_type: 2, so_type_name: "止损", cmd: 1, leverage: "10", open_time: "2026-10-09 08:30:15", close_time: "2026-10-09 16:44:31", open_price: "7,898.00", close_price: "7,860.00", margin_order: "11,847.00", profit: "+114.00", fee: "-22.10", funding_fee: "-1.10", order_status: 1, close_type: 5 }    ],
+      { id: 1, user_code: "315899879", login: "888001", trade_account_type_name: "真实账户", ticket: "20261012001", source: "Au99.99", trade_volume: "1.00", so_type: 0, so_type_name: "市价", leverage: "20", margin_order: "3,062.00", profit: "+226.00", funding_fee: "0.00" },
+      { id: 2, user_code: "315899879", login: "888001", trade_account_type_name: "真实账户", ticket: "20261011088", source: "Au(T+D)", trade_volume: "2.00", so_type: 0, so_type_name: "市价", leverage: "10", margin_order: "6,108.50", profit: "+682.50", funding_fee: "-8.60" },
+      { id: 3, user_code: "643448777", login: "888012", trade_account_type_name: "模拟账户", ticket: "20261011090", source: "Ag(T+D)", trade_volume: "5.00", so_type: 1, so_type_name: "限价", leverage: "10", margin_order: "19,605.00", profit: "-135.00", funding_fee: "-2.20" },
+      { id: 4, user_code: "548302071", login: "900204", trade_account_type_name: "真实账户", ticket: "20261010055", source: "mAu50g", trade_volume: "1.00", so_type: 0, so_type_name: "市价", leverage: "20", margin_order: "30,620.00", profit: "+235.00", funding_fee: "0.00" },
+      { id: 5, user_code: "499516984", login: "877310", trade_account_type_name: "真实账户", ticket: "20261010061", source: "Au100g", trade_volume: "0.50", so_type: 0, so_type_name: "市价", leverage: "10", margin_order: "15,310.00", profit: "-96.00", funding_fee: "0.00" },
+      { id: 6, user_code: "686566723", login: "901103", trade_account_type_name: "赠金账户", ticket: "20261009012", source: "Ag(T+D)", trade_volume: "3.00", so_type: 2, so_type_name: "止损", leverage: "10", margin_order: "11,847.00", profit: "+114.00", funding_fee: "-1.10" }    ],
     // —— 充值提现管理 ——
     depositAuditStatusOptions: [
       { name: "待审核", code: "pending" },

@@ -21,7 +21,7 @@
   const e = React.createElement;
 
   const STATUS_OPTIONS = ["启用", "禁用"];
-  const CONDITION_OPTIONS = ["总充值", "平仓"];
+  const CONDITION_OPTIONS = ["总充值"];
   const LANG_OPTIONS = ["英语", "简体中文", "繁体中文"];
   // 原型模拟上传：从已有徽章图中随机取一张作为图标。
   const SAMPLE_ICONS = [...new Set((app.mockData.badges || []).map(item => item.icon))];

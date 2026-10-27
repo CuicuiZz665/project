@@ -3,7 +3,7 @@
   const { Text } = Typography;
   const e = React.createElement;
 
-  const sourceOptions = ["开仓", "连续签到", "首次连续签到", "手动触发", "活动兑换", "完课"].map(value => ({ value, label: value }));
+  const sourceOptions = ["手续费", "连续签到", "首次连续签到", "手动触发", "活动兑换", "完课"].map(value => ({ value, label: value }));
 
   // 积分明细：激励中心下的独立叶子页，只读流水，支持筛选/列设置/分页。
   function PointDetailsPage({ details }) {

@@ -20,9 +20,9 @@
   const e = React.createElement;
 
   const SORT_OPTIONS = ["添加时间", "注册时间"];
-  const RESTRICTION_OPTIONS = ["限制登录", "限制充值", "限制提现", "限制开仓"];
+  const RESTRICTION_OPTIONS = ["限制登录", "限制充值", "限制提现"];
   const EXPORT_HEADERS = ["用户ID", "注册方式", "注册时间(GMT+8)", "邮箱", "收款账号", "最后操作人", "添加时间(GMT+8)", "拉黑原因", "是否充值", "权限限制"];
-  const RESTRICTION_TAG_COLOR = { "限制登录": "orange", "限制充值": "gold", "限制提现": "error", "限制开仓": "purple" };
+  const RESTRICTION_TAG_COLOR = { "限制登录": "orange", "限制充值": "gold", "限制提现": "error" };
 
   // 列设置分组：操作列固定不可取消，与源系统一致。
   const columnGroups = [

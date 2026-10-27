@@ -133,8 +133,6 @@
         marketingRate: values.marketingRate || 0,
         symbolRates: symbols.map(item => ({
           code: item.code,
-          openRate: item.openRate,
-          closeRate: item.closeRate,
           rate: symbolRateDraft[item.code] ?? null
         })),
         settleCycle: "日结",
@@ -267,53 +265,41 @@
         (!symbolFilter.code || item.code === symbolFilter.code)
         && (listedFilter === null || item.listed === listedFilter)
       ));
-      const symbolRows = visibleSymbols.flatMap(item => ["买", "卖"].map((direction, index) => ({
-        key: `${item.code}-${direction}`,
+      const symbolRows = visibleSymbols.map(item => ({
+        key: item.code,
         code: item.code,
         name: item.name,
         margin: item.margin,
         listed: item.listed,
-        direction,
-        openRate: item.openRate,
-        closeRate: item.closeRate,
-        lead: index === 0
-      })));
-      const leadCell = record => ({ rowSpan: record.lead ? 2 : 0 });
+        feeRate: item.feeRate
+      }));
       const estimateText = record => {
         const rate = symbolRateDraft[record.code];
         if (rate === undefined || rate === null || rate === "") {
           return e("span", { className: "symbol-off-text" }, "-");
         }
-        const fee = record.direction === "买"
-          ? record.margin * record.openRate / 100
-          : record.margin * record.closeRate / 100;
+        const fee = record.margin * record.feeRate / 100;
         return feeText(fee, rate);
       };
       const symbolColumns = [
-        { title: "品种代码", dataIndex: "code", width: 130, onCell: leadCell },
-        { title: "品种名称", dataIndex: "name", width: 130, onCell: leadCell },
-        { title: "持仓量(Margin * 杠杆)", dataIndex: "margin", width: 180, onCell: leadCell, render: value => `${value}元` },
+        { title: "品种代码", dataIndex: "code", width: 130 },
+        { title: "品种名称", dataIndex: "name", width: 130 },
+        { title: "持仓量(Margin * 杠杆)", dataIndex: "margin", width: 180, render: value => `${value}元` },
         {
           title: "上/下架状态",
           key: "listed",
           width: 120,
-          onCell: leadCell,
           render: (_, record) => (record.listed
             ? e(Tag, { color: "green" }, "上架")
             : e("span", { className: "symbol-off-text" }, "下架"))
         },
-        { title: "方向", dataIndex: "direction", width: 70 },
-        { title: "开仓费率", dataIndex: "openRate", width: 100, render: rateText },
-        { title: "平仓费率", dataIndex: "closeRate", width: 100, render: rateText },
-        { title: "开仓费用", key: "openFee", width: 110, render: (_, record) => feeText(record.margin, record.openRate) },
-        { title: "平仓费用", key: "closeFee", width: 110, render: (_, record) => feeText(record.margin, record.closeRate) },
-        { title: "预计分佣金额", key: "estimate", width: 120, render: (_, record) => estimateText(record) },
+        { title: "费率", dataIndex: "feeRate", width: 100, render: rateText },
+        { title: "预计分佣金额", key: "estimate", width: 140, render: (_, record) => estimateText(record) },
         {
           title: "分佣比例",
           key: "rate",
           width: 170,
-          onCell: leadCell,
-          render: (_, record) => (record.lead ? e(InputNumber, {
+          render: (_, record) => e(InputNumber, {
             min: 0,
             max: 100,
             size: "small",
@@ -323,13 +309,7 @@
             parser: percentParse,
             value: symbolRateDraft[record.code],
             onChange: value => setSymbolRateDraft(prev => ({ ...prev, [record.code]: value }))
-          }) : null)
-        },
-        {
-          title: "开平仓费状态",
-          key: "feeStatus",
-          width: 110,
-          render: () => e(Tag, { color: "green" }, "启用")
+          })
         }
       ];
       const baseItem = (label, name, key) => e(Form.Item, {
@@ -449,7 +429,7 @@
               columns: symbolColumns,
               dataSource: symbolRows,
               pagination: false,
-              scroll: { x: 1450 },
+              scroll: { x: 980 },
               locale: { emptyText: "暂无数据" }
             })
           ])

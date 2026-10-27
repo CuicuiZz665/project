@@ -61,15 +61,12 @@
 
     syncTriggerDefaults() {
       const event = this.els.triggerEvent.value;
-      const options = event === "开仓"
-        ? ["交易账号类型 (必选)", "≥交易量"]
-        : event === "连续签到"
-          ? ["签到天数", "是否首次连续签到"]
-          : ["完成状态"];
+      const options = event === "连续签到"
+        ? ["签到天数", "是否首次连续签到"]
+        : ["完成状态"];
       this.els.eventParam.innerHTML = options.map(option => `<option>${option}</option>`).join("");
-      this.els.accountType.closest(".field").classList.toggle("hidden-field", event !== "开仓");
-      if (event === "开仓" && !this.els.rewardDrop.value) this.els.rewardDrop.value = "100";
-      if (event !== "开仓" && !this.els.rewardXp.value) this.els.rewardXp.value = event === "连续签到" ? "33" : "150";
+      this.els.accountType.closest(".field").classList.add("hidden-field");
+      if (!this.els.rewardXp.value) this.els.rewardXp.value = event === "连续签到" ? "33" : "150";
     }
 
     syncJumpType() {
@@ -123,7 +120,7 @@
       this.els.taskType.value = rule?.taskType || "请选择任务类型";
       this.els.rewardXp.value = rule?.rewardXp || "";
       this.els.rewardDrop.value = rule?.rewardDrop || "";
-      this.els.triggerEvent.value = rule?.triggerEvent === "首次连续签到" ? "连续签到" : (rule?.triggerEvent || "开仓");
+      this.els.triggerEvent.value = rule?.triggerEvent === "首次连续签到" ? "连续签到" : (rule?.triggerEvent || "手续费");
       this.els.accountType.value = "统一交易帐户";
       this.els.jumpType.value = "无跳转";
       this.els.jumpTarget.value = "";
