@@ -542,11 +542,11 @@
         { name: "Au50g", type: "实物金条", lots: "8.35", amount: "112,400", volume: "204", orders: "74" }
       ],
       customersSummary: [
-        { id: 1, name: "林知夏", account: "C-100286", agent: "Bella", customers: "3", lots: "82.40", amount: "¥1,286,400", deposit: "¥220,000", pnl: "+¥28,640", lastTrade: "2026-09-10 21:05" },
-        { id: 2, name: "陈柏言", account: "C-100417", agent: "Amy", customers: "2", lots: "64.82", amount: "¥968,200", deposit: "¥180,000", pnl: "-¥8,460", lastTrade: "2026-09-09 19:42" },
-        { id: 3, name: "周予安", account: "C-100802", agent: "Bella", customers: "2", lots: "58.36", amount: "¥824,600", deposit: "¥300,000", pnl: "+¥15,600", lastTrade: "2026-09-08 11:30" },
-        { id: 4, name: "许嘉禾", account: "C-100931", agent: "David", customers: "1", lots: "44.18", amount: "¥692,800", deposit: "¥120,000", pnl: "+¥6,920", lastTrade: "2026-09-07 16:20" },
-        { id: 5, name: "沈星河", account: "C-101024", agent: "Amy", customers: "4", lots: "39.72", amount: "¥586,300", deposit: "¥80,000", pnl: "-¥3,240", lastTrade: "2026-09-06 13:08" }
+        { id: 1, name: "林知夏", account: "C-100286", agent: "Bella", customers: "3", lots: "82", amount: "¥1,286,400", deposit: "¥220,000", pnl: "+¥28,640", lastTrade: "2026-09-10 21:05" },
+        { id: 2, name: "陈柏言", account: "C-100417", agent: "Amy", customers: "2", lots: "65", amount: "¥968,200", deposit: "¥180,000", pnl: "-¥8,460", lastTrade: "2026-09-09 19:42" },
+        { id: 3, name: "周予安", account: "C-100802", agent: "Bella", customers: "2", lots: "58", amount: "¥824,600", deposit: "¥300,000", pnl: "+¥15,600", lastTrade: "2026-09-08 11:30" },
+        { id: 4, name: "许嘉禾", account: "C-100931", agent: "David", customers: "1", lots: "44", amount: "¥692,800", deposit: "¥120,000", pnl: "+¥6,920", lastTrade: "2026-09-07 16:20" },
+        { id: 5, name: "沈星河", account: "C-101024", agent: "Amy", customers: "4", lots: "40", amount: "¥586,300", deposit: "¥80,000", pnl: "-¥3,240", lastTrade: "2026-09-06 13:08" }
       ]
     },
     loginLogs: [

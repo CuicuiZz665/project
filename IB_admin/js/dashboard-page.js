@@ -157,7 +157,7 @@
     const [dateMode, setDateMode] = React.useState("week");
     const [customRange, setCustomRange] = React.useState(() => [dayjs("2026-08-12"), dayjs("2026-09-11")]);
     const [mainMetric, setMainMetric] = React.useState("net");
-    const [rankMetric, setRankMetric] = React.useState("lots");
+    const [rankMetric, setRankMetric] = React.useState("orders");
     // 今日为实时数据，进入页面时记录「截至」时刻
     const [liveAt] = React.useState(() => dayjs());
 
@@ -358,16 +358,13 @@
       return Number(String(text).replace(/[^\d.-]/g, "")) || 0;
     }
 
-    function formatRankTotal(valueKey, value) {
-      if (valueKey === "lots") {
-        return value.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-      }
+    function formatRankTotal(value) {
       return Math.round(value).toLocaleString("en-US");
     }
 
     function renderRankingCard() {
-      const totalLabels = { lots: "总订单数", amount: "总金额", orders: "总订单笔数" };
-      const totalUnits = { lots: "笔", amount: "元" };
+      const totalLabels = { orders: "总订单数", amount: "总金额" };
+      const totalUnits = { amount: "元" };
       const ranked = periodSymbols
         .map(item => ({ item, value: parseRankValue(item[rankMetric]) }))
         .sort((a, b) => b.value - a.value);
@@ -378,7 +375,7 @@
         title: e("span", { key: "title" }, [
           "品种排行",
           e("span", { className: "dashboard-ranking-total", key: "total" },
-            ` ${totalLabels[rankMetric]} ${formatRankTotal(rankMetric, totalValue)}${totalUnit}`)
+            ` ${totalLabels[rankMetric]} ${formatRankTotal(totalValue)}${totalUnit}`)
         ]),
         className: "dashboard-analysis-card dashboard-ranking-card",
         key: "ranking",
@@ -386,7 +383,7 @@
           size: "small",
           value: rankMetric,
           onChange: setRankMetric,
-          options: [{ value: "lots", label: "订单数" }, { value: "amount", label: "金额" }, { value: "orders", label: "笔数" }]
+          options: [{ value: "orders", label: "订单数" }, { value: "amount", label: "金额" }]
         })
       }, [
         e("div", { className: "dashboard-ranking-list", key: "list" },
